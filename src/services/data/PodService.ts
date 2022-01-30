@@ -1,11 +1,9 @@
-import { Service } from "typedi";
 import { ApiResponse } from "../../models/data/Impl/ApiResponse";
 import { UxPod } from "../../models/data/Impl/UxPod";
 import { IApiResponse } from "../../models/data/Interfaces/IApiResponse";
 import { IUxPod } from "../../models/data/Interfaces/IUxPod";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
 
-@Service()
 export class PodService extends OracleRestServiceBase {
   async getAllPods(): Promise<ApiResponse<IUxPod>> {
     let response = new ApiResponse<UxPod>();

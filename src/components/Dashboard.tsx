@@ -57,6 +57,9 @@ const Dashboard: FC<DashboardProps> = (props: DashboardProps) => {
   const [selectedTmpl, setSelectedTmpl] = useState("");
   const [selectedTmplFile, setSelectedTmplFile] = useState("");
 
+  const [selectedFile, setSelectedFile] = useState("");
+  const [selectedFileExt, setSelectedFileExt] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [loadMessage, setLoadMessage] = useState("");
   const [showErrors, setShowErrors] = useState(false);
@@ -81,7 +84,8 @@ const Dashboard: FC<DashboardProps> = (props: DashboardProps) => {
   };
 
   const fileChange = (fileName: string, fileExt: string): void => {
-    console.log({ fileName, fileExt });
+    setSelectedFile(fileName);
+    setSelectedFileExt(fileExt);
   };
 
   const convTypeChange = (val: string): void => {

@@ -1,9 +1,7 @@
-import { Service } from "typedi";
 import { ApiResponse } from "../../models/data/Impl/ApiResponse";
 import { IUxConversionType } from "../../models/data/Interfaces/IUxConversionType";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
 
-@Service()
 export class ConversionTypeService extends OracleRestServiceBase {
   async getAllConvTypes(): Promise<ApiResponse<IUxConversionType>> {
     let response = new ApiResponse<IUxConversionType>();

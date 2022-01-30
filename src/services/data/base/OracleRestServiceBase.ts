@@ -5,12 +5,9 @@ import { IApiResponse } from "../../../models/data/Interfaces/IApiResponse";
 import { IOracleResponse } from "../../../models/data/Interfaces/IOracleResponse";
 import { ErrorCodes, ErrorTypes, IOracleApiError } from "../../../models/errors/IOracleApiError";
 import { HttpHeaderContentType } from "./HttpHeaderContentType";
+import { ServerConfig } from "../../../ServerConfig";
 
 export class OracleRestServiceBase {
-  constructor(private baseConfig: { baseUrl: string; entity?: string }) {
-    axios.defaults.baseURL = baseConfig.baseUrl;
-  }
-
   //#region error handling
   /**
    *
@@ -21,9 +18,15 @@ export class OracleRestServiceBase {
    */
 
   protected handleError(e: any, code: ErrorCodes, reqType: ErrorTypes): IOracleApiError {
-    return e.isAxiosError
-      ? (e as AxiosError).response.data
-      : { code: code, title: "Oracle ORDS Exception", type: reqType, message: e, instance: this.baseConfig.baseUrl };
+    const error = e as Error;
+    return {
+      title: "ORDS request error",
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      type: reqType,
+      code: code,
+    };
   }
 
   //#endregion

@@ -1,11 +1,9 @@
 import _ from "lodash";
-import { Service } from "typedi";
 import { CsvService } from "../general/CsvService";
 import { writeToString } from "@fast-csv/format";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
 import { CnvSpreadsheet } from "../../models/data/Impl/CnvSpreadsheet";
 
-@Service()
 export class SpreadsheetService extends OracleRestServiceBase {
   constructor(private csvService: CsvService, httpConfig: { baseUrl: string; entity: string }) {
     super(httpConfig);
@@ -23,7 +21,7 @@ export class SpreadsheetService extends OracleRestServiceBase {
       let i = 0;
       let timesThroughAlphabet = 0;
       row.map((col, colIdx) => {
-        let colName = "COLUMN_";
+        let colName: string = "COLUMN_";
 
         if (timesThroughAlphabet === 0) colName += alphabet[i];
         else if (timesThroughAlphabet === 1) colName += alphabet[timesThroughAlphabet] + alphabet[i];
