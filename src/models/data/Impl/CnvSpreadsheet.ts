@@ -1,4 +1,4 @@
-import { ICnvSpreadsheet } from "../Interfaces/ICnvSpreadsheet";
+import { ICnvSpreadsheet } from "../Interfaces/ORDS/ICnvSpreadsheet";
 
 export class CnvSpreadsheet implements ICnvSpreadsheet {
   [k: string]: string | number | null;

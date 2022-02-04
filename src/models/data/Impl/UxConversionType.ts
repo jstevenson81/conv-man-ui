@@ -1,5 +1,5 @@
 import { IOracleLink } from "../Interfaces/IOracleLink";
-import { IUxConversionType } from "../Interfaces/IUxConversionType";
+import { IUxConversionType } from "../Interfaces/ORDS/IUxConversionType";
 
 export class UxConversionType implements IUxConversionType {
   ux_conversion_type_id: number;

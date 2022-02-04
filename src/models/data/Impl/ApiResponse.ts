@@ -1,12 +1,13 @@
-import { IApiResponse } from "../Interfaces/IApiResponse";
-import { IOracleItem } from "../Interfaces/IOracleItem";
+import { IOracleApiError } from "../../errors/IOracleApiError";
+import { IApiResponse } from "../Interfaces/Local/IApiResponse";
+import { IOracleItem } from "../Interfaces/OracleApi/IOracleItem";
 import { IOracleLink } from "../Interfaces/IOracleLink";
 import { IOracleResponse } from "../Interfaces/IOracleResponse";
 
 export class ApiResponse<T> implements IApiResponse<T> {
   collection?: IOracleResponse<T>;
   item?: T;
-  error?: { code: string; title: string; message: string; type: string; instance: string };
+  error?: IOracleApiError
   constructor() {
     this.collection = {
       items: new Array<T>(),
@@ -17,6 +18,6 @@ export class ApiResponse<T> implements IApiResponse<T> {
       links: new Array<IOracleLink>(),
     };
     this.item = {} as T;
-    this.error = { code: "", title: "", message: "", type: "", instance: "" };
+    this.error = {} as IOracleApiError;
   }
 }

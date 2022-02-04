@@ -1,5 +1,5 @@
 import { IOracleLink } from "../Interfaces/IOracleLink";
-import { IUxPod } from "../Interfaces/IUxPod";
+import { IUxPod } from "../Interfaces/ORDS/IUxPod";
 
 export class UxPod implements IUxPod {
   uxp_ux_pod_email_id: number;
@@ -8,6 +8,12 @@ export class UxPod implements IUxPod {
   pod_url: string;
   links?: IOracleLink[];
 
+  constructor() {
+    this.ux_pod_id = 0;
+    this.uxp_ux_pod_email_id = 0;
+    this.ux_pod_id = 0;
+    this.pod_name = "";
+    this.pod_url = "";
+    this.links = new Array<IOracleLink>();
+  }
 }
-
-

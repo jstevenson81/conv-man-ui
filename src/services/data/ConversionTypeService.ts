@@ -1,5 +1,5 @@
 import { ApiResponse } from "../../models/data/Impl/ApiResponse";
-import { IUxConversionType } from "../../models/data/Interfaces/IUxConversionType";
+import { IUxConversionType } from "../../models/data/Interfaces/ORDS/IUxConversionType";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
 
 export class ConversionTypeService extends OracleRestServiceBase {

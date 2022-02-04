@@ -13,5 +13,8 @@ export interface IValidationError {
   message: string;
   row: number;
   column: string;
+  columnData: string;
   fileName: string;
+  rowData: string;
+  resolved: boolean;
 }

@@ -1,4 +1,4 @@
-import { IOracleItem } from "./IOracleItem";
+import { IOracleItem } from "../OracleApi/IOracleItem";
 
 
 export interface IUxConversionType extends IOracleItem {

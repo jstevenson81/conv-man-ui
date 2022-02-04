@@ -1,4 +1,4 @@
-import { IOracleItem } from "./IOracleItem";
+import { IOracleItem } from "../OracleApi/IOracleItem";
 
 export interface IUxPod extends IOracleItem {
   ux_pod_id: number;

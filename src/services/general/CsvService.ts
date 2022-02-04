@@ -2,10 +2,8 @@ import { parseStream, parseString } from "@fast-csv/parse";
 import { DateTime } from "luxon";
 import _ from "lodash";
 import { CsvParseResponse } from "../../models/CsvParseResponse";
-import { Service } from "typedi";
 import { ReadableStream } from "node:stream/web";
 
-@Service()
 export class CsvService {
   constructor() {}
 

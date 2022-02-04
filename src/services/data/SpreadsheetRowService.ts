@@ -5,7 +5,7 @@ import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
 import { CnvSpreadsheet } from "../../models/data/Impl/CnvSpreadsheet";
 
 export class SpreadsheetService extends OracleRestServiceBase {
-  constructor(private csvService: CsvService, httpConfig: { baseUrl: string; entity: string }) {
+  constructor(private csvService: CsvService, httpConfig: { ordsUri: string; entity: string }) {
     super(httpConfig);
   }
 

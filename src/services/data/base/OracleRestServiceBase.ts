@@ -1,13 +1,14 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import _ from "lodash";
-import { IOracleItem } from "../../../models/data/Interfaces/IOracleItem";
-import { IApiResponse } from "../../../models/data/Interfaces/IApiResponse";
+import { IOracleItem } from "../../../models/data/Interfaces/OracleApi/IOracleItem";
+import { IApiResponse } from "../../../models/data/Interfaces/Local/IApiResponse";
 import { IOracleResponse } from "../../../models/data/Interfaces/IOracleResponse";
 import { ErrorCodes, ErrorTypes, IOracleApiError } from "../../../models/errors/IOracleApiError";
 import { HttpHeaderContentType } from "./HttpHeaderContentType";
-import { ServerConfig } from "../../../ServerConfig";
 
 export class OracleRestServiceBase {
+  constructor(private baseConfig: { ordsUri: string; entity: string }) {}
+
   //#region error handling
   /**
    *
