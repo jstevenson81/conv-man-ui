@@ -1,4 +1,4 @@
-import { IOracleLink } from "../Interfaces/IOracleLink";
+import { IOracleLink } from "../Interfaces/OracleApi/IOracleLink";
 import { IUxConversionType } from "../Interfaces/ORDS/IUxConversionType";
 
 export class UxConversionType implements IUxConversionType {

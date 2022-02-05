@@ -1,4 +1,4 @@
-import { IOracleLink } from "../Interfaces/IOracleLink";
+import { IOracleLink } from "../Interfaces/OracleApi/IOracleLink";
 import { IUxPodEmail } from "../Interfaces/ORDS/IUxPodEmail";
 
 export class UxPodEmail implements IUxPodEmail {

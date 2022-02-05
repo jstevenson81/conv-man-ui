@@ -2,12 +2,14 @@ import axios, { AxiosResponse } from "axios";
 import _ from "lodash";
 import { IOracleItem } from "../../../models/data/Interfaces/OracleApi/IOracleItem";
 import { IApiResponse } from "../../../models/data/Interfaces/Local/IApiResponse";
-import { IOracleResponse } from "../../../models/data/Interfaces/IOracleResponse";
 import { ErrorCodes, ErrorTypes, IOracleApiError } from "../../../models/errors/IOracleApiError";
 import { HttpHeaderContentType } from "./HttpHeaderContentType";
+import { IOracleResponse } from "../../../models/data/Interfaces/OracleApi/IOracleResponse";
 
 export class OracleRestServiceBase {
-  constructor(private baseConfig: { ordsUri: string; entity: string }) {}
+  constructor(private baseConfig: { ordsUri: string; entity: string }) {
+    axios.defaults.baseURL = baseConfig.ordsUri;
+  }
 
   //#region error handling
   /**
@@ -88,6 +90,19 @@ export class OracleRestServiceBase {
 
   protected async runGetMany<T>(): Promise<AxiosResponse<IOracleResponse<T>>> {
     return await axios.get<IOracleResponse<T>>(this.baseConfig.entity, {
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  protected async runGetManyWithAction<T>(customAction: string): Promise<AxiosResponse<IOracleResponse<T>>> {
+    const action: string = `${this.baseConfig.entity}${customAction}`;
+    return await axios.get<IOracleResponse<T>>(action, {
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  protected async runGetManyAbsUrl<T>(url: string): Promise<AxiosResponse<IOracleResponse<T>>> {
+    return await axios.get<IOracleResponse<T>>(url, {
       headers: { "Content-Type": "application/json" },
     });
   }

@@ -1,8 +1,7 @@
 import { IOracleApiError } from "../../errors/IOracleApiError";
 import { IApiResponse } from "../Interfaces/Local/IApiResponse";
-import { IOracleItem } from "../Interfaces/OracleApi/IOracleItem";
-import { IOracleLink } from "../Interfaces/IOracleLink";
-import { IOracleResponse } from "../Interfaces/IOracleResponse";
+import { IOracleLink } from "../Interfaces/OracleApi/IOracleLink";
+import { IOracleResponse } from "../Interfaces/OracleApi/IOracleResponse";
 
 export class ApiResponse<T> implements IApiResponse<T> {
   collection?: IOracleResponse<T>;
