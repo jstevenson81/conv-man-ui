@@ -1,5 +1,5 @@
 import _ from "lodash";
-import React from "react";
+import React, { useMemo } from "react";
 import { Column, useTable } from "react-table";
 import { ICnvValError } from "../models/data/Interfaces/ORDS/ICnvValError";
 import { IConvManCol } from "../services/data/CnvDataService";
@@ -10,7 +10,9 @@ type ConvManErrorTableProps = {
 };
 
 const ConvManErrorTable: React.FC<ConvManErrorTableProps> = (props: ConvManErrorTableProps) => {
-  const tableInstance = useTable({ columns: props.columns as Array<Column<ICnvValError>>, data: props.data });
+  const columns = useMemo(() => props.columns as Array<Column<ICnvValError>>, []);
+  const data = useMemo(() => props.data, []);
+  const tableInstance = useTable({ columns, data });
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
 
   return (

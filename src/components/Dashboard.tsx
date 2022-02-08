@@ -318,9 +318,11 @@ const Dashboard: FC<DashboardProps> = (props: DashboardProps) => {
       });
     });
     setTableSetup(tables);
+    setLoading(false);
   };
 
   useEffect(() => {
+    setLoading(true);
     buildErrors();
   }, []);
 
