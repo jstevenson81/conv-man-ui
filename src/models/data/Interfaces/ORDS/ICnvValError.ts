@@ -259,5 +259,3 @@ export interface ICnvValError extends IOracleItem {
   orig_dff_data099?: any;
   orig_dff_data100?: any;
 }
-
-

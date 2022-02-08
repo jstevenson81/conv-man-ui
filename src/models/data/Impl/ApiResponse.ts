@@ -4,11 +4,11 @@ import { IOracleLink } from "../Interfaces/OracleApi/IOracleLink";
 import { IOracleResponse } from "../Interfaces/OracleApi/IOracleResponse";
 
 export class ApiResponse<T> implements IApiResponse<T> {
-  collection?: IOracleResponse<T>;
-  item?: T;
+  oracleResponse?: IOracleResponse<T>;
+  singleOracleItem?: T;
   error?: IOracleApiError
   constructor() {
-    this.collection = {
+    this.oracleResponse = {
       items: new Array<T>(),
       hasMore: false,
       limit: 0,
@@ -16,7 +16,7 @@ export class ApiResponse<T> implements IApiResponse<T> {
       count: 0,
       links: new Array<IOracleLink>(),
     };
-    this.item = {} as T;
+    this.singleOracleItem = {} as T;
     this.error = {} as IOracleApiError;
   }
 }

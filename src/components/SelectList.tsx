@@ -22,7 +22,6 @@ export default class SelectList extends Component<ISelectListProps, ISelectListS
   handleChange(e: ChangeEvent<HTMLSelectElement>): void {
     this.setState({ selectedItem: e.target.value });
     this.props.onListboxChange(e.target.value);
-    console.log(e.target);
   }
 
   render(): ReactNode {

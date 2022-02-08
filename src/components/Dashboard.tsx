@@ -1,6 +1,5 @@
-import React, { ChangeEvent, FC, useState } from "react";
+import React, { ChangeEvent, FC, useEffect, useState } from "react";
 import { ConvManFile, ConvManLabel, SelectList } from ".";
-import ConvManInput from "./ConvManInput";
 import { IConversion, IValidationError } from "./interfaces/IConversion";
 import { ISelectListItem } from "./interfaces/ISelectListItem";
 
@@ -14,8 +13,12 @@ import {
 import _ from "lodash";
 import Loader from "./Loader";
 import { IConvManFileInputState } from "./ConvManFile";
-import reportWebVitals from "../reportWebVitals";
 import ConvManErrorTable from "./ConvManErrorTable";
+import { CnvDataService, IConvManCol } from "../services/data/CnvDataService";
+import { ServerConfig } from "../ServerConfig";
+import { ICnvValError } from "../models/data/Interfaces/ORDS/ICnvValError";
+import { Column } from "react-table";
+import { ICnvValErrorAttr } from "../models/data/Interfaces/ORDS/ICnvValErrorAttr";
 
 interface DashboardState {
   pods: Array<ISelectListItem>;
@@ -44,6 +47,9 @@ interface IPod {
 
 const Dashboard: FC<DashboardProps> = (props: DashboardProps) => {
   //#region state
+
+  const [svcErrors, setSvcErrors] = useState<Array<ICnvValError>>([]);
+  const [tableCols, setTableCols] = useState<Array<IConvManCol<ICnvValError>>>([]);
 
   const [errors, setErrors] = useState(sampleErrors);
   const [conversions, setConversions] = useState(sampleConversions);
@@ -107,7 +113,6 @@ const Dashboard: FC<DashboardProps> = (props: DashboardProps) => {
 
   const templateChange = (val: string): void => {
     setSelectedTmpl(val);
-    console.log(val.toUpperCase());
     switch (val.toUpperCase()) {
       case "EMP.CSV":
         // show the employee template
@@ -268,6 +273,57 @@ const Dashboard: FC<DashboardProps> = (props: DashboardProps) => {
     setErrors(errCopy);
   };
 
+  type ICnvErrorTable = {
+    columns: Array<IConvManCol<ICnvValError>>;
+    data: Array<ICnvValError>;
+    key: number;
+    error: string;
+    objectType: string;
+  };
+
+  // get the data for the table
+  const getData = async () => {
+    const svc = new CnvDataService({
+      ordsUri: ServerConfig.ords.url,
+      entity: ServerConfig.ords.entities.customMethods,
+    });
+    const data = await svc.getErrorsByBatch("testerrors1");
+    const attrs = await svc.getAttributes();
+    return { data, attrs };
+  };
+
+  const [tableSetup, setTableSetup] = useState<Array<ICnvErrorTable>>([]);
+
+  const buildErrors = async () => {
+    const { data, attrs } = await getData();
+    const tables = new Array<ICnvErrorTable>();
+    _.each(data.oracleResponse?.items, (e: ICnvValError) => {
+      const cols: Array<IConvManCol<ICnvValError>> = new Array<IConvManCol<ICnvValError>>();
+      _.each(_.keysIn(e), (key: string) => {
+        const header = _.find(attrs.oracleResponse?.items, (a: ICnvValErrorAttr) => {
+          return (
+            a.cnv_data_column.toUpperCase() === key.toUpperCase() && e.obj_key.toUpperCase() === a.obj_key.toUpperCase()
+          );
+        });
+        if (header && header.display_name) {
+          cols.push({ Header: header.display_name, accessor: key, id: key });
+        }
+      });
+      tables.push({
+        columns: cols,
+        data: [{ ...e }],
+        key: e.stg_key_id,
+        error: e.stg_error_msg,
+        objectType: e.obj_key,
+      });
+    });
+    setTableSetup(tables);
+  };
+
+  useEffect(() => {
+    buildErrors();
+  }, []);
+
   //#endregion
 
   //#region render
@@ -289,13 +345,20 @@ const Dashboard: FC<DashboardProps> = (props: DashboardProps) => {
         <SelectList items={templates} label="templates" onListboxChange={templateChange}></SelectList>
         <ConvManFile label="File to Convert" onFileChange={fileChange} />
       </div>
-      <div className="not-prose relative rounded-xl overflow-hidden bg-slate-600">
-        <div className="relative rounded-xl overflow-auto">
-          <div className="shadow-sm overflow-hidden">
-            <ConvManErrorTable data={[]}></ConvManErrorTable>
+      {tableSetup.map((table) => {
+        return (
+          <div key={`${table.key}-container`}>
+            <h2 className="font-bold font-mono text-sm font-text-gray-600" key={`${table.key}-error`}>
+              {table.error}
+            </h2>
+            <h2 className="font-bold font-mono text-sm font-text-gray-600" key={`${table.key}-objtype`}>
+              {table.objectType}
+            </h2>
+            <ConvManErrorTable columns={table.columns} data={table.data} key={table.key}></ConvManErrorTable>
           </div>
-        </div>
-      </div>
+        );
+      })}
+
       <div className={selectedConvType !== "" || selectedPod !== "" || emailAddress !== "" ? "block" : "hidden"}>
         <div className="mt-8 pt-2 border-y-2 border-slate-700">
           <div className="text-xl text-sky-800 mb-2 md:mb-0">Conversion Summary</div>

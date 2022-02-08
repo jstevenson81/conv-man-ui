@@ -10,6 +10,7 @@ export const ServerConfig = {
     },
     customActions: {
       getAllAttr: "cnvdata/attr",
+      getErrorsByBatch: "errors/{{batch}}",
     },
   },
 };

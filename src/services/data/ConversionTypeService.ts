@@ -7,7 +7,7 @@ export class ConversionTypeService extends OracleRestServiceBase {
     let response = new ApiResponse<IUxConversionType>();
     try {
       const axiosResponse = await this.runGetMany<IUxConversionType>();
-      response.collection = axiosResponse.data;
+      response.oracleResponse = axiosResponse.data;
     } catch (e) {
       response.error = this.handleError(e, "GET", "ORDS_API_EXCEPTION");
     }
@@ -17,7 +17,7 @@ export class ConversionTypeService extends OracleRestServiceBase {
     let response = new ApiResponse<IUxConversionType>();
     try {
       const axiosResponse = await this.runGetOne<IUxConversionType>(id.toString());
-      response.item = axiosResponse.data;
+      response.singleOracleItem = axiosResponse.data;
     } catch (e) {
       response.error = this.handleError(e, "GET", "ORDS_API_EXCEPTION");
     }

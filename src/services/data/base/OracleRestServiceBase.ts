@@ -5,7 +5,6 @@ import { IApiResponse } from "../../../models/data/Interfaces/Local/IApiResponse
 import { ErrorCodes, ErrorTypes, IOracleApiError } from "../../../models/errors/IOracleApiError";
 import { HttpHeaderContentType } from "./HttpHeaderContentType";
 import { IOracleResponse } from "../../../models/data/Interfaces/OracleApi/IOracleResponse";
-
 export class OracleRestServiceBase {
   constructor(private baseConfig: { ordsUri: string; entity: string }) {
     axios.defaults.baseURL = baseConfig.ordsUri;
@@ -34,6 +33,27 @@ export class OracleRestServiceBase {
 
   //#endregion
 
+  //#region get more results
+
+  protected async getMore<T extends IOracleItem>(
+    initialResponse: AxiosResponse<IOracleResponse<T>>
+  ): Promise<AxiosResponse<IOracleResponse<T>>> {
+    while (initialResponse.data.hasMore) {
+      const moreLink = _.find(initialResponse.data.links, (link) => {
+        return link.rel.toUpperCase() === "NEXT";
+      });
+
+      if (moreLink && moreLink.href) {
+        const existingItems = initialResponse.data.items;
+        initialResponse = await this.runGetManyAbsUrl<T>(moreLink.href);
+        initialResponse.data.items = [...existingItems, ...initialResponse.data.items];
+      }
+    }
+    return initialResponse;
+  }
+
+  //#endregion
+
   //#region generic http methods
 
   /**
@@ -53,7 +73,7 @@ export class OracleRestServiceBase {
       const axiosResponse = await axios.post<TInputType>(actionUrl, config.body, {
         headers: { "Content-Type": config.contentType },
       });
-      response.item = axiosResponse.data;
+      response.singleOracleItem = axiosResponse.data;
     } catch (e) {
       response.error = this.handleError(e, "POST", "API_POST_EXCEPTION");
     }
@@ -75,7 +95,7 @@ export class OracleRestServiceBase {
       const axiosResponse = await axios.put<TInputType>(this.baseConfig.entity, config.body, {
         headers: { "Content-Type": config.contentType },
       });
-      response.item = axiosResponse.data;
+      response.singleOracleItem = axiosResponse.data;
     } catch (e) {
       response.error = this.handleError(e, "POST", "API_POST_EXCEPTION");
     }

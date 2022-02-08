@@ -9,7 +9,7 @@ export class PodService extends OracleRestServiceBase {
     let response = new ApiResponse<UxPod>();
     try {
       const axiosResponse = await this.runGetMany<IUxPod>();
-      response.collection = axiosResponse.data;
+      response.oracleResponse = axiosResponse.data;
     } catch (e) {
       response.error = this.handleError(e, "GET", "API_GET_EXCEPTION");
     }
@@ -19,7 +19,7 @@ export class PodService extends OracleRestServiceBase {
     let response = new ApiResponse<IUxPod>();
     try {
       const axiosResponse = await this.runGetOne<IUxPod>(id.toString());
-      response.item = axiosResponse.data;
+      response.singleOracleItem = axiosResponse.data;
     } catch (e) {
       response.error = this.handleError(e, "GET", "API_GET_EXCEPTION");
     }
