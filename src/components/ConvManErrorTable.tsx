@@ -1,4 +1,3 @@
-import _ from "lodash";
 import React, { useMemo } from "react";
 import { Column, useTable } from "react-table";
 import { ICnvValError } from "../models/data/Interfaces/ORDS/ICnvValError";

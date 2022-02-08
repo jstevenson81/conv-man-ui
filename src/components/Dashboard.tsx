@@ -17,18 +17,8 @@ import ConvManErrorTable from "./ConvManErrorTable";
 import { CnvDataService, IConvManCol } from "../services/data/CnvDataService";
 import { ServerConfig } from "../ServerConfig";
 import { ICnvValError } from "../models/data/Interfaces/ORDS/ICnvValError";
-import { Column } from "react-table";
 import { ICnvValErrorAttr } from "../models/data/Interfaces/ORDS/ICnvValErrorAttr";
 
-interface DashboardState {
-  pods: Array<ISelectListItem>;
-  conversionTypes: Array<ISelectListItem>;
-  selectedPod: any;
-  selectedConversion: any;
-  selectedFile: { fileName: string; fileExt: string };
-  conversions: Array<IConversion>;
-  emailAddress: string;
-}
 interface DashboardProps {}
 
 interface IPodDomain {
@@ -45,11 +35,8 @@ interface IPod {
   podDomain?: IPodDomain;
 }
 
-const Dashboard: FC<DashboardProps> = (props: DashboardProps) => {
+const Dashboard: FC<DashboardProps> = () => {
   //#region state
-
-  const [svcErrors, setSvcErrors] = useState<Array<ICnvValError>>([]);
-  const [tableCols, setTableCols] = useState<Array<IConvManCol<ICnvValError>>>([]);
 
   const [errors, setErrors] = useState(sampleErrors);
   const [conversions, setConversions] = useState(sampleConversions);
@@ -105,10 +92,6 @@ const Dashboard: FC<DashboardProps> = (props: DashboardProps) => {
 
   const convTypeChange = (val: string): void => {
     setSelectedConvType(val);
-  };
-
-  const emailChange = (value: string, name: string): void => {
-    setEmailAddress(value);
   };
 
   const templateChange = (val: string): void => {
@@ -260,11 +243,6 @@ const Dashboard: FC<DashboardProps> = (props: DashboardProps) => {
     }, 2000);
   };
 
-  const handleCheck = (idx: number) => {
-    const errCopy = [...errors];
-    errCopy[idx].resolved = !errCopy[idx].resolved;
-    setErrors(errCopy);
-  };
   const handleErrorChange = (e: ChangeEvent<HTMLTextAreaElement>, idx: number) => {
     const errCopy = [...errors];
     errCopy[idx].rowData = e.currentTarget.value;
@@ -294,35 +272,35 @@ const Dashboard: FC<DashboardProps> = (props: DashboardProps) => {
 
   const [tableSetup, setTableSetup] = useState<Array<ICnvErrorTable>>([]);
 
-  const buildErrors = async () => {
-    const { data, attrs } = await getData();
-    const tables = new Array<ICnvErrorTable>();
-    _.each(data.oracleResponse?.items, (e: ICnvValError) => {
-      const cols: Array<IConvManCol<ICnvValError>> = new Array<IConvManCol<ICnvValError>>();
-      _.each(_.keysIn(e), (key: string) => {
-        const header = _.find(attrs.oracleResponse?.items, (a: ICnvValErrorAttr) => {
-          return (
-            a.cnv_data_column.toUpperCase() === key.toUpperCase() && e.obj_key.toUpperCase() === a.obj_key.toUpperCase()
-          );
-        });
-        if (header && header.display_name) {
-          cols.push({ Header: header.display_name, accessor: key, id: key });
-        }
-      });
-      tables.push({
-        columns: cols,
-        data: [{ ...e }],
-        key: e.stg_key_id,
-        error: e.stg_error_msg,
-        objectType: e.obj_key,
-      });
-    });
-    setTableSetup(tables);
-    setLoading(false);
-  };
-
   useEffect(() => {
     setLoading(true);
+    const buildErrors = async () => {
+      const { data, attrs } = await getData();
+      const tables = new Array<ICnvErrorTable>();
+      _.each(data.oracleResponse?.items, (e: ICnvValError) => {
+        const cols: Array<IConvManCol<ICnvValError>> = new Array<IConvManCol<ICnvValError>>();
+        _.each(_.keysIn(e), (key: string) => {
+          const header = _.find(attrs.oracleResponse?.items, (a: ICnvValErrorAttr) => {
+            return (
+              a.cnv_data_column.toUpperCase() === key.toUpperCase() &&
+              e.obj_key.toUpperCase() === a.obj_key.toUpperCase()
+            );
+          });
+          if (header && header.display_name) {
+            cols.push({ Header: header.display_name, accessor: key, id: key });
+          }
+        });
+        tables.push({
+          columns: cols,
+          data: [{ ...e }],
+          key: e.stg_key_id,
+          error: e.stg_error_msg,
+          objectType: e.obj_key,
+        });
+      });
+      setTableSetup(tables);
+      setLoading(false);
+    };
     buildErrors();
   }, []);
 
