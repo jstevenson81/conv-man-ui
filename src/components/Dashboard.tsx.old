@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FC, useEffect, useState } from "react";
 import { ConvManFile, ConvManLabel, SelectList } from ".";
 import { IConversion, IValidationError } from "./interfaces/IConversion";
-import { ISelectListItem } from "./interfaces/ISelectListItem";
+import { IConvManSelectListItem } from "./forms/interfaces/ISelectListItem";
 
 import {
   samplePods,
@@ -11,9 +11,9 @@ import {
   sampleConversions,
 } from "../sampleData/samples";
 import _ from "lodash";
-import Loader from "./Loader";
-import { IConvManFileInputState } from "./ConvManFile";
-import ConvManErrorTable from "./ConvManErrorTable";
+import Loader from "./common/loader/Loader";
+import { IConvManFileInputState } from "./forms/interfaces/IConvManFileInputState";
+import ConvManErrorTable from "./pageParts/convErrorManager/ConvManErrorTable";
 import { CnvDataService, IConvManCol } from "../services/data/CnvDataService";
 import { ServerConfig } from "../ServerConfig";
 import { ICnvValError } from "../models/data/Interfaces/ORDS/ICnvValError";
@@ -48,10 +48,10 @@ const Dashboard: FC<DashboardProps> = () => {
   const [convTypes, setConvTypes] = useState(sampleConversionTypes);
   const [selectedConvType, setSelectedConvType] = useState("");
 
-  const [pods, setPods] = useState<Array<ISelectListItem>>(samplePods);
+  const [pods, setPods] = useState<Array<IConvManSelectListItem>>(samplePods);
   const [selectedPod, setSelectedPod] = useState("");
 
-  const [templates, setTemplates] = useState<Array<ISelectListItem>>(sampleTemplates);
+  const [templates, setTemplates] = useState<Array<IConvManSelectListItem>>(sampleTemplates);
   const [selectedTmpl, setSelectedTmpl] = useState("");
   const [selectedTmplFile, setSelectedTmplFile] = useState("");
 

@@ -1,5 +1,7 @@
-const Loader = (props: any) => {
-  let circleCommonClasses = "h-2.5 w-2.5 bg-current rounded-full";
+import { IConvManLoaderProps } from "./interfaces/IConvManLoaderProps";
+
+const Loader: React.FC<IConvManLoaderProps> = (props: IConvManLoaderProps) => {
+  const circleCommonClasses = "h-2.5 w-2.5 bg-current rounded-full";
 
   return (
     <div className={`${props.show ? "w-full h-screen fixed block top-0 left-0 bg-white opacity-75 z-50" : "hidden"}`}>
