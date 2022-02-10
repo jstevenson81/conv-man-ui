@@ -3,7 +3,9 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Login, Dashboard, App } from "./components";
+import App from "./components/App";
+import Dashboard from "./components/pages/Dashboard/Dashboard";
+import Login from "./components/pages/Login/Login";
 
 ReactDOM.render(
   <React.StrictMode>

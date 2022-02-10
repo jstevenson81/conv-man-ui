@@ -1,22 +1,17 @@
 import React, { useMemo } from "react";
 import { Column, useTable } from "react-table";
-import { ICnvValError } from "../models/data/Interfaces/ORDS/ICnvValError";
-import { IConvManCol } from "../services/data/CnvDataService";
+import { ICnvValError } from "../../../models/data/Interfaces/ORDS/ICnvValError";
+import { IConvManErrorTableProps } from "./interfaces/IConvManErrorTableProps";
 
-type ConvManErrorTableProps = {
-  columns: Array<IConvManCol<ICnvValError>>;
-  data: Array<ICnvValError>;
-};
-
-const ConvManErrorTable: React.FC<ConvManErrorTableProps> = (props: ConvManErrorTableProps) => {
-  const columns = useMemo(() => props.columns as Array<Column<ICnvValError>>, []);
-  const data = useMemo(() => props.data, []);
+const ConvManErrorTable: React.FC<IConvManErrorTableProps> = (props: IConvManErrorTableProps) => {
+  const columns = useMemo(() => props.columns as Array<Column<ICnvValError>>, [props.columns]);
+  const data = useMemo(() => props.data, [props.data]);
   const tableInstance = useTable({ columns, data });
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
 
   return (
     // apply the table props
-    <table {...getTableProps()}>
+    <table className="font-sm font-mono uppercase" {...getTableProps()}>
       <thead>
         {
           // Loop over the header rows
