@@ -4,7 +4,7 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "./components/App";
-import Dashboard from "./components/pages/Dashboard/Dashboard";
+import Conversions from "./components/pages/Batches/Conversions";
 import Login from "./components/pages/Login/Login";
 
 ReactDOM.render(
@@ -13,7 +13,7 @@ ReactDOM.render(
       <Routes>
         <Route path="/" element={<App />}>
           <Route path="/login" element={<Login />}></Route>
-          <Route path="/dashboard" element={<Dashboard />}></Route>
+          <Route path="/conversions" element={<Conversions />}></Route>
         </Route>
       </Routes>
     </BrowserRouter>

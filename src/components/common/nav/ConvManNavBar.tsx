@@ -58,7 +58,7 @@ const ConvManNavBar: React.FC<IConvManNavBarProps> = (props: IConvManNavBarProps
         </div>
       </div>
       <Transition
-        className="absolute top-0 left-0 w-2/3 md:w-1/3 h-screen bg-sky-700 shadow-lg border-r-2 border-sky-900
+        className="absolute z-[999999999] top-0 left-0 w-2/3 md:w-1/3 h-screen bg-sky-700 shadow-lg border-r-2 border-sky-900
           flex flex-col space-y-10 items-center text-xl text-white uppercase pt-36"
         show={menuVisible}
         enter="transition ease-in-out duration-300 transform"
@@ -72,8 +72,8 @@ const ConvManNavBar: React.FC<IConvManNavBarProps> = (props: IConvManNavBarProps
           <div className="font-semibold text-gray-400 hover:text-gray-700 text-lg uppercase">Conversion Manager</div>
         </Link>
         <ConvManNavLink
-          text="Dashboard"
-          link="/dashboard"
+          text="Conversions"
+          link="/conversions"
           click={() => {
             setMenuVisible(!menuVisible);
           }}
