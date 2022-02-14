@@ -6,7 +6,7 @@ const ConvManInput: React.FC<IConvManInputProps> = (props: IConvManInputProps) =
   const [inputValue, setInputValue] = useState("");
 
   return (
-    <div className="relative my-4 border-b-2 border-gray-300 focus-within:border-sky-600">
+    <div className="relative border-b-2 border-gray-300 focus-within:border-sky-600">
       <input
         placeholder=" "
         type={props.type}
