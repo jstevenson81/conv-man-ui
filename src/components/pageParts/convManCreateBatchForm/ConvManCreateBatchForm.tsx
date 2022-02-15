@@ -1,8 +1,19 @@
 import { Transition, Dialog } from "@headlessui/react";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import ConvManInput from "../../forms/ConvManInput";
 import ConvManSelectList from "../../forms/ConvManSelectList";
 import { XIcon } from "@heroicons/react/solid";
+import ConvManFileInput from "../../forms/ConvManFile";
+import { IConvManFileInputState } from "../../forms/interfaces/IConvManFileInputState";
+import { ConversionTypeService } from "../../../services/data/ConversionTypeService";
+import { ServerConfig } from "../../../ServerConfig";
+import { IUxConversionType } from "../../../models/data/Interfaces/ORDS/IUxConversionType";
+import { ApiResponse } from "../../../models/data/Impl/ApiResponse";
+import { DateTime } from "luxon";
+import { IConvManSelectListItem } from "../../forms/interfaces/ISelectListItem";
+import { PodService } from "../../../services/data/PodService";
+import { IUxPod } from "../../../models/data/Interfaces/ORDS/IUxPod";
+import { IApiResponse } from "../../../models/data/Interfaces/Local/IApiResponse";
 
 type ICreateBatchProps = {
   isOpen: boolean;
@@ -11,7 +22,50 @@ type ICreateBatchProps = {
 
 const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatchProps) => {
   const [batchName, setBatchName] = useState("");
-  const [convType, setConvType] = useState("");
+  const [template, setTemplate] = useState("");
+  const [uploadFile, setUploadFile] = useState<IConvManFileInputState>({
+    fileExt: "",
+    fileName: "",
+    fileText: "",
+    lastModified: "",
+  });
+
+  const [convTypes, setConvTypes] = useState<Array<IConvManSelectListItem>>([]);
+  const [pods, setPods] = useState<Array<IConvManSelectListItem>>([]);
+
+  const convTypeSvc = new ConversionTypeService({
+    ordsUri: ServerConfig.ords.url,
+    entity: ServerConfig.ords.entities.conversionTypes,
+  });
+
+  const podSvc = new PodService({
+    ordsUri: ServerConfig.ords.url,
+    entity: ServerConfig.ords.entities.pod,
+  });
+
+  useEffect(() => {
+    convTypeSvc.getAllConvTypes().then((resp: ApiResponse<IUxConversionType>) => {
+      const iConvTypes: Array<IConvManSelectListItem> = [];
+      resp.oracleResponse?.items.forEach((i) => {
+        iConvTypes.push({ option: i.conversion_type_name, value: i.ux_conversion_type_id });
+      });
+      setConvTypes(iConvTypes);
+    });
+
+    podSvc.getAllPods().then((resp: IApiResponse<IUxPod>) => {
+      const iPods: Array<IConvManSelectListItem> = [];
+      resp.oracleResponse?.items.forEach((pod) => {
+        iPods.push({ option: pod.pod_name, value: pod.pod_url, disabled: false });
+      });
+      setPods(iPods);
+    });
+
+    setBatchName(DateTime.now().valueOf().toString());
+  }, []);
+
+  useEffect(() => {
+    console.log(`current batch name: ${batchName}`);
+  }, [batchName]);
 
   return (
     <Transition appear show={props.isOpen} as={Fragment}>
@@ -58,35 +112,32 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
                   label="Batch Name"
                   placeHolder=" "
                   name="BatchName"
+                  value={batchName}
                   onInputChange={(newValue: string, name: string) => {
-                    console.log({ newValue, name });
+                    setBatchName(newValue);
                   }}
                 ></ConvManInput>
 
                 <ConvManSelectList
-                  items={[
-                    { option: "Select a template type", value: 0 },
-                    { option: "This is a 1", value: 1 },
-                    { option: "This is a 2", value: 2 },
-                    { option: "This is a 3", value: 3 },
-                    { option: "This is a 4", value: 4 },
-                  ]}
+                  label="Conversion Type"
+                  items={convTypes}
                   onListboxChange={(newValue: any) => {
                     console.log(newValue);
                   }}
                 ></ConvManSelectList>
                 <ConvManSelectList
-                  items={[
-                    { option: "Select a pod", value: 0 },
-                    { option: "DEV-1", value: 1 },
-                    { option: "DEV-2", value: 2 },
-                    { option: "DEV-3", value: 3 },
-                    { option: "DEV-4", value: 4 },
-                  ]}
+                  label="Pod"
+                  items={pods}
                   onListboxChange={(newValue: any) => {
                     console.log(newValue);
                   }}
                 ></ConvManSelectList>
+                <ConvManFileInput
+                  label="Completed template"
+                  onFileChange={(file) => {
+                    setUploadFile(file);
+                  }}
+                ></ConvManFileInput>
               </div>
 
               <div className="mt-4">

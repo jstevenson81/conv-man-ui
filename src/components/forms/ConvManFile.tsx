@@ -22,10 +22,10 @@ const ConvManFileInput: React.FC<IConvManFileInputProps> = (props: IConvManFileI
   };
 
   return (
-    <div className="flex-none md:flex">
+    <div className="flex-none md:flex md:flex-col md:gap-4">
       <ConvManLabel label={props.label}></ConvManLabel>
-      <div className="flex-1 ">
-        <input type="file" className="py-3" onChange={handleChange} />
+      <div className="flex-1">
+        <input type="file" onChange={handleChange} />
       </div>
     </div>
   );
