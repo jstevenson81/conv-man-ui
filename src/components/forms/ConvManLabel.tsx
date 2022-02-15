@@ -12,7 +12,7 @@ const ConvManLabel: React.FC<IConvManLabelProps> = (props: IConvManLabelProps) =
           font-bold
           pb-2
           md:ml-0
-          md:p-4
+          md:pb-0
           md:text-right
           md:whitespace-nowrap"
     >

@@ -1,18 +1,15 @@
 import { useState, ChangeEvent } from "react";
-import ConvManLabel from "./ConvManLabel";
 import { IConvManInputProps } from "./interfaces/IConvManInputProps";
 
 const ConvManInput: React.FC<IConvManInputProps> = (props: IConvManInputProps) => {
-  const [inputValue, setInputValue] = useState("");
-
   return (
     <div className="relative border-b-2 border-gray-300 focus-within:border-sky-600">
       <input
+        defaultValue={props.value}
         placeholder=" "
         type={props.type}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setInputValue(e.currentTarget.value);
-          props.onInputChange(inputValue, e.currentTarget.name);
+          props.onInputChange(e.currentTarget.value, e.currentTarget.name);
         }}
         className="block w-full appearance-none focus:outline-none bg-transparent"
       />
