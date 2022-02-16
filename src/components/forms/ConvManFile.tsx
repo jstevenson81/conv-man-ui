@@ -4,21 +4,16 @@ import ConvManLabel from "./ConvManLabel";
 import { IConvManFileInputProps } from "./interfaces/IConvManFileInputProps";
 
 const ConvManFileInput: React.FC<IConvManFileInputProps> = (props: IConvManFileInputProps) => {
-  const [fileName, setFileName] = useState("");
-  const [fileExt, setFileExt] = useState("");
-  const [fileText, setFileText] = useState("");
-  const [lastModified, setLastModified] = useState("");
-
   const handleChange = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     const file = e.currentTarget.files?.item(0);
     if (file) {
       const lastMod = DateTime.fromMillis(file.lastModified).toJSON();
-      setLastModified(lastMod);
-      setFileExt(file.type);
-      setFileName(file.name);
-      setFileText(await file.text());
+      const fileText = await file.text();
+      localStorage.setItem(file.name, fileText);
+
+      const newFile = { fileName: file.name, fileExt: file.type, lastModified: lastMod };
+      props.onFileChange(newFile);
     }
-    props.onFileChange({ fileExt, fileName, fileText, lastModified });
   };
 
   return (
