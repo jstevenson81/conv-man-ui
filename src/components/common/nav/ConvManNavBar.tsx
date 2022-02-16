@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Transition } from "@headlessui/react";
 
@@ -9,8 +9,30 @@ import IConvManNavBarProps from "./interfaces/IConvManNavBarProps";
 const ConvManNavBar: React.FC<IConvManNavBarProps> = (props: IConvManNavBarProps) => {
   const [menuVisible, setMenuVisible] = useState(false);
 
+  const useOutsideAlerter = (ref: React.MutableRefObject<any>) => {
+    useEffect(() => {
+      /**
+       * Alert if clicked on outside of element
+       */
+      const handleClickOutside = (event: { target: any }): any => {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setMenuVisible(false);
+        }
+      };
+      // Bind the event listener
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        // Unbind the event listener on clean up
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [ref]);
+  };
+
+  const navRef = useRef(null);
+  useOutsideAlerter(navRef);
+
   return (
-    <nav>
+    <nav ref={navRef}>
       <div className="shadow-md p-4 flex items-center justify-between">
         <div className="mr-2">
           <img src={BlueLogo} alt="Northpoint Logo" className="w-1/2 min-h-[38px] min-w-[250px]" />

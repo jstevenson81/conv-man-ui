@@ -1,6 +1,6 @@
 import { IConvManLoaderProps } from "./interfaces/IConvManLoaderProps";
 
-const Loader: React.FC<IConvManLoaderProps> = (props: IConvManLoaderProps) => {
+const ConvManLoader: React.FC<IConvManLoaderProps> = (props: IConvManLoaderProps) => {
   const circleCommonClasses = "h-2.5 w-2.5 bg-current rounded-full";
 
   return (
@@ -17,4 +17,4 @@ const Loader: React.FC<IConvManLoaderProps> = (props: IConvManLoaderProps) => {
   );
 };
 
-export default Loader;
+export default ConvManLoader;

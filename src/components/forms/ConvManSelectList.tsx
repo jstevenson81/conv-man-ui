@@ -5,7 +5,7 @@ import Select from "react-select";
 const ConvManSelectList: React.FC<IConvManSelectListProps> = (props: IConvManSelectListProps) => {
   const [selected, setSelected] = useState(props.items[0]);
   return (
-    <div>
+    <div className="w-full">
       <label className="mb-1 ml-1/2 uppercase text-sm text-slate-600 font-bold">{props.label}</label>
       <Select
         placeholder={`select a ${props.label}`}
@@ -13,6 +13,7 @@ const ConvManSelectList: React.FC<IConvManSelectListProps> = (props: IConvManSel
         className="uppercase"
         escapeClearsValue={true}
         menuPosition="absolute"
+        isSearchable={true}
         onChange={(newValue) => {
           props.onListboxChange(newValue);
         }}

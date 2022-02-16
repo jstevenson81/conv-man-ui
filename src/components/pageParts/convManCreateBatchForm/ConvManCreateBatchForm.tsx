@@ -14,24 +14,28 @@ import { IConvManSelectListItem } from "../../forms/interfaces/ISelectListItem";
 import { PodService } from "../../../services/data/PodService";
 import { IUxPod } from "../../../models/data/Interfaces/ORDS/IUxPod";
 import { IApiResponse } from "../../../models/data/Interfaces/Local/IApiResponse";
+import { SpreadsheetService } from "../../../services/data/SpreadsheetRowService";
+import { usePapaParse } from "react-papaparse";
 
 type ICreateBatchProps = {
   isOpen: boolean;
   toggle(open: boolean): void;
+  onLoading(loading: boolean): void;
 };
 
 const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatchProps) => {
+  //#region state
   const [batchName, setBatchName] = useState("");
-  const [template, setTemplate] = useState("");
-  const [uploadFile, setUploadFile] = useState<IConvManFileInputState>({
-    fileExt: "",
-    fileName: "",
-    fileText: "",
-    lastModified: "",
-  });
+  const [convType, setConvType] = useState<IConvManSelectListItem>();
+  const [pod, setPod] = useState<IConvManSelectListItem>();
+  const [uploadFile, setUploadFile] = useState<IConvManFileInputState>();
 
   const [convTypes, setConvTypes] = useState<Array<IConvManSelectListItem>>([]);
   const [pods, setPods] = useState<Array<IConvManSelectListItem>>([]);
+
+  //#endregion
+
+  //#region services
 
   const convTypeSvc = new ConversionTypeService({
     ordsUri: ServerConfig.ords.url,
@@ -42,6 +46,15 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
     ordsUri: ServerConfig.ords.url,
     entity: ServerConfig.ords.entities.pod,
   });
+
+  const spSvc = new SpreadsheetService({
+    ordsUri: ServerConfig.ords.url,
+    entity: ServerConfig.ords.entities.spreadsheetRows,
+  });
+
+  //#endregion
+
+  //#region data gathering
 
   useEffect(() => {
     convTypeSvc.getAllConvTypes().then((resp: ApiResponse<IUxConversionType>) => {
@@ -55,13 +68,42 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
     podSvc.getAllPods().then((resp: IApiResponse<IUxPod>) => {
       const iPods: Array<IConvManSelectListItem> = [];
       resp.oracleResponse?.items.forEach((pod) => {
-        iPods.push({ label: pod.pod_name, value: pod.pod_url, disabled: false });
+        iPods.push({ label: pod.pod_name, value: pod.ux_pod_id, disabled: false });
       });
       setPods(iPods);
     });
 
     setBatchName(DateTime.now().valueOf().toString());
   }, []);
+
+  //#endregion
+
+  //#region batch creation
+
+  const { readString } = usePapaParse();
+
+  const createBatch = async (): Promise<any> => {
+    props.onLoading(true);
+    const fileContents = localStorage.getItem(uploadFile!.fileName);
+
+    readString(fileContents!, {
+      worker: true,
+      header: true,
+      complete: async (results: Papa.ParseResult<any>) => {
+        const saveResp = await spSvc.saveFile({
+          parsedCsv: results,
+          fileName: uploadFile!.fileName,
+          podId: pod!.value,
+          batchName: batchName!,
+          createdBy: "ConversionMangerService",
+        });
+        props.onLoading(false);
+        console.log(saveResp);
+      },
+    });
+  };
+
+  //#endregion
 
   return (
     <Transition appear show={props.isOpen} as={Fragment}>
@@ -118,18 +160,18 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
                   label="Conversion Type"
                   items={convTypes}
                   onListboxChange={(newValue: any) => {
-                    console.log(newValue);
+                    setConvType(newValue);
                   }}
                 ></ConvManSelectList>
                 <ConvManSelectList
                   label="Pod"
                   items={pods}
                   onListboxChange={(newValue: any) => {
-                    console.log(newValue);
+                    setPod(newValue);
                   }}
                 ></ConvManSelectList>
                 <ConvManFileInput
-                  label="Completed template"
+                  label="completed conversion file"
                   onFileChange={(file) => {
                     setUploadFile(file);
                   }}
@@ -137,18 +179,10 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
               </div>
 
               <div className="mt-4 flex justify-end items-center gap-4 justify-items-center">
-                <button
-                  type="button"
-                  className="px-4 py-2 text-sm font-medium text-blue-900 bg-red-100 border border-transparent rounded-md hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500"
-                  onClick={(e) => props.toggle(false)}
-                >
+                <button type="button" className="button red" onClick={(e) => props.toggle(false)}>
                   Close
                 </button>
-                <button
-                  type="button"
-                  className="px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-                  onClick={(e) => props.toggle(false)}
-                >
+                <button type="button" className="button blue" onClick={(e) => createBatch()}>
                   Create Batch
                 </button>
               </div>

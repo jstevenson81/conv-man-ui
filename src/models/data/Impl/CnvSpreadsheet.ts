@@ -133,10 +133,10 @@ export class CnvSpreadsheet implements ICnvSpreadsheet {
   COLUMN_DY = null;
   COLUMN_DZ = null;
   SPR_KEY_ID = null;
-  CNV_BATCH = null;
-  SPREADSHEET_NAME = null;
+  CNV_BATCH = "";
+  SPREADSHEET_NAME = "";
   CREATION_DATE = null;
-  CREATED_BY = null;
+  CREATED_BY = "";
   LAST_UPDATE_DATE = null;
   LAST_UPDATED_BY = null;
 }
