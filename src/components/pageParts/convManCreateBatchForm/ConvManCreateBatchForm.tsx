@@ -47,7 +47,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
     convTypeSvc.getAllConvTypes().then((resp: ApiResponse<IUxConversionType>) => {
       const iConvTypes: Array<IConvManSelectListItem> = [];
       resp.oracleResponse?.items.forEach((i) => {
-        iConvTypes.push({ option: i.conversion_type_name, value: i.ux_conversion_type_id });
+        iConvTypes.push({ label: i.conversion_type_name, value: i.template_csv_name });
       });
       setConvTypes(iConvTypes);
     });
@@ -55,7 +55,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
     podSvc.getAllPods().then((resp: IApiResponse<IUxPod>) => {
       const iPods: Array<IConvManSelectListItem> = [];
       resp.oracleResponse?.items.forEach((pod) => {
-        iPods.push({ option: pod.pod_name, value: pod.pod_url, disabled: false });
+        iPods.push({ label: pod.pod_name, value: pod.pod_url, disabled: false });
       });
       setPods(iPods);
     });
@@ -63,13 +63,9 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
     setBatchName(DateTime.now().valueOf().toString());
   }, []);
 
-  useEffect(() => {
-    console.log(`current batch name: ${batchName}`);
-  }, [batchName]);
-
   return (
     <Transition appear show={props.isOpen} as={Fragment}>
-      <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={(e) => props.toggle(false)}>
+      <Dialog as="div" className="fixed inset-0 z-10" onClose={(e) => props.toggle(false)}>
         <div className="min-h-screen px-4 text-center">
           <Transition.Child
             as={Fragment}
@@ -96,7 +92,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <div className="inline-block w-full max-w-xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+            <div className="inline-block w-full max-w-xl p-6 my-8 overflow-visible text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
               <Dialog.Title as="div" className="flex items-center justify-between justify-items-center">
                 <h3 className="text-lg font-medium leading-6">create a batch</h3>
                 <div className="hover:text-gray-800 hover:scale-125 transition duration-300">
@@ -140,10 +136,17 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
                 ></ConvManFileInput>
               </div>
 
-              <div className="mt-4">
+              <div className="mt-4 flex justify-end items-center gap-4 justify-items-center">
                 <button
                   type="button"
-                  className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                  className="px-4 py-2 text-sm font-medium text-blue-900 bg-red-100 border border-transparent rounded-md hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500"
+                  onClick={(e) => props.toggle(false)}
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  className="px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
                   onClick={(e) => props.toggle(false)}
                 >
                   Create Batch

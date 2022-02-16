@@ -1,5 +1,5 @@
 export interface IConvManSelectListItem {
   value: any;
-  option: string;
+  label: string;
   disabled?: boolean;
 }
