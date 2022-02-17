@@ -12,7 +12,7 @@ const ConvManInput: React.FC<IConvManInputProps> = (props: IConvManInputProps) =
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           props.onInputChange(e.currentTarget.value, e.currentTarget.name);
         }}
-        className="w-full border-slate-300 border-2 rounded-md p-2"
+        className="w-full border-slate-300 border rounded-md p-2"
       />
     </div>
   );

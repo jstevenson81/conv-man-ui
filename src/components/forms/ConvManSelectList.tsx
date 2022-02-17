@@ -10,7 +10,7 @@ const ConvManSelectList: React.FC<IConvManSelectListProps> = (props: IConvManSel
       <Select
         placeholder={`select a ${props.label}`}
         options={props.items}
-        className="uppercase"
+        className="uppercase border-slate-300"
         escapeClearsValue={true}
         menuPosition="absolute"
         isSearchable={true}

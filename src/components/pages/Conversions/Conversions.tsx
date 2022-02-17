@@ -1,8 +1,6 @@
-import { Transition } from "@headlessui/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import ConvManLoader from "../../common/loader/ConvManLoader";
 import ConvManSelectList from "../../forms/ConvManSelectList";
-import IConvManSelectListState from "../../forms/interfaces/IConvManSelectListState";
 import { IConvManSelectListItem } from "../../forms/interfaces/ISelectListItem";
 import ConvManCreateBatchForm from "../../pageParts/convManCreateBatchForm/ConvManCreateBatchForm";
 import IConvManDashProps from "./interfaces/IConvManDashProps";
@@ -62,14 +60,22 @@ const Conversions: React.FC<IConvManDashProps> = (props: IConvManDashProps) => {
         This page allows you to manage your conversion processes. You can create a new conversion or resolve any issues
         with existing conversions and resubmit
       </p>
-      <div className="flex items-center justify-start justify-items-start gap-2 mt-8 w-full">
-        <ConvManSelectList
-          items={templates}
-          label="conversion template"
-          onListboxChange={(tmpl: IConvManSelectListItem) => {
-            downloadTemplate(tmpl);
-          }}
-        ></ConvManSelectList>
+      <h1 className="mt-8 text-2xl">Templates</h1>
+      <p>Click on any of the buttons below to download the template to use to create a conversion.</p>
+      <div className="flex items-center justify-start justify-items-start gap-2 mt-4 w-full">
+        {templates.map((t) => {
+          return (
+            <button
+              className="button blue"
+              key={t.value}
+              onClick={(e) => {
+                downloadTemplate(t);
+              }}
+            >
+              {t.label}
+            </button>
+          );
+        })}
       </div>
       <div className="mt-8">
         <h1 className="text-2xl">recent batches</h1>
