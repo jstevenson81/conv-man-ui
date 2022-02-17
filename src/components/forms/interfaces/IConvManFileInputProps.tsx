@@ -1,6 +1,6 @@
 import { IConvManFileInputState } from "./IConvManFileInputState";
 
-export type IConvManFileInputProps = {
+export interface IConvManFileInputProps {
   label: string;
   onFileChange(file: IConvManFileInputState): void;
 };

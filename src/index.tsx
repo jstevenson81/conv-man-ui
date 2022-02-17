@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
+import "./assets/css/index.css";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "./components/App";
-import Conversions from "./components/pages/Batches/Conversions";
+import Conversions from "./components/pages/Conversions/Conversions";
 import Login from "./components/pages/Login/Login";
 
 ReactDOM.render(

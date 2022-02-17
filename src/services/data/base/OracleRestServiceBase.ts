@@ -1,13 +1,15 @@
 import axios, { AxiosResponse } from "axios";
 import _ from "lodash";
-import { IOracleItem } from "../../../models/data/Interfaces/OracleApi/IOracleItem";
-import { IApiResponse } from "../../../models/data/Interfaces/Local/IApiResponse";
-import { ErrorCodes, ErrorTypes, IOracleApiError } from "../../../models/errors/IOracleApiError";
+import { IOracleItem } from "../../models/data/Interfaces/OracleApi/IOracleItem";
+import { IApiResponse } from "../../models/data/Interfaces/Local/IApiResponse";
+import { ErrorCodes, ErrorTypes, IOracleApiError } from "../../models/errors/IOracleApiError";
 import { HttpHeaderContentType } from "./HttpHeaderContentType";
-import { IOracleResponse } from "../../../models/data/Interfaces/OracleApi/IOracleResponse";
+import { IOracleResponse } from "../../models/data/Interfaces/OracleApi/IOracleResponse";
+import { ServerConfig } from "../../../ServerConfig";
+import { IConvManSelectListItem } from "../../../components/forms/interfaces/ISelectListItem";
 export class OracleRestServiceBase {
-  constructor(private baseConfig: { ordsUri: string; entity: string }) {
-    axios.defaults.baseURL = baseConfig.ordsUri;
+  constructor(private entity: string) {
+    axios.defaults.baseURL = ServerConfig.ords.url;
   }
 
   //#region error handling
@@ -19,7 +21,7 @@ export class OracleRestServiceBase {
    * @returns {IOracleApiError} the error the occurred
    */
 
-  protected handleError(e: any, code: ErrorCodes, reqType: ErrorTypes): IOracleApiError {
+  protected handleError({ e, code, reqType }: { e: any; code: ErrorCodes; reqType: ErrorTypes }): IOracleApiError {
     const error = e as Error;
     return {
       title: "ORDS request error",
@@ -54,6 +56,30 @@ export class OracleRestServiceBase {
 
   //#endregion
 
+  //#region convert to select list items
+  public convertToSelectList<T extends IOracleItem>({
+    data,
+    props,
+  }: {
+    data: Array<T>;
+    props: { value: string; option: string };
+  }): Array<IConvManSelectListItem> {
+    const resp = new Array<IConvManSelectListItem>();
+    data.map((d: any) => {
+      const valProp = _.find(_.keys(d), (k: string) => {
+        return k === props.value;
+      });
+      const optProp = _.find(_.keys(d), (k: string) => {
+        return k === props.option;
+      });
+      if (valProp && optProp) resp.push({ label: d[optProp], value: d[valProp] });
+      else if (valProp) resp.push({ label: d[valProp], value: d[valProp] });
+      else if (optProp) resp.push({ label: d[optProp], value: d[optProp] });
+    });
+    return resp;
+  }
+  //#endregion
+
   //#region generic http methods
 
   /**
@@ -69,13 +95,13 @@ export class OracleRestServiceBase {
   }): Promise<IApiResponse<TInputType>> {
     let response: IApiResponse<TInputType> = {};
     try {
-      const actionUrl = config.action ? this.baseConfig.entity + config.action : this.baseConfig.entity;
+      const actionUrl = config.action ? this.entity + config.action : this.entity;
       const axiosResponse = await axios.post<TInputType>(actionUrl, config.body, {
         headers: { "Content-Type": config.contentType },
       });
       response.singleOracleItem = axiosResponse.data;
     } catch (e) {
-      response.error = this.handleError(e, "POST", "API_POST_EXCEPTION");
+      response.error = this.handleError({ e, code: "POST", reqType: "API_POST_EXCEPTION" });
     }
     return response;
   }
@@ -92,12 +118,12 @@ export class OracleRestServiceBase {
   }): Promise<IApiResponse<TInputType>> {
     let response: IApiResponse<TInputType> = {};
     try {
-      const axiosResponse = await axios.put<TInputType>(this.baseConfig.entity, config.body, {
+      const axiosResponse = await axios.put<TInputType>(this.entity, config.body, {
         headers: { "Content-Type": config.contentType },
       });
       response.singleOracleItem = axiosResponse.data;
     } catch (e) {
-      response.error = this.handleError(e, "POST", "API_POST_EXCEPTION");
+      response.error = this.handleError({ e, code: "POST", reqType: "API_POST_EXCEPTION" });
     }
     return response;
   }
@@ -109,13 +135,13 @@ export class OracleRestServiceBase {
    */
 
   protected async runGetMany<T>(): Promise<AxiosResponse<IOracleResponse<T>>> {
-    return await axios.get<IOracleResponse<T>>(this.baseConfig.entity, {
+    return await axios.get<IOracleResponse<T>>(this.entity, {
       headers: { "Content-Type": "application/json" },
     });
   }
 
   protected async runGetManyWithAction<T>(customAction: string): Promise<AxiosResponse<IOracleResponse<T>>> {
-    const action: string = `${this.baseConfig.entity}${customAction}`;
+    const action: string = `${this.entity}${customAction}`;
     return await axios.get<IOracleResponse<T>>(action, {
       headers: { "Content-Type": "application/json" },
     });
@@ -128,7 +154,7 @@ export class OracleRestServiceBase {
   }
 
   protected async runGetOne<T>(path: string): Promise<AxiosResponse<T>> {
-    return await axios.get<T>(this.baseConfig.entity + path, {
+    return await axios.get<T>(this.entity + path, {
       headers: { "Content-Type": "application/json" },
     });
   }

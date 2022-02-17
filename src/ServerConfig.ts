@@ -11,6 +11,8 @@ export const ServerConfig = {
     customActions: {
       getAllAttr: "cnvdata/attr",
       getErrorsByBatch: "errors/{{batch}}",
+      getAllWorksheets: "worksheets",
+      batchload: "batchload"
     },
   },
 };

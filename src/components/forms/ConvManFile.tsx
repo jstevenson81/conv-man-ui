@@ -8,11 +8,9 @@ const ConvManFileInput: React.FC<IConvManFileInputProps> = (props: IConvManFileI
     const file = e.currentTarget.files?.item(0);
     if (file) {
       const lastMod = DateTime.fromMillis(file.lastModified).toJSON();
-      const fileText = await file.text();
-      localStorage.setItem(file.name, fileText);
-
-      const newFile = { fileName: file.name, fileExt: file.type, lastModified: lastMod };
-      props.onFileChange(newFile);
+      file.arrayBuffer().then((buffer) => {
+        props.onFileChange({ fileExt: file.type, fileName: file.name, lastModified: lastMod, data: buffer });
+      });
     }
   };
 

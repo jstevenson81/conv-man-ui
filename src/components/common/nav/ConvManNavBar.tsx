@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Transition } from "@headlessui/react";
 
-import BlueLogo from "../../../img/np-logo-blue.png";
+import BlueLogo from "../../../assets/img/np-logo-blue.png";
 import ConvManNavLink from "./ConvManNavLink";
 import IConvManNavBarProps from "./interfaces/IConvManNavBarProps";
 

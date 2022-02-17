@@ -1,11 +1,11 @@
 import _ from "lodash";
-import { ApiResponse } from "../../models/data/Impl/ApiResponse";
-import { IApiResponse } from "../../models/data/Interfaces/Local/IApiResponse";
-import { ICnvValError } from "../../models/data/Interfaces/ORDS/ICnvValError";
-import { ICnvValErrorAttr } from "../../models/data/Interfaces/ORDS/ICnvValErrorAttr";
+import { ApiResponse } from "../models/data/Impl/ApiResponse";
+import { IApiResponse } from "../models/data/Interfaces/Local/IApiResponse";
+import { ICnvValError } from "../models/data/Interfaces/ORDS/ICnvValError";
+import { ICnvValErrorAttr } from "../models/data/Interfaces/ORDS/ICnvValErrorAttr";
 import { ServerConfig } from "../../ServerConfig";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
-import { IConvManCol } from "../../models/data/Interfaces/Local/IConvManCol";
+import { IConvManCol } from "../models/data/Interfaces/Local/IConvManCol";
 
 export class CnvDataService extends OracleRestServiceBase {
   async getAttributes(): Promise<ApiResponse<ICnvValErrorAttr>> {
@@ -15,7 +15,7 @@ export class CnvDataService extends OracleRestServiceBase {
       axiosResp = await this.getMore(axiosResp);
       response.oracleResponse = axiosResp.data;
     } catch (e) {
-      response.error = this.handleError(e, "GET", "ORDS_API_EXCEPTION");
+      response.error = this.handleError({ e, code: "GET", reqType: "ORDS_API_EXCEPTION" });
     }
     return response;
   }
@@ -30,7 +30,7 @@ export class CnvDataService extends OracleRestServiceBase {
       axiosResp = await this.getMore(axiosResp);
       response.oracleResponse = axiosResp.data;
     } catch (e) {
-      response.error = this.handleError(e, "GET", "ORDS_API_EXCEPTION");
+      response.error = this.handleError({ e, code: "GET", reqType: "ORDS_API_EXCEPTION" });
     }
     return response;
   }

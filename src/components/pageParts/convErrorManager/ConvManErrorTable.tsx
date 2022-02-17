@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Column, useTable } from "react-table";
-import { ICnvValError } from "../../../models/data/Interfaces/ORDS/ICnvValError";
+import { ICnvValError } from "../../../services/models/data/Interfaces/ORDS/ICnvValError";
 import { IConvManErrorTableProps } from "./interfaces/IConvManErrorTableProps";
 
 const ConvManErrorTable: React.FC<IConvManErrorTableProps> = (props: IConvManErrorTableProps) => {

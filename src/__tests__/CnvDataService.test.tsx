@@ -1,7 +1,7 @@
 import { CnvDataService } from "../services/data/CnvDataService";
 import { ServerConfig } from "../ServerConfig";
-import { IApiResponse } from "../models/data/Interfaces/Local/IApiResponse";
-import { ICnvValError } from "../models/data/Interfaces/ORDS/ICnvValError";
+import { IApiResponse } from "../services/models/data/Interfaces/Local/IApiResponse";
+import { ICnvValError } from "../services/models/data/Interfaces/ORDS/ICnvValError";
 
 beforeEach((): void => {
   jest.useRealTimers();
