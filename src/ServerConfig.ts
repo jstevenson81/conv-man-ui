@@ -9,10 +9,15 @@ export const ServerConfig = {
       customMethods: "api/",
     },
     customActions: {
-      getAllAttr: "cnvdata/attr",
-      getErrorsByBatch: "errors/{{batch}}",
-      getAllWorksheets: "worksheets",
-      batchload: "batchload"
+      gets: {
+        getAllAttr: "cnvdata/attr",
+        getErrorsByBatch: "errors/{{batch}}",
+        getAllWorksheets: "worksheets",
+        getAllBatches: "batches",
+      },
+      posts: {
+        batchload: "batchload",
+      },
     },
   },
 };

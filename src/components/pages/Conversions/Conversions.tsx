@@ -1,17 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { CustomMethodService } from "../../../services/data/CustomMethodService";
+import { IConvManBatch } from "../../../services/models/data/Interfaces/ORDS/IConvManBatch";
 import ConvManLoader from "../../common/loader/ConvManLoader";
 import ConvManSelectList from "../../forms/ConvManSelectList";
 import { IConvManSelectListItem } from "../../forms/interfaces/ISelectListItem";
+import ConvManErrorTableContainer from "../../pageParts/convErrorManager/ConvManErrorTableContainer";
 import ConvManCreateBatchForm from "../../pageParts/convManCreateBatchForm/ConvManCreateBatchForm";
 import IConvManDashProps from "./interfaces/IConvManDashProps";
 
 const Conversions: React.FC<IConvManDashProps> = (props: IConvManDashProps) => {
   const [newBatchOpen, setNewBatchOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [batchSelectItems, setBatchSelectItems] = useState<Array<IConvManSelectListItem>>([]);
   const [templates, setTemplates] = useState<Array<IConvManSelectListItem>>([
     { label: "DC001 - Work Structures", value: "DC001.xlsx" },
     { label: "DC002 - Global HR", value: "DC002.xlsx" },
   ]);
+
+  const [selectedBatch, setSelectedBatch] = useState<IConvManSelectListItem>({ label: "", value: "" });
+
+  useEffect(() => {
+    const custMethodsSvc = new CustomMethodService();
+    custMethodsSvc.getBatches().then((batches) => {
+      const mappedBatches = custMethodsSvc.convertToSelectList({
+        data: batches.oracleResponse!.items,
+        props: { option: "batch_name", value: "batch_name" },
+      });
+      setBatchSelectItems(mappedBatches);
+    });
+  }, []);
 
   const toggleNewBatch = (open: boolean) => {
     setNewBatchOpen(open);
@@ -78,7 +96,21 @@ const Conversions: React.FC<IConvManDashProps> = (props: IConvManDashProps) => {
         })}
       </div>
       <div className="mt-8">
-        <h1 className="text-2xl">recent batches</h1>
+        <h1 className="text-2xl">recent conversions</h1>
+        <p className="mb-3">
+          Below are your recent conversions submitted. Select a batch, and there will be visuals and tables that will
+          allow you to correct your errors and re-submit
+        </p>
+        <ConvManSelectList
+          items={batchSelectItems}
+          label="Batch"
+          onListboxChange={(newVal) => {
+            setSelectedBatch(newVal);
+          }}
+        ></ConvManSelectList>
+      </div>
+      <div className="mt-8">
+        <ConvManErrorTableContainer batchName={selectedBatch.value}></ConvManErrorTableContainer>
       </div>
 
       <ConvManCreateBatchForm
