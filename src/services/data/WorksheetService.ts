@@ -13,7 +13,7 @@ export class WorksheetService extends OracleRestServiceBase {
     let response = new ApiResponse<IWorksheet>();
     try {
       const axiosResponse = await this.runGetManyWithAction<IWorksheet>(
-        ServerConfig.ords.customActions.getAllWorksheets
+        ServerConfig.ords.customActions.gets.getAllWorksheets
       );
       response.oracleResponse = axiosResponse.data;
     } catch (e) {

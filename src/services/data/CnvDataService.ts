@@ -8,10 +8,16 @@ import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
 import { IConvManCol } from "../models/data/Interfaces/Local/IConvManCol";
 
 export class CnvDataService extends OracleRestServiceBase {
+  constructor() {
+    super(ServerConfig.ords.entities.customMethods);
+  }
+
   async getAttributes(): Promise<ApiResponse<ICnvValErrorAttr>> {
     let response = new ApiResponse<ICnvValErrorAttr>();
     try {
-      let axiosResp = await this.runGetManyWithAction<ICnvValErrorAttr>(ServerConfig.ords.customActions.getAllAttr);
+      let axiosResp = await this.runGetManyWithAction<ICnvValErrorAttr>(
+        ServerConfig.ords.customActions.gets.getAllAttr
+      );
       axiosResp = await this.getMore(axiosResp);
       response.oracleResponse = axiosResp.data;
     } catch (e) {
@@ -23,7 +29,7 @@ export class CnvDataService extends OracleRestServiceBase {
   async getErrorsByBatch(batch: string): Promise<IApiResponse<ICnvValError>> {
     let response = new ApiResponse<ICnvValError>();
     try {
-      const action = ServerConfig.ords.customActions.getErrorsByBatch.replace("{{batch}}", batch);
+      const action = ServerConfig.ords.customActions.gets.getErrorsByBatch.replace("{{batch}}", batch);
       // get the initial response
       let axiosResp = await this.runGetManyWithAction<ICnvValError>(action);
       // do we have more?
@@ -34,21 +40,4 @@ export class CnvDataService extends OracleRestServiceBase {
     }
     return response;
   }
-
-  getCols(errors: IApiResponse<ICnvValError>, attrs: IApiResponse<ICnvValErrorAttr>): Array<IConvManCol<ICnvValError>> {
-    const cols = new Array<IConvManCol<ICnvValError>>();
-    const firstRow = _.first(errors.oracleResponse?.items);
-    _.each(_.keysIn(firstRow), (key: string) => {
-      const header = _.find(attrs.oracleResponse?.items, (attr: ICnvValErrorAttr) => {
-        return (
-          attr.cnv_data_column.toUpperCase() === key.toUpperCase() &&
-          attr.obj_key.toUpperCase() === firstRow?.obj_key.toUpperCase()
-        );
-      });
-      if (header && header.display_name) cols.push({ Header: header.display_name, id: key, accessor: key });
-    });
-    return cols;
-  }
 }
-
-

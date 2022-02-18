@@ -22,7 +22,7 @@ export class SpreadsheetService extends OracleRestServiceBase {
     const spRows = excel.sheetToCsv({ workbook: config.file, sheetToRead: config.sheet, batchName: config.batchName });
     const csv = Papa.unparse(spRows);
     return await this.runPost<any>({
-      action: ServerConfig.ords.customActions.batchload,
+      action: ServerConfig.ords.customActions.posts.batchload,
       body: csv,
       contentType: "text/csv",
     });
