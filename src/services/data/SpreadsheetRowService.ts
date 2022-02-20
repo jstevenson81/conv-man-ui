@@ -1,7 +1,5 @@
-import _ from "lodash";
 import Papa from "papaparse";
-import { fileURLToPath } from "url";
-import { IConvManFileInputState } from "../../components/forms/interfaces/IConvManFileInputState";
+import { IConvManFile } from "../../components/forms/interfaces/IConvManFileInputState";
 import { ServerConfig } from "../../ServerConfig";
 import ExcelService from "../ExcelService";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
@@ -12,7 +10,7 @@ export class SpreadsheetService extends OracleRestServiceBase {
   }
 
   async saveFile(config: {
-    file: IConvManFileInputState;
+    file: IConvManFile;
     podId: number;
     batchName: string;
     createdBy: string;

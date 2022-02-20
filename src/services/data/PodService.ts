@@ -1,6 +1,5 @@
 import { ApiResponse } from "../models/data/Impl/ApiResponse";
 import { UxPod } from "../models/data/Impl/UxPod";
-import { IApiResponse } from "../models/data/Interfaces/Local/IApiResponse";
 import { IUxPod } from "../models/data/Interfaces/ORDS/IUxPod";
 import { ServerConfig } from "../../ServerConfig";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";

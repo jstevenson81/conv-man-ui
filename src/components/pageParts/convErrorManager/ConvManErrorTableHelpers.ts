@@ -33,7 +33,7 @@ const buildTables = async (batchName: string): Promise<Array<IConvManErrorTableD
   const { rows, columns } = await getData(batchName);
   if (_.isEmpty(rows.oracleResponse!.items)) return [];
   if (_.isEmpty(columns.oracleResponse!.items))
-    throw "The database services returned no attributes.  Errors cannot be built without attributes.";
+    throw new Error("The database services returned no attributes.  Errors cannot be built without attributes.");
 
   let table: IConvManErrorTableDef = { data: [], columns: [], sheetName: "", objectKey: "", key: 0 };
   const tables: Array<IConvManErrorTableDef> = [];

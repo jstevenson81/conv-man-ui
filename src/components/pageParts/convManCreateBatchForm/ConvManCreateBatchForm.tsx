@@ -1,16 +1,14 @@
 import { Transition, Dialog } from "@headlessui/react";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import ConvManInput from "../../forms/ConvManInput";
 import ConvManSelectList from "../../forms/ConvManSelectList";
 import { XIcon } from "@heroicons/react/solid";
-import ConvManFileInput from "../../forms/ConvManFile";
-import { IConvManFileInputState } from "../../forms/interfaces/IConvManFileInputState";
+import { IConvManFile } from "../../forms/interfaces/IConvManFileInputState";
 import { DateTime } from "luxon";
 import { IConvManSelectListItem } from "../../forms/interfaces/ISelectListItem";
 import { PodService } from "../../../services/data/PodService";
 import { IUxPod } from "../../../services/models/data/Interfaces/ORDS/IUxPod";
 import { IApiResponse } from "../../../services/models/data/Interfaces/Local/IApiResponse";
-import { SpreadsheetService } from "../../../services/data/SpreadsheetRowService";
 import { WorksheetService } from "../../../services/data/WorksheetService";
 import IWorksheet from "../../../services/models/data/Interfaces/ORDS/IWorksheet";
 import ConvManFileDropZone from "../../forms/ConvManDropZone";
@@ -25,9 +23,9 @@ type ICreateBatchProps = {
 const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatchProps) => {
   //#region state
   const [batchName, setBatchName] = useState("");
-  const [selectedWorksheet, setSelectedWorksheet] = useState<IConvManSelectListItem>();
   const [selectedPod, setSelectedPod] = useState<IConvManSelectListItem>();
-  const [selectedSpreadsheet, setSelectedSpreadsheet] = useState<IConvManFileInputState>();
+  const [selectedSpreadsheet, setSelectedSpreadsheet] = useState<IConvManFile>();
+  const [selectedWorksheet, setSelectedWorsheet] = useState<IConvManSelectListItem>();
 
   const [worksheetOpts, setWorksheetOpts] = useState<Array<IConvManSelectListItem>>([]);
   const [podOpts, setPodOpts] = useState<Array<IConvManSelectListItem>>([]);
@@ -36,9 +34,6 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
 
   //#region services
 
-  const worksheetSvc = new WorksheetService();
-  const podSvc = new PodService();
-  const spSvc = new SpreadsheetService();
   const excelSvc = new ExcelService();
 
   //#endregion
@@ -46,6 +41,9 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
   //#region data gathering
 
   useEffect(() => {
+    const worksheetSvc = new WorksheetService();
+    const podSvc = new PodService();
+
     worksheetSvc.getAll().then((resp: IApiResponse<IWorksheet>) => {
       if (resp && resp.oracleResponse) {
         const options = worksheetSvc.convertToSelectList({
@@ -85,14 +83,19 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
       batchName: batchName,
     });
     console.log(csv);
+    console.log(selectedPod);
     props.onLoading(false);
   };
+
+  const spreadsheetChange = useCallback((newFile: IConvManFile): void => {
+    setSelectedSpreadsheet(newFile);
+  }, []);
 
   //#endregion
 
   return (
     <Transition appear show={props.isOpen} as={Fragment}>
-      <Dialog as="div" className="fixed inset-0 z-10" onClose={(e) => props.toggle(false)}>
+      <Dialog as="div" className="fixed inset-0 z-10" onClose={() => props.toggle(false)}>
         <div className="min-h-screen px-4 text-center">
           <Transition.Child
             as={Fragment}
@@ -136,14 +139,14 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
                   placeHolder=" "
                   name="BatchName"
                   value={batchName}
-                  onInputChange={(newValue: string, name: string) => {
+                  onInputChange={(newValue: string) => {
                     setBatchName(newValue);
                   }}
                 ></ConvManInput>
                 <ConvManSelectList
                   label="Environment"
                   items={podOpts}
-                  onListboxChange={(newValue: any) => {
+                  onListboxChange={(newValue: IConvManSelectListItem) => {
                     setSelectedPod(newValue);
                   }}
                 ></ConvManSelectList>
@@ -151,25 +154,24 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
                 <ConvManSelectList
                   label="Worksheet"
                   items={worksheetOpts}
-                  onListboxChange={(newValue: any) => {
-                    setSelectedWorksheet(newValue);
+                  onListboxChange={(newWorksheet: IConvManSelectListItem) => {
+                    console.log(newWorksheet);
+                    setSelectedWorsheet(newWorksheet);
                   }}
                 ></ConvManSelectList>
 
                 <ConvManFileDropZone
                   label="Drop xlsx files here or click to browse"
                   fileFilter="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                  onFileChange={(newFile) => {
-                    setSelectedSpreadsheet(newFile);
-                  }}
+                  onFileChange={spreadsheetChange}
                 ></ConvManFileDropZone>
               </div>
 
               <div className="mt-4 flex justify-end items-center gap-4 justify-items-center">
-                <button type="button" className="button red" onClick={(e) => props.toggle(false)}>
+                <button type="button" className="button red" onClick={() => props.toggle(false)}>
                   Close
                 </button>
-                <button type="button" className="button blue" onClick={(e) => createBatch()}>
+                <button type="button" className="button blue" onClick={() => createBatch()}>
                   Create Request
                 </button>
               </div>

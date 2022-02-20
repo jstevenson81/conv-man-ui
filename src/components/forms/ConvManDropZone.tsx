@@ -8,9 +8,9 @@ interface IConvManFileDropZoneProps extends IConvManFileInputProps {
   fileFilter: string;
 }
 
-const ConvManFileDropZone: React.FC<IConvManFileDropZoneProps> = (props: IConvManFileDropZoneProps) => {
+const ConvManFileDropZone: React.FC<IConvManFileDropZoneProps> = ({ onFileChange, fileFilter, label }) => {
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
-    accept: props.fileFilter,
+    accept: fileFilter,
     maxFiles: 1,
   });
 
@@ -29,15 +29,16 @@ const ConvManFileDropZone: React.FC<IConvManFileDropZoneProps> = (props: IConvMa
     const file = acceptedFiles[0];
     if (file) {
       file.arrayBuffer().then((buffer) => {
-        props.onFileChange({
+        onFileChange({
           fileExt: file.type,
           fileName: file.name,
           lastModified: DateTime.fromMillis(file.lastModified).toJSON(),
           data: buffer,
         });
       });
+      console.log("use effect for file change was called");
     }
-  }, [acceptedFiles]);
+  }, [acceptedFiles, onFileChange]);
 
   return (
     <>
@@ -48,7 +49,7 @@ const ConvManFileDropZone: React.FC<IConvManFileDropZoneProps> = (props: IConvMa
         })}
       >
         <input {...getInputProps()} />
-        <p>{props.label}</p>
+        <p>{label}</p>
         <aside className="mt-4 text-left flex items-center gap-2">
           <h4>selected file:</h4>
           <ul>{files}</ul>
