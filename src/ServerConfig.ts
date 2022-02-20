@@ -7,6 +7,7 @@ export const ServerConfig = {
       podEmails: "uxpodemails/",
       spreadsheetRows: "cnvsp/",
       customMethods: "api/",
+      batchRequest: "uxbatchrequest/",
     },
     customActions: {
       gets: {
