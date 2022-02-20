@@ -65,7 +65,7 @@ export class OracleRestServiceBase {
     props: { value: string; option: string };
   }): Array<IConvManSelectListItem> {
     const resp = new Array<IConvManSelectListItem>();
-    data.map((d: any) => {
+    data.forEach((d: any) => {
       const valProp = _.find(_.keys(d), (k: string) => {
         return k === props.value;
       });

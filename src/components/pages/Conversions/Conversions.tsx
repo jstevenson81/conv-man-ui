@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { CustomMethodService } from "../../../services/data/CustomMethodService";
-import { IConvManBatch } from "../../../services/models/data/Interfaces/ORDS/IConvManBatch";
 import ConvManLoader from "../../common/loader/ConvManLoader";
 import ConvManSelectList from "../../forms/ConvManSelectList";
 import { IConvManSelectListItem } from "../../forms/interfaces/ISelectListItem";
@@ -8,12 +7,12 @@ import ConvManErrorTableContainer from "../../pageParts/convErrorManager/ConvMan
 import ConvManCreateBatchForm from "../../pageParts/convManCreateBatchForm/ConvManCreateBatchForm";
 import IConvManDashProps from "./interfaces/IConvManDashProps";
 
-const Conversions: React.FC<IConvManDashProps> = (props: IConvManDashProps) => {
+const Conversions: React.FC<IConvManDashProps> = () => {
   const [newBatchOpen, setNewBatchOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const [batchSelectItems, setBatchSelectItems] = useState<Array<IConvManSelectListItem>>([]);
-  const [templates, setTemplates] = useState<Array<IConvManSelectListItem>>([
+  const [templates] = useState<Array<IConvManSelectListItem>>([
     { label: "DC001 - Work Structures", value: "DC001.xlsx" },
     { label: "DC002 - Global HR", value: "DC002.xlsx" },
   ]);
@@ -70,7 +69,7 @@ const Conversions: React.FC<IConvManDashProps> = (props: IConvManDashProps) => {
       <ConvManLoader show={isLoading} message="Please wait while we complete your request"></ConvManLoader>
       <div className="flex items-center justify-start justify-items-start mb-2 gap-4">
         <h1 className="text-2xl">Conversions</h1>
-        <button className="button blue" onClick={(e) => toggleNewBatch(true)}>
+        <button className="button blue" onClick={() => toggleNewBatch(true)}>
           new conversion
         </button>
       </div>
@@ -86,7 +85,7 @@ const Conversions: React.FC<IConvManDashProps> = (props: IConvManDashProps) => {
             <button
               className="button blue"
               key={t.value}
-              onClick={(e) => {
+              onClick={() => {
                 downloadTemplate(t);
               }}
             >

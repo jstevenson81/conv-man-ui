@@ -1,6 +1,6 @@
-import { IConvManFileInputState } from "./IConvManFileInputState";
+import { IConvManFile } from "./IConvManFileInputState";
 
 export interface IConvManFileInputProps {
   label: string;
-  onFileChange(file: IConvManFileInputState): void;
+  onFileChange(file: IConvManFile): void;
 };

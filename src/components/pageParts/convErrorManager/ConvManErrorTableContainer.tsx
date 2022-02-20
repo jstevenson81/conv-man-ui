@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { useState, useEffect } from "react";
 import { IConvManErrorTableDef } from "./interfaces/ICnvErrorTable";
 import { IConvManErrorTableProps } from "./interfaces/IConvManErrorTableProps";

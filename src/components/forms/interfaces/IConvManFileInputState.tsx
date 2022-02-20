@@ -1,6 +1,6 @@
 import { Stream } from "stream";
 
-export type IConvManFileInputState = {
+export type IConvManFile = {
   fileName: string;
   fileExt: string;
   lastModified: string;

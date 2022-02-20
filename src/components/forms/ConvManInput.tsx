@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from "react";
+import { ChangeEvent } from "react";
 import { IConvManInputProps } from "./interfaces/IConvManInputProps";
 
 const ConvManInput: React.FC<IConvManInputProps> = (props: IConvManInputProps) => {

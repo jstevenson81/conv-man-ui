@@ -1,5 +1,4 @@
 import { ApiResponse } from "../models/data/Impl/ApiResponse";
-import { IApiResponse } from "../models/data/Interfaces/Local/IApiResponse";
 import IWorksheet from "../models/data/Interfaces/ORDS/IWorksheet";
 import { ServerConfig } from "../../ServerConfig";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
