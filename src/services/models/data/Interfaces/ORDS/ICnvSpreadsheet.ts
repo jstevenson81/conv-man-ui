@@ -1,3 +1,5 @@
+import { IOracleItem } from "../OracleApi/IOracleItem";
+
 export interface ICnvSpreadsheet {
   [k: string]: number | string | null;
   COLUMN_A: string | null;
