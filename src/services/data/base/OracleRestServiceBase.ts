@@ -7,6 +7,13 @@ import { HttpHeaderContentType } from "./HttpHeaderContentType";
 import { IOracleResponse } from "../../models/data/Interfaces/OracleApi/IOracleResponse";
 import { ServerConfig } from "../../../ServerConfig";
 import { IConvManSelectListItem } from "../../../components/forms/interfaces/ISelectListItem";
+
+export interface ICreateApiConfig<T> {
+  body: T;
+  contentType: HttpHeaderContentType;
+  action?: string;
+}
+
 export class OracleRestServiceBase {
   constructor(private entity: string) {
     axios.defaults.baseURL = ServerConfig.ords.url;
@@ -88,23 +95,23 @@ export class OracleRestServiceBase {
    *
    * @returns {IApiResponse} where the error is filled or the data is
    */
-  protected async runPost<TInputType extends IOracleItem>(config: {
-    body: TInputType;
-    contentType: HttpHeaderContentType;
-    action?: string;
-  }): Promise<IApiResponse<TInputType>> {
+  protected runPost = async <TInputType>({
+    action,
+    contentType,
+    body,
+  }: ICreateApiConfig<TInputType>): Promise<IApiResponse<TInputType>> => {
     let response: IApiResponse<TInputType> = {};
     try {
-      const actionUrl = config.action ? this.entity + config.action : this.entity;
-      const axiosResponse = await axios.post<TInputType>(actionUrl, config.body, {
-        headers: { "Content-Type": config.contentType },
+      const actionUrl = action ? this.entity + action : this.entity;
+      const axiosResponse = await axios.post<TInputType>(actionUrl, body, {
+        headers: { "Content-Type": contentType },
       });
       response.singleOracleItem = axiosResponse.data;
     } catch (e) {
       response.error = this.handleError({ e, code: "POST", reqType: "API_POST_EXCEPTION" });
     }
     return response;
-  }
+  };
 
   /**
    * This method runs a put.  A put in the ORDS world updates an existing item
@@ -112,21 +119,21 @@ export class OracleRestServiceBase {
    *
    * @returns {IApiResponse} where the error is filled or the data is
    */
-  protected async runPut<TInputType extends IOracleItem>(config: {
-    body: TInputType;
-    contentType: HttpHeaderContentType;
-  }): Promise<IApiResponse<TInputType>> {
+  protected runPut = async <TInputType extends IOracleItem>({
+    contentType,
+    body,
+  }: ICreateApiConfig<TInputType>): Promise<IApiResponse<TInputType>> => {
     let response: IApiResponse<TInputType> = {};
     try {
-      const axiosResponse = await axios.put<TInputType>(this.entity, config.body, {
-        headers: { "Content-Type": config.contentType },
+      const axiosResponse = await axios.put<TInputType>(this.entity, body, {
+        headers: { "Content-Type": contentType },
       });
       response.singleOracleItem = axiosResponse.data;
     } catch (e) {
       response.error = this.handleError({ e, code: "POST", reqType: "API_POST_EXCEPTION" });
     }
     return response;
-  }
+  };
 
   /**
    * This method runs a GET

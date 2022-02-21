@@ -3,15 +3,21 @@ import { IConvManFile } from "../../components/forms/interfaces/IConvManFileInpu
 import { ServerConfig } from "../../ServerConfig";
 import ExcelService from "../ExcelService";
 import { IApiResponse } from "../models/data/Interfaces/Local/IApiResponse";
-import { ICnvSpreadsheet } from "../models/data/Interfaces/ORDS/ICnvSpreadsheet";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
+import { UxBatchService } from "./UxBatchService";
 
 export class CnvSpreadsheetService extends OracleRestServiceBase {
   constructor() {
     super(ServerConfig.ords.entities.spreadsheetRows);
   }
 
-  async saveFile(config: {
+  async saveFile({
+    file,
+    podUrl,
+    batchName,
+    createdBy,
+    sheet,
+  }: {
     file: IConvManFile;
     podUrl: string;
     batchName: string;
@@ -19,12 +25,16 @@ export class CnvSpreadsheetService extends OracleRestServiceBase {
     sheet: string;
   }): Promise<IApiResponse<any>> {
     const excel = new ExcelService();
-    const spRows = excel.sheetToCsv({ workbook: config.file, sheetToRead: config.sheet, batchName: config.batchName });
+    const spRows = excel.sheetToCsv({ workbook: file, sheetToRead: sheet, batchName: batchName });
     const csv = Papa.unparse(spRows);
-    const batchReqResp = await this.runPost<any>({
-      body: { ...config },
-      contentType: "application/json",
+
+    const uxBatchSvc = new UxBatchService();
+    const batchReqResp = await uxBatchSvc.createBatchRequest({
+      pod_url: podUrl,
+      cnv_batch: batchName,
+      created_by: createdBy,
     });
+
     return batchReqResp && batchReqResp.error
       ? batchReqResp
       : await this.runPost<any>({
