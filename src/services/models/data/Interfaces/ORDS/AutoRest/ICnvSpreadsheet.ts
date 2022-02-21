@@ -1,5 +1,5 @@
 export interface ICnvSpreadsheet {
-  [k: string]: number | string | null;
+  [k: string]: any;
   column_a: string | null;
   column_b: string | null;
   column_c: string | null;
