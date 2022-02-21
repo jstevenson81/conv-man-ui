@@ -1,7 +1,7 @@
 import { ServerConfig } from "../../ServerConfig";
 import { ApiResponse } from "../models/data/Impl/ApiResponse";
 import { IApiResponse } from "../models/data/Interfaces/Local/IApiResponse";
-import { IConvManBatch } from "../models/data/Interfaces/ORDS/IConvManBatch";
+import { IUxBatchRequest } from "../models/data/Interfaces/ORDS/AutoRest/IUxBatchRequest";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
 
 export class CustomMethodService extends OracleRestServiceBase {
@@ -9,11 +9,11 @@ export class CustomMethodService extends OracleRestServiceBase {
     super(ServerConfig.ords.entities.customMethods);
   }
 
-  async getBatches(): Promise<IApiResponse<IConvManBatch>> {
-    let response = new ApiResponse<IConvManBatch>();
+  async getBatches(): Promise<IApiResponse<IUxBatchRequest>> {
+    let response = new ApiResponse<IUxBatchRequest>();
     try {
-      let axiosResp = await this.runGetManyWithAction<IConvManBatch>(
-        ServerConfig.ords.customActions.gets.getAllBatches
+      let axiosResp = await this.runGetManyWithAction<IUxBatchRequest>(
+        ServerConfig.ords.customActions.gets.batches
       );
       axiosResp = await this.getMore(axiosResp);
       response.oracleResponse = axiosResp.data;

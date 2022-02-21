@@ -1,15 +1,15 @@
 import { IConvManFile } from "../components/forms/interfaces/IConvManFileInputState";
 import * as XLSX from "xlsx";
 import Papa from "papaparse";
-import { ICnvSpreadsheet } from "./models/data/Interfaces/ORDS/ICnvSpreadsheet";
+import { ICnvSp } from "./models/data/Interfaces/ORDS/AutoRest/ICnvSpreadsheet";
 import _ from "lodash";
 import { CnvSpreadsheet } from "./models/data/Impl/CnvSpreadsheet";
 
 export default class ExcelService {
-  sheetToCsv(config: { workbook: IConvManFile; sheetToRead: string; batchName: string }): Array<ICnvSpreadsheet> {
+  sheetToCsv(config: { workbook: IConvManFile; sheetToRead: string; batchName: string }): Array<ICnvSp> {
     const wb = XLSX.read(config.workbook.data);
     const csv = XLSX.utils.sheet_to_csv(wb.Sheets[config.sheetToRead]);
-    const arr = new Array<ICnvSpreadsheet>();
+    const arr = new Array<ICnvSp>();
 
     Papa.parse(csv, {
       complete: (csvData) => {
@@ -26,7 +26,7 @@ export default class ExcelService {
     return arr;
   }
 
-  createSpreadsheetRow(row: any, batchName: string): ICnvSpreadsheet {
+  createSpreadsheetRow(row: any, batchName: string): ICnvSp {
     const alpha = Array.from(Array(26)).map((e, i) => i + 65);
     const alphabet = alpha.map((x) => {
       return String.fromCharCode(x);

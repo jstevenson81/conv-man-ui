@@ -4,7 +4,7 @@ import { CnvSpreadsheetService } from "../services/data/CnvSpreadsheetService";
 import { UxBatchService } from "../services/data/UxBatchService";
 import { IApiResponse } from "../services/models/data/Interfaces/Local/IApiResponse";
 import { ICnvValError } from "../services/models/data/Interfaces/ORDS/ICnvValError";
-import { ICreateBatchRequest } from "../services/models/data/Interfaces/ORDS/IConvManBatch";
+import { ICreateBatchRequest } from "../services/models/data/Interfaces/ORDS/ICreateBatchRequest";
 
 beforeEach((): void => {
   jest.useRealTimers();

@@ -1,12 +1,12 @@
 import { DateTime } from "luxon";
 import { ServerConfig } from "../../ServerConfig";
 import { IApiResponse } from "../models/data/Interfaces/Local/IApiResponse";
-import { ICreateBatchRequest } from "../models/data/Interfaces/ORDS/IConvManBatch";
+import { ICreateBatchRequest } from "../models/data/Interfaces/ORDS/ICreateBatchRequest";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
 
 export class UxBatchService extends OracleRestServiceBase {
   constructor() {
-    super(ServerConfig.ords.entities.batchRequest);
+    super(ServerConfig.ords.entities.batchRequests);
   }
   createBatchRequest = async ({
     pod_url,

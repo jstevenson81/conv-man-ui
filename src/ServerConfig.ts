@@ -3,18 +3,19 @@ export const ServerConfig = {
     url: "https://etvwbwij8jdtzoz-hcmconversion1.adb.us-phoenix-1.oraclecloudapps.com/ords/admin/",
     entities: {
       pod: "uxpods/",
-      conversionTypes: "uxconvtypes/",
-      podEmails: "uxpodemails/",
-      spreadsheetRows: "cnvsp/",
+      podEmails: "podemails/",
+      spreadsheets: "spreadsheets/",
       customMethods: "api/",
-      batchRequest: "uxbatchrequest/",
+      batchRequests: "batchRequests/",
     },
     customActions: {
       gets: {
-        getAllAttr: "cnvdata/attr",
-        getErrorsByBatch: "errors/{{batch}}",
-        getAllWorksheets: "worksheets",
-        getAllBatches: "batches",
+        attributes: "attributes",
+        errorsByBatch: "errors/{{batch}}",
+        spreadsheetsByBatch: "spreadsheets/{{batch}}",
+        worksheets: "worksheets",
+        batches: "batches",
+        podsByEmail: "pods/{{email}}",
       },
       posts: {
         batchload: "batchload",
