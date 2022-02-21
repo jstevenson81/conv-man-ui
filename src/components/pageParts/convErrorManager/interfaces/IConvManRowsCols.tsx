@@ -1,9 +1,9 @@
-import { IApiResponse } from "../../../../services/models/data/Interfaces/Local/IApiResponse";
-import { ICnvValError } from "../../../../services/models/data/Interfaces/ORDS/ICnvValError";
-import { ICnvValErrorAttr } from "../../../../services/models/data/Interfaces/ORDS/ICnvValErrorAttr";
+import { IApiResponse } from "../../../../services/models/data/interfaces/Local/IApiResponse";
+import { IValidationError } from "../../../../services/models/data/interfaces/ords/module/api/IValidationError";
+import { ICnvValErrorAttr } from "../../../../services/models/data/interfaces/ords/ICnvValErrorAttr";
 
 
 export type IConvManRowsCols = {
-  rows: IApiResponse<ICnvValError>;
+  rows: IApiResponse<IValidationError>;
   columns: IApiResponse<ICnvValErrorAttr>;
 };

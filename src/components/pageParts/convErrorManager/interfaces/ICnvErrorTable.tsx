@@ -1,9 +1,9 @@
-import { IConvManCol } from "../../../../services/models/data/Interfaces/Local/IConvManCol";
-import { ICnvValError } from "../../../../services/models/data/Interfaces/ORDS/ICnvValError";
+import { IConvManCol } from "../../../../services/models/data/interfaces/IConvManCol";
+import { IValidationError } from "../../../../services/models/data/interfaces/ords/module/api/IValidationError";
 
 export type IConvManErrorTableDef = {
-  columns: Array<IConvManCol<ICnvValError>>;
-  data: Array<ICnvValError>;
+  columns: Array<IConvManCol<IValidationError>>;
+  data: Array<IValidationError>;
   key: number;
   objectKey: string;
   sheetName: string;

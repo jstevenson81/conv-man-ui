@@ -1,12 +1,13 @@
 import axios, { AxiosResponse } from "axios";
 import _ from "lodash";
-import { IOracleItem } from "../../models/data/Interfaces/OracleApi/IOracleItem";
-import { IApiResponse } from "../../models/data/Interfaces/Local/IApiResponse";
-import { ErrorCodes, ErrorTypes, IOracleApiError } from "../../models/errors/IOracleApiError";
+import { ErrorCodes, ErrorTypes, IConvManError } from "../../models/errors/IOracleApiError";
 import { HttpHeaderContentType } from "./HttpHeaderContentType";
-import { IOracleResponse } from "../../models/data/Interfaces/OracleApi/IOracleResponse";
 import { ServerConfig } from "../../../ServerConfig";
 import { IConvManSelectListItem } from "../../../components/forms/interfaces/ISelectListItem";
+import { IOracleModuleItem } from "../../models/data/interfaces/ords/module/base/IOracleModuleItem";
+import { IOracleAutoRestItem } from "../../models/data/interfaces/ords/autoRest/base/IOracleAutoRestItem";
+import { IOracleModuleResponse } from "../../models/data/interfaces/ords/module/base/IOracleModuleResponse";
+import { IOracleAutoRestResponse } from "../../models/data/interfaces/ords/autoRest/base/IOracleAutoRestResponse";
 
 export interface ICreateApiConfig<T> {
   body: T;
@@ -14,7 +15,7 @@ export interface ICreateApiConfig<T> {
   action?: string;
 }
 
-export class OracleRestServiceBase {
+export abstract class OracleRestServiceBase {
   constructor(private entity: string) {
     axios.defaults.baseURL = ServerConfig.ords.url;
   }
@@ -25,10 +26,10 @@ export class OracleRestServiceBase {
    * @param e the error
    * @param code the error code used to tell the UI about the exception
    * @param reqType the type of request that was performed
-   * @returns {IOracleApiError} the error the occurred
+   * @returns {IConvManError} the error the occurred
    */
 
-  protected handleError({ e, code, reqType }: { e: any; code: ErrorCodes; reqType: ErrorTypes }): IOracleApiError {
+  protected handleError({ e, code, reqType }: { e: any; code: ErrorCodes; reqType: ErrorTypes }): IConvManError {
     const error = e as Error;
     return {
       title: "ORDS request error",
@@ -44,9 +45,9 @@ export class OracleRestServiceBase {
 
   //#region get more results
 
-  protected async getMore<T extends IOracleItem>(
-    initialResponse: AxiosResponse<IOracleResponse<T>>
-  ): Promise<AxiosResponse<IOracleResponse<T>>> {
+  protected async getMore<T extends IOracleModuleItem>(
+    initialResponse: AxiosResponse<IOracleModuleResponse<T>>
+  ): Promise<AxiosResponse<IOracleModuleResponse<T>>> {
     while (initialResponse.data.hasMore) {
       const moreLink = _.find(initialResponse.data.links, (link) => {
         return link.rel.toUpperCase() === "NEXT";
@@ -64,7 +65,7 @@ export class OracleRestServiceBase {
   //#endregion
 
   //#region convert to select list items
-  public convertToSelectList<T extends IOracleItem>({
+  public convertToSelectList<T extends IOracleModuleItem>({
     data,
     props,
   }: {
@@ -95,22 +96,15 @@ export class OracleRestServiceBase {
    *
    * @returns {IApiResponse} where the error is filled or the data is
    */
-  protected runPost = async <TInputType>({
+  protected runPost = async <TInputType extends IOracleAutoRestItem>({
     action,
     contentType,
     body,
-  }: ICreateApiConfig<TInputType>): Promise<IApiResponse<TInputType>> => {
-    let response: IApiResponse<TInputType> = {};
-    try {
-      const actionUrl = action ? this.entity + action : this.entity;
-      const axiosResponse = await axios.post<TInputType>(actionUrl, body, {
-        headers: { "Content-Type": contentType },
-      });
-      response.singleOracleItem = axiosResponse.data;
-    } catch (e) {
-      response.error = this.handleError({ e, code: "POST", reqType: "API_POST_EXCEPTION" });
-    }
-    return response;
+  }: ICreateApiConfig<TInputType>): Promise<AxiosResponse<IOracleAutoRestResponse<TInputType>>> => {
+    const actionUrl = action ? this.entity + action : this.entity;
+    return await axios.post<IOracleAutoRestResponse<TInputType>>(actionUrl, body, {
+      headers: { "Content-Type": contentType },
+    });
   };
 
   /**
@@ -119,20 +113,15 @@ export class OracleRestServiceBase {
    *
    * @returns {IApiResponse} where the error is filled or the data is
    */
-  protected runPut = async <TInputType extends IOracleItem>({
+  protected runPut = async <TInputType extends IOracleAutoRestItem>({
+    action,
     contentType,
     body,
-  }: ICreateApiConfig<TInputType>): Promise<IApiResponse<TInputType>> => {
-    let response: IApiResponse<TInputType> = {};
-    try {
-      const axiosResponse = await axios.put<TInputType>(this.entity, body, {
-        headers: { "Content-Type": contentType },
-      });
-      response.singleOracleItem = axiosResponse.data;
-    } catch (e) {
-      response.error = this.handleError({ e, code: "POST", reqType: "API_POST_EXCEPTION" });
-    }
-    return response;
+  }: ICreateApiConfig<TInputType>): Promise<AxiosResponse<IOracleAutoRestResponse<TInputType>>> => {
+    const actionUrl = action ? this.entity + action : this.entity;
+    return await axios.put<IOracleAutoRestResponse<TInputType>>(actionUrl, body, {
+      headers: { "Content-Type": contentType },
+    });
   };
 
   /**
@@ -141,40 +130,38 @@ export class OracleRestServiceBase {
    * @returns the type passed in the call (generic)
    */
 
-  protected async runGetMany<T>(): Promise<AxiosResponse<IOracleResponse<T>>> {
-    return await axios.get<IOracleResponse<T>>(this.entity, {
+  protected async runGetMany<T extends IOracleModuleItem>(): Promise<AxiosResponse<IOracleModuleResponse<T>>> {
+    return await axios.get<IOracleModuleResponse<T>>(this.entity, {
       headers: { "Content-Type": "application/json" },
     });
   }
 
-  protected async runGetManyWithAction<T>(customAction: string): Promise<AxiosResponse<IOracleResponse<T>>> {
+  protected async runGetManyWithAction<T>(customAction: string): Promise<AxiosResponse<IOracleModuleResponse<T>>> {
     const action: string = `${this.entity}${customAction}`;
-    return await axios.get<IOracleResponse<T>>(action, {
+    return await axios.get<IOracleModuleResponse<T>>(action, {
       headers: { "Content-Type": "application/json" },
     });
   }
 
-  protected async runGetManyAbsUrl<T>(url: string): Promise<AxiosResponse<IOracleResponse<T>>> {
-    return await axios.get<IOracleResponse<T>>(url, {
+  protected async runGetManyWithEntityAction<T>(
+    customAction: string
+  ): Promise<AxiosResponse<IOracleModuleResponse<T>>> {
+    const action: string = `${this.entity}${customAction}`;
+    return await axios.get<IOracleModuleResponse<T>>(action, {
       headers: { "Content-Type": "application/json" },
     });
   }
 
-  protected async runGetOne<T>(path: string): Promise<AxiosResponse<T>> {
-    return await axios.get<T>(this.entity + path, {
+  protected async runGetManyAbsUrl<T>(url: string): Promise<AxiosResponse<IOracleModuleResponse<T>>> {
+    return await axios.get<IOracleModuleResponse<T>>(url, {
       headers: { "Content-Type": "application/json" },
     });
   }
-  //#endregion
-  //#region standard http methods
 
-  async add<TInputType extends IOracleItem>(body: TInputType): Promise<IApiResponse<TInputType>> {
-    return await this.runPost({ body: body, contentType: "application/json" });
+  protected async runGetOne<T>(path: string): Promise<AxiosResponse<IOracleModuleResponse<T>>> {
+    return await axios.get<IOracleModuleResponse<T>>(this.entity + path, {
+      headers: { "Content-Type": "application/json" },
+    });
   }
-
-  async update<TInputType extends IOracleItem>(body: TInputType): Promise<IApiResponse<TInputType>> {
-    return await this.runPut({ body: body, contentType: "application/json" });
-  }
-
   //#endregion
 }

@@ -1,6 +1,6 @@
-import { IOracleItem } from "../OracleApi/IOracleItem";
+import { IOracleModuleItem } from "../base/IOracleModuleItem";
 
-export interface ICnvValError extends IOracleItem {
+export interface IValidationError extends IOracleModuleItem {
   stg_key_id: number;
   stg_status: string;
   stg_error_msg: string;

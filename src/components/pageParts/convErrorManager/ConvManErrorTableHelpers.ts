@@ -1,8 +1,8 @@
 import _ from "lodash";
-import { CnvDataService } from "../../../services/data/CnvDataService";
-import { IConvManCol } from "../../../services/models/data/Interfaces/Local/IConvManCol";
-import { ICnvValError } from "../../../services/models/data/Interfaces/ORDS/ICnvValError";
-import { ICnvValErrorAttr } from "../../../services/models/data/Interfaces/ORDS/ICnvValErrorAttr";
+import { CnvDataService } from "../../../services/ords/customMethods/CnvDataService";
+import { IConvManCol } from "../../../services/models/data/interfaces/IConvManCol";
+import { IValidationError } from "../../../services/models/data/interfaces/ords/module/api/IValidationError";
+import { ICnvValErrorAttr } from "../../../services/models/data/interfaces/ords/ICnvValErrorAttr";
 import { IConvManErrorTableDef } from "./interfaces/ICnvErrorTable";
 import { IConvManRowsCols } from "./interfaces/IConvManRowsCols";
 
@@ -13,8 +13,8 @@ const getData = async (batchName: string): Promise<IConvManRowsCols> => {
   return { rows: data, columns: attrs };
 };
 
-const getTableCols = (attrs: Array<ICnvValErrorAttr>, row: ICnvValError): Array<IConvManCol<ICnvValError>> => {
-  const cols: Array<IConvManCol<ICnvValError>> = new Array<IConvManCol<ICnvValError>>();
+const getTableCols = (attrs: Array<ICnvValErrorAttr>, row: IValidationError): Array<IConvManCol<IValidationError>> => {
+  const cols: Array<IConvManCol<IValidationError>> = new Array<IConvManCol<IValidationError>>();
   _.keysIn(row).forEach((key: string) => {
     const header = _.find(attrs, (attr: ICnvValErrorAttr) => {
       return (

@@ -1,10 +1,10 @@
 import { DateTime } from "luxon";
-import { CnvDataService } from "../services/data/CnvDataService";
-import { CnvSpreadsheetService } from "../services/data/CnvSpreadsheetService";
-import { UxBatchService } from "../services/data/UxBatchService";
-import { IApiResponse } from "../services/models/data/Interfaces/Local/IApiResponse";
-import { ICnvValError } from "../services/models/data/Interfaces/ORDS/ICnvValError";
-import { ICreateBatchRequest } from "../services/models/data/Interfaces/ORDS/ICreateBatchRequest";
+import { CnvDataService } from "../services/ords/customMethods/CnvDataService";
+import { CnvSpreadsheetService } from "../services/ords/autoRest/SpreadsheetSvc";
+import { UxBatchService } from "../services/ords/BatchRequestSvc";
+import { IApiResponse } from "../services/models/data/interfaces/Local/IApiResponse";
+import { IValidationError } from "../services/models/data/interfaces/ords/module/api/IValidationError";
+import { ICreateBatchRequest } from "../services/models/data/interfaces/ords/ICreateBatchRequest";
 
 beforeEach((): void => {
   jest.useRealTimers();
@@ -23,7 +23,7 @@ test("service should get all attributes", (done: jest.DoneCallback) => {
 
 test("service should get all errors by batch", (done: jest.DoneCallback) => {
   const svc = new CnvDataService();
-  svc.getErrorsByBatch("testerrors1").then((response: IApiResponse<ICnvValError>) => {
+  svc.getErrorsByBatch("testerrors1").then((response: IApiResponse<IValidationError>) => {
     expect(response).not.toBeUndefined();
     expect(response.oracleResponse?.hasMore).toBeFalsy();
     expect(response.oracleResponse?.items.length).toBeGreaterThan(0);

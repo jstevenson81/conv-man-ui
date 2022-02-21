@@ -1,9 +1,8 @@
 import { IConvManFile } from "../components/forms/interfaces/IConvManFileInputState";
 import * as XLSX from "xlsx";
 import Papa from "papaparse";
-import { ICnvSp } from "./models/data/Interfaces/ORDS/AutoRest/ICnvSpreadsheet";
 import _ from "lodash";
-import { CnvSpreadsheet } from "./models/data/Impl/CnvSpreadsheet";
+import { CnvSpreadsheet } from "./models/data/implementation/CnvSpreadsheet";
 
 export default class ExcelService {
   sheetToCsv(config: { workbook: IConvManFile; sheetToRead: string; batchName: string }): Array<ICnvSp> {

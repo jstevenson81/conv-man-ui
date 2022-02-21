@@ -1,8 +1,8 @@
-import { ServerConfig } from "../../ServerConfig";
-import { ApiResponse } from "../models/data/Impl/ApiResponse";
-import { IApiResponse } from "../models/data/Interfaces/Local/IApiResponse";
-import { IUxBatchRequest } from "../models/data/Interfaces/ORDS/AutoRest/IUxBatchRequest";
-import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
+import { ServerConfig } from "../../../ServerConfig";
+import { ApiResponse } from "../models/data/implementation/ApiResponse";
+import { IApiResponse } from "../models/data/interfaces/Local/IApiResponse";
+import { IUxBatchRequest } from "../models/data/interfaces/ords/autoRest/IUxBatchRequest";
+import { OracleRestServiceBase } from "../../data/base/OracleRestServiceBase";
 
 export class CustomMethodService extends OracleRestServiceBase {
   constructor() {

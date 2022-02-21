@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Column, useTable } from "react-table";
-import { ICnvValError } from "../../../services/models/data/Interfaces/ORDS/ICnvValError";
+import { IValidationError } from "../../../services/models/data/interfaces/ords/module/api/IValidationError";
 import { IConvManErrorTableDef } from "./interfaces/ICnvErrorTable";
 
 const ConvManErrTable: React.FC<IConvManErrorTableDef> = (props: IConvManErrorTableDef) => {
@@ -9,7 +9,7 @@ const ConvManErrTable: React.FC<IConvManErrorTableDef> = (props: IConvManErrorTa
   // set the columns passed as a prop to a memo to allow for caching
   // and faster operation.  Required by react-tables
   const columns = useMemo(() => {
-    return props.columns as Array<Column<ICnvValError>>;
+    return props.columns as Array<Column<IValidationError>>;
   }, [props.columns]);
 
   // set the data passed as a prop to a memo to allow for caching
