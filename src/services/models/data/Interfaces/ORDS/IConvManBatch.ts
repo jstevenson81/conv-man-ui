@@ -12,4 +12,7 @@ export interface ICreateBatchRequest {
   pod_url: string;
   cnv_batch: string;
   created_by: string;
+  created_on?: string;
+  updated_on?: string;
+  updated_by?: string;
 }
