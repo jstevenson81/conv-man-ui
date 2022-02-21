@@ -1,5 +1,5 @@
 import { IOracleItem } from "./IOracleItem";
-import { IOracleLink } from "./IOracleLink";
+import { ILink } from "./IOracleLink";
 
 export interface IOracleResponse<TItemModel extends IOracleItem> {
   items: TItemModel[];
@@ -7,5 +7,5 @@ export interface IOracleResponse<TItemModel extends IOracleItem> {
   limit: number;
   offset: number;
   count: number;
-  links: IOracleLink[];
+  links: ILink[];
 }

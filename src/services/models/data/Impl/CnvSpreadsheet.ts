@@ -1,6 +1,6 @@
-import { ICnvSpreadsheet } from "../Interfaces/ORDS/ICnvSpreadsheet";
+import { ICnvSp } from "../Interfaces/ORDS/AutoRest/ICnvSpreadsheet";
 
-export class CnvSpreadsheet implements ICnvSpreadsheet {
+export class CnvSpreadsheet implements ICnvSp {
   [k: string]: string | number | null;
   COLUMN_A = null;
   COLUMN_B = null;

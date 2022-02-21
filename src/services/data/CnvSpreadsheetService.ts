@@ -8,7 +8,7 @@ import { UxBatchService } from "./UxBatchService";
 
 export class CnvSpreadsheetService extends OracleRestServiceBase {
   constructor() {
-    super(ServerConfig.ords.entities.spreadsheetRows);
+    super(ServerConfig.ords.entities.spreadsheets);
   }
 
   async saveFile({

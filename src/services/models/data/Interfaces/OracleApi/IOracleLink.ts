@@ -1,5 +1,5 @@
 
-export interface IOracleLink {
+export interface ILink {
   rel: string;
   href: string;
 }
