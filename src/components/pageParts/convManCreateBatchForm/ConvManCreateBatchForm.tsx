@@ -6,11 +6,11 @@ import { XIcon } from "@heroicons/react/solid";
 import { IConvManFile } from "../../forms/interfaces/IConvManFileInputState";
 import { DateTime } from "luxon";
 import { IConvManSelectListItem } from "../../forms/interfaces/ISelectListItem";
-import { PodService } from "../../../services/data/PodService";
-import { IUxPod } from "../../../services/models/data/Interfaces/ORDS/IUxPod";
-import { IApiResponse } from "../../../services/models/data/Interfaces/Local/IApiResponse";
-import { WorksheetService } from "../../../services/data/WorksheetService";
-import IWorksheet from "../../../services/models/data/Interfaces/ORDS/IWorksheet";
+import { PodService } from "../../../services/ords/customMethods/PodService";
+import { IUxPod } from "../../../services/models/data/interfaces/ords/IUxPod";
+import { IApiResponse } from "../../../services/models/data/interfaces/Local/IApiResponse";
+import { WorksheetService } from "../../../services/ords/customMethods/WorksheetService";
+import IWorksheet from "../../../services/models/data/interfaces/ords/IWorksheet";
 import ConvManFileDropZone from "../../forms/ConvManDropZone";
 import ExcelService from "../../../services/ExcelService";
 

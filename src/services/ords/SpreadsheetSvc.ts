@@ -1,12 +1,11 @@
 import Papa from "papaparse";
-import { IConvManFile } from "../../components/forms/interfaces/IConvManFileInputState";
-import { ServerConfig } from "../../ServerConfig";
-import ExcelService from "../ExcelService";
-import { IApiResponse } from "../models/data/Interfaces/Local/IApiResponse";
-import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
-import { UxBatchService } from "./UxBatchService";
+import { IConvManFile } from "../../../components/forms/interfaces/IConvManFileInputState";
+import { ServerConfig } from "../../../ServerConfig";
+import ExcelService from "../../ExcelService";
+import { OracleRestServiceBase } from "../../data/base/OracleRestServiceBase";
+import { UxBatchService } from "./BatchRequestSvc";
 
-export class CnvSpreadsheetService extends OracleRestServiceBase {
+export class SpreadsheetsSvc extends OracleRestServiceBase {
   constructor() {
     super(ServerConfig.ords.entities.spreadsheets);
   }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CustomMethodService } from "../../../services/data/CustomMethodService";
+import { CustomMethodService } from "../../../services/ords/customMethods/CustomMethodService";
 import ConvManLoader from "../../common/loader/ConvManLoader";
 import ConvManSelectList from "../../forms/ConvManSelectList";
 import { IConvManSelectListItem } from "../../forms/interfaces/ISelectListItem";

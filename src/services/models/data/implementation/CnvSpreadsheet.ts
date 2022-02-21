@@ -1,4 +1,4 @@
-import { ICnvSpreadsheet } from "../Interfaces/ORDS/AutoRest/ICnvSpreadsheet";
+import { ICnvSpreadsheet } from "../interfaces/ords/base/entities/ICnvSpreadsheet";
 
 export class CnvSpreadsheet implements ICnvSpreadsheet {
   column_a = null;

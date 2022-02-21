@@ -1,8 +1,8 @@
-import { ApiResponse } from "../models/data/Impl/ApiResponse";
-import { UxPod } from "../models/data/Impl/UxPod";
-import { IUxPod } from "../models/data/Interfaces/ORDS/IUxPod";
-import { ServerConfig } from "../../ServerConfig";
-import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
+import { ApiResponse } from "../models/data/implementation/ApiResponse";
+import { UxPod } from "../models/data/implementation/UxPod";
+import { IUxPod } from "../models/data/interfaces/ords/IUxPod";
+import { ServerConfig } from "../../../ServerConfig";
+import { OracleRestServiceBase } from "../../data/base/OracleRestServiceBase";
 
 export class PodService extends OracleRestServiceBase {
 

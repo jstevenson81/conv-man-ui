@@ -1,7 +1,7 @@
-import { ApiResponse } from "../models/data/Impl/ApiResponse";
-import IWorksheet from "../models/data/Interfaces/ORDS/IWorksheet";
-import { ServerConfig } from "../../ServerConfig";
-import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
+import { ApiResponse } from "../models/data/implementation/ApiResponse";
+import IWorksheet from "../models/data/interfaces/ords/IWorksheet";
+import { ServerConfig } from "../../../ServerConfig";
+import { OracleRestServiceBase } from "../../data/base/OracleRestServiceBase";
 
 export class WorksheetService extends OracleRestServiceBase {
   constructor() {

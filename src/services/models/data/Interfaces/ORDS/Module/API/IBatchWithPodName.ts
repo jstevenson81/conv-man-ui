@@ -1,5 +1,6 @@
-import { IUxBatchRequest } from "../../AutoRest/IUxBatchRequest";
+import { IUxBatchRequest } from "../../base/entities/IUxBatchRequest";
+import { IOracleModuleItem } from "../base/IOracleModuleItem";
 
-export interface IBatchWithPodName extends IUxBatchRequest {
+export interface IBatchWithPodName extends IUxBatchRequest, IOracleModuleItem {
   pod_name: string;
 }
