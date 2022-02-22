@@ -7,10 +7,10 @@ import { IConvManFile } from "../../forms/interfaces/IConvManFileInputState";
 import { DateTime } from "luxon";
 import { IConvManSelectListItem } from "../../forms/interfaces/ISelectListItem";
 import { PodService } from "../../../services/ords/customMethods/PodService";
-import { IUxPod } from "../../../services/models/data/interfaces/ords/IUxPod";
-import { IApiResponse } from "../../../services/models/data/interfaces/Local/IApiResponse";
+import { IUxPod } from "../../../interfaces/ords/IUxPod";
+import { IApiResponse } from "../../../interfaces/Local/IApiResponse";
 import { WorksheetService } from "../../../services/ords/customMethods/WorksheetService";
-import IWorksheet from "../../../services/models/data/interfaces/ords/IWorksheet";
+import IWorksheet from "../../../interfaces/ords/IWorksheet";
 import ConvManFileDropZone from "../../forms/ConvManDropZone";
 import ExcelService from "../../../services/ExcelService";
 
@@ -82,8 +82,6 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
       sheetToRead: selectedWorksheet!.value,
       batchName: batchName,
     });
-    console.log(csv);
-    console.log(selectedPod);
     props.onLoading(false);
   };
 
@@ -155,7 +153,6 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
                   label="Worksheet"
                   items={worksheetOpts}
                   onListboxChange={(newWorksheet: IConvManSelectListItem) => {
-                    console.log(newWorksheet);
                     setSelectedWorsheet(newWorksheet);
                   }}
                 ></ConvManSelectList>

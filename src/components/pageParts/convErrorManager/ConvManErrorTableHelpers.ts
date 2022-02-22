@@ -1,8 +1,8 @@
 import _ from "lodash";
 import { CnvDataService } from "../../../services/ords/customMethods/CnvDataService";
-import { IConvManCol } from "../../../services/models/data/interfaces/IConvManCol";
-import { IValidationError } from "../../../services/models/data/interfaces/ORDS/module/api/IValidationError";
-import { ICnvValErrorAttr } from "../../../services/models/data/interfaces/ords/ICnvValErrorAttr";
+import { IConvManCol } from "../../../interfaces/IConvManCol";
+import { IValidationError } from "../../../services/models/entities/api/IValidationError";
+import { ICnvValErrorAttr } from "../../../interfaces/ords/ICnvValErrorAttr";
 import { IConvManErrorTableDef } from "./interfaces/ICnvErrorTable";
 import { IConvManRowsCols } from "./interfaces/IConvManRowsCols";
 
