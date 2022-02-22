@@ -1,19 +1,20 @@
 import { DateTime } from "luxon";
 import { ServerConfig } from "../../ServerConfig";
-import { OracleRestServiceBase } from "../data/base/OracleRestServiceBase";
 import { GetResponse } from "../models/data/implementation/GetResponse";
 import { PutPostDeleteRespose } from "../models/data/implementation/PutPostDeleteRespose";
-import { IUxBatchReqModel } from "../models/data/interfaces/ORDS/autoRest/IUxBatchReqModel";
-import { IUxBatchRequest } from "../models/data/interfaces/ORDS/entities/IUxBatchRequest";
-import { IBatchWithPodName } from "../models/data/interfaces/ORDS/module/api/IBatchWithPodName";
+import { IUxBatchReqModel } from "../models/data/interfaces/ords/autoRest/IUxBatchReqModel";
+import { IUxBatchRequest } from "../models/data/interfaces/ords/entities/IUxBatchRequest";
+import { IUxPod } from "../models/data/interfaces/ords/entities/IUxPod";
+import { IBatchWithPodName } from "../models/data/interfaces/ords/module/api/IBatchWithPodName";
 import { IGetResp } from "../models/data/interfaces/responses/IGetResp";
 import { IPutPostDeleteResp } from "../models/data/interfaces/responses/IPutPostDeleteResp";
+import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
 
 export class BatchRequestSvc extends OracleRestServiceBase {
   constructor() {
     super(ServerConfig.ords.entities.batchRequests);
   }
-  createBatchRequest = async ({
+  create = async ({
     pod_url,
     cnv_batch,
     created_by,
@@ -41,7 +42,7 @@ export class BatchRequestSvc extends OracleRestServiceBase {
     return response;
   };
 
-  getBatches = async (batchName: string): Promise<IGetResp<IBatchWithPodName>> => {
+  getAll = async (): Promise<IGetResp<IBatchWithPodName>> => {
     const response = new GetResponse<IBatchWithPodName>();
     try {
       const axiosResp = await this.runGet<IBatchWithPodName>({
@@ -55,3 +56,5 @@ export class BatchRequestSvc extends OracleRestServiceBase {
     return response;
   };
 }
+
+

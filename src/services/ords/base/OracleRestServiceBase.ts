@@ -60,7 +60,7 @@ export abstract class OracleRestServiceBase {
 
       if (moreLink && moreLink.href) {
         const existingItems = initialResponse.data.items;
-        initialResponse = await this.runGetManyAbsUrl<T>(moreLink.href);
+        initialResponse = await this.runGetAbsUrl<T>(moreLink.href);
         initialResponse.data.items = [...existingItems, ...initialResponse.data.items];
       }
     }

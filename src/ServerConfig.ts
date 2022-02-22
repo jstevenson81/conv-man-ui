@@ -16,6 +16,7 @@ export const ServerConfig = {
         worksheets: "worksheets",
         batches: "batches",
         podsByEmail: "pods/{{email}}",
+        pods: "pods"
       },
       posts: {
         batchload: "batchload",
