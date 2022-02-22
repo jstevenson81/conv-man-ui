@@ -1,6 +1,6 @@
-import { IApiResponse } from "../../../../services/models/data/interfaces/Local/IApiResponse";
-import { IValidationError } from "../../../../services/models/data/interfaces/ORDS/module/api/IValidationError";
-import { ICnvValErrorAttr } from "../../../../services/models/data/interfaces/ords/ICnvValErrorAttr";
+import { IApiResponse } from "../../../../interfaces/Local/IApiResponse";
+import { IValidationError } from "../../../../services/models/entities/api/IValidationError";
+import { ICnvValErrorAttr } from "../../../../interfaces/ords/ICnvValErrorAttr";
 
 
 export type IConvManRowsCols = {

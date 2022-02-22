@@ -1,5 +1,5 @@
-import { IValidationErrorAttr } from "../services/models/data/interfaces/ORDS/module/api/IValidationErrorAttr";
-import { IGetResp } from "../services/models/data/interfaces/responses/IGetResp";
+import { IValidationErrorAttr } from "../services/models/entities/api/IValidationErrorAttr";
+import { IGetResp } from "../interfaces/responses/IGetResp";
 import ErrorMgmtSvc from "../services/ords/ErrorMgmtSvc";
 
 describe("GET tests", () => {
