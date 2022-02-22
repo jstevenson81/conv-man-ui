@@ -1,7 +1,7 @@
 import { IConvManError } from "../../errors/IOracleApiError";
 import { IOracleAutoRestItem } from "../interfaces/ords/autoRest/base/IOracleAutoRestItem";
 import { IOracleAutoRestResponse } from "../interfaces/ords/autoRest/base/IOracleAutoRestResponse";
-import { ILink } from "../interfaces/ords/base/IOracleLink";
+import { IOracleLink } from "../interfaces/ords/base/IOracleLink";
 import { IPutPostDeleteResp } from "../interfaces/responses/IPutPostDeleteResp";
 
 
@@ -10,7 +10,7 @@ export class PutPostDeleteRespose<T extends IOracleAutoRestItem> implements IPut
   error: IConvManError;
 
   constructor() {
-    this.data = { hasMore: false, count: 0, item: null, limit: 0, links: new Array<ILink>(), offset: 0 };
+    this.data = { hasMore: false, count: 0, item: null, limit: 0, links: new Array<IOracleLink>(), offset: 0 };
     this.error = {
       message: "",
       name: "",

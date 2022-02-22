@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Column, useTable } from "react-table";
-import { IValidationError } from "../../../services/models/data/interfaces/ords/module/api/IValidationError";
+import { IValidationError } from "../../../services/models/data/interfaces/ORDS/module/api/IValidationError";
 import { IConvManErrorTableDef } from "./interfaces/ICnvErrorTable";
 
 const ConvManErrTable: React.FC<IConvManErrorTableDef> = (props: IConvManErrorTableDef) => {

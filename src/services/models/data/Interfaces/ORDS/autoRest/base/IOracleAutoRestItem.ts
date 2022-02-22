@@ -1,6 +1,5 @@
-import { ILink } from "../../base/IOracleLink";
-
+import { IOracleLink } from "../../base/IOracleLink";
 
 export interface IOracleAutoRestItem {
-  links: ILink[] | null;
+  links: IOracleLink[] | null;
 }

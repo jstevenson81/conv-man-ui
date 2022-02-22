@@ -11,7 +11,7 @@ export class WorksheetService extends OracleRestServiceBase {
   async getAll(): Promise<ApiResponse<IWorksheet>> {
     let response = new ApiResponse<IWorksheet>();
     try {
-      const axiosResponse = await this.runGetManyWithAction<IWorksheet>(
+      const axiosResponse = await this.runGetManyCustom<IWorksheet>(
         ServerConfig.ords.customActions.gets.worksheets
       );
       response.oracleResponse = axiosResponse.data;
