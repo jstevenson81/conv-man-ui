@@ -4,10 +4,15 @@ import { ErrorCodes, ErrorTypes, IConvManError } from "../../models/errors/IOrac
 import { HttpHeaderContentType } from "./HttpHeaderContentType";
 import { ServerConfig } from "../../../ServerConfig";
 import { IConvManSelectListItem } from "../../../components/forms/interfaces/ISelectListItem";
-import { IOracleModuleItem } from "../../models/data/interfaces/ords/module/base/IOracleModuleItem";
 import { IOracleAutoRestItem } from "../../models/data/interfaces/ords/autoRest/base/IOracleAutoRestItem";
-import { IOracleModuleResponse } from "../../models/data/interfaces/ords/module/base/IOracleModuleResponse";
 import { IOracleAutoRestResponse } from "../../models/data/interfaces/ords/autoRest/base/IOracleAutoRestResponse";
+import { IOracleModuleItem } from "../../models/data/interfaces/ORDS/module/base/IOracleModuleItem";
+import { IOracleModuleResponse } from "../../models/data/interfaces/ORDS/module/base/IOracleModuleResponse";
+
+export interface IGetApiConfig {
+  action: string | null;
+  pathOrEntity: string | null;
+}
 
 export interface ICreateApiConfig<T> {
   body: T;
@@ -65,6 +70,18 @@ export abstract class OracleRestServiceBase {
   //#endregion
 
   //#region convert to select list items
+
+  //#endregion
+
+  //#region helper methods
+
+  protected getAction(config: IGetApiConfig): string {
+    const path = config.pathOrEntity === null ? this.entity : config.pathOrEntity;
+    const action = config.action === null ? "" : `/${config.action}`;
+
+    return path + action;
+  }
+
   public convertToSelectList<T extends IOracleModuleItem>({
     data,
     props,
@@ -88,7 +105,7 @@ export abstract class OracleRestServiceBase {
   }
   //#endregion
 
-  //#region generic http methods
+  //#region PUT, POST, DELETE
 
   /**
    *
@@ -124,44 +141,32 @@ export abstract class OracleRestServiceBase {
     });
   };
 
+  //#endregion
+
+  //#region GET
+
+  /**
+   * This method GETs from an absolute URL
+   * @param url the url we are trying to get from.  Can be a path from the base url
+   * @returns {AxiosResponse{IOracleModuleResponse{}}} - an axios reponse that contains the oracle module (/api) response
+   */
+  protected async runGetAbsUrl<TModuleItem>(url: string): Promise<AxiosResponse<IOracleModuleResponse<TModuleItem>>> {
+    return await axios.get<IOracleModuleResponse<TModuleItem>>(url, {
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   /**
    * This method runs a GET
    * @param path if this is passed, we override the base entity path
    * @returns the type passed in the call (generic)
    */
-
-  protected async runGetMany<T extends IOracleModuleItem>(): Promise<AxiosResponse<IOracleModuleResponse<T>>> {
-    return await axios.get<IOracleModuleResponse<T>>(this.entity, {
-      headers: { "Content-Type": "application/json" },
-    });
+  protected async runGet<TModuleItem extends IOracleModuleItem>(
+    config: IGetApiConfig
+  ): Promise<AxiosResponse<IOracleModuleResponse<TModuleItem>>> {
+    const action = this.getAction(config);
+    return await this.runGetAbsUrl(action);
   }
 
-  protected async runGetManyWithAction<T>(customAction: string): Promise<AxiosResponse<IOracleModuleResponse<T>>> {
-    const action: string = `${this.entity}${customAction}`;
-    return await axios.get<IOracleModuleResponse<T>>(action, {
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  protected async runGetManyWithEntityAction<T>(
-    customAction: string
-  ): Promise<AxiosResponse<IOracleModuleResponse<T>>> {
-    const action: string = `${this.entity}${customAction}`;
-    return await axios.get<IOracleModuleResponse<T>>(action, {
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  protected async runGetManyAbsUrl<T>(url: string): Promise<AxiosResponse<IOracleModuleResponse<T>>> {
-    return await axios.get<IOracleModuleResponse<T>>(url, {
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  protected async runGetOne<T>(path: string): Promise<AxiosResponse<IOracleModuleResponse<T>>> {
-    return await axios.get<IOracleModuleResponse<T>>(this.entity + path, {
-      headers: { "Content-Type": "application/json" },
-    });
-  }
   //#endregion
 }

@@ -1,4 +1,4 @@
-import { ILink } from "./IOracleLink";
+import { IOracleLink } from "./IOracleLink";
 
 
 export interface IOracleMoreLinks {
@@ -6,5 +6,5 @@ export interface IOracleMoreLinks {
   limit: number;
   offset: number;
   count: number;
-  links: ILink[] | null;
+  links: IOracleLink[] | null;
 }

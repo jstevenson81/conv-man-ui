@@ -3,9 +3,9 @@ import { ServerConfig } from "../../ServerConfig";
 import { OracleRestServiceBase } from "../data/base/OracleRestServiceBase";
 import { GetResponse } from "../models/data/implementation/GetResponse";
 import { PutPostDeleteRespose } from "../models/data/implementation/PutPostDeleteRespose";
-import { IUxBatchReqModel } from "../models/data/interfaces/ords/autoRest/IUxBatchReqModel";
-import { IUxBatchRequest } from "../models/data/interfaces/ords/base/entities/IUxBatchRequest";
-import { IBatchWithPodName } from "../models/data/interfaces/ords/module/api/IBatchWithPodName";
+import { IUxBatchReqModel } from "../models/data/interfaces/ORDS/autoRest/IUxBatchReqModel";
+import { IUxBatchRequest } from "../models/data/interfaces/ORDS/entities/IUxBatchRequest";
+import { IBatchWithPodName } from "../models/data/interfaces/ORDS/module/api/IBatchWithPodName";
 import { IGetResp } from "../models/data/interfaces/responses/IGetResp";
 import { IPutPostDeleteResp } from "../models/data/interfaces/responses/IPutPostDeleteResp";
 
@@ -44,7 +44,11 @@ export class BatchRequestSvc extends OracleRestServiceBase {
   getBatches = async (batchName: string): Promise<IGetResp<IBatchWithPodName>> => {
     const response = new GetResponse<IBatchWithPodName>();
     try {
-      const axiosResp = await this.runGetManyWithAction(ServerConfig.ords.customActions.gets.batches)
+      const axiosResp = await this.runGet<IBatchWithPodName>({
+        action: ServerConfig.ords.customActions.gets.batches,
+        pathOrEntity: ServerConfig.ords.entities.customMethods,
+      });
+      response.data = axiosResp.data;
     } catch (e) {
       response.error = this.handleError({ e, code: "GET", reqType: "ORDS_API_EXCEPTION" });
     }

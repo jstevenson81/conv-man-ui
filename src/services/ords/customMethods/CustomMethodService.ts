@@ -12,7 +12,7 @@ export class CustomMethodService extends OracleRestServiceBase {
   async getBatches(): Promise<IApiResponse<IUxBatchRequest>> {
     let response = new ApiResponse<IUxBatchRequest>();
     try {
-      let axiosResp = await this.runGetManyWithAction<IUxBatchRequest>(
+      let axiosResp = await this.runGetManyCustom<IUxBatchRequest>(
         ServerConfig.ords.customActions.gets.batches
       );
       axiosResp = await this.getMore(axiosResp);

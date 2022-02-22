@@ -3,7 +3,7 @@ import { CnvDataService } from "../services/ords/customMethods/CnvDataService";
 import { CnvSpreadsheetService } from "../services/ords/autoRest/SpreadsheetSvc";
 import { UxBatchService } from "../services/ords/BatchRequestSvc";
 import { IApiResponse } from "../services/models/data/interfaces/Local/IApiResponse";
-import { IValidationError } from "../services/models/data/interfaces/ords/module/api/IValidationError";
+import { IValidationError } from "../services/models/data/interfaces/ORDS/module/api/IValidationError";
 import { ICreateBatchRequest } from "../services/models/data/interfaces/ords/ICreateBatchRequest";
 
 beforeEach((): void => {
