@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CustomMethodService } from "../../../services/ords/customMethods/CustomMethodService";
+import { BatchRequestSvc } from "../../../services/BatchRequestSvc";
 import ConvManLoader from "../../common/loader/ConvManLoader";
 import ConvManSelectList from "../../forms/ConvManSelectList";
 import { IConvManSelectListItem } from "../../forms/interfaces/ISelectListItem";
@@ -20,11 +20,11 @@ const Conversions: React.FC<IConvManDashProps> = () => {
   const [selectedBatch, setSelectedBatch] = useState<IConvManSelectListItem>({ label: "", value: "" });
 
   useEffect(() => {
-    const custMethodsSvc = new CustomMethodService();
-    custMethodsSvc.getBatches().then((batches) => {
-      const mappedBatches = custMethodsSvc.convertToSelectList({
-        data: batches.oracleResponse!.items,
-        props: { option: "batch_name", value: "batch_name" },
+    const batchReqSvc = new BatchRequestSvc();
+    batchReqSvc.getAllBatches().then((batches) => {
+      const mappedBatches = batchReqSvc.convertToSelectList({
+        data: batches.entities,
+        props: { option: "cnv_batch", value: "cnv_batch" },
       });
       setBatchSelectItems(mappedBatches);
     });

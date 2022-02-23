@@ -1,7 +1,5 @@
 import { DateTime } from "luxon";
-import { IBatchWithPodName } from "../services/models/entities/api/IBatchWithPodName";
-import { IGetResp } from "../interfaces/responses/IGetResp";
-import { BatchRequestSvc } from "../services/ords/BatchRequestSvc";
+import { BatchRequestSvc } from "../../services/BatchRequestSvc";
 
 describe("POST, PUT, DELETE Tests", () => {
   let svc: BatchRequestSvc;
@@ -27,9 +25,8 @@ describe("POST, PUT, DELETE Tests", () => {
         created_on: null,
       })
       .then((resp) => {
-        console.log(resp);
         expect(resp).not.toBeUndefined();
-        expect(resp.data.item!.ux_batch_request_id).toBeGreaterThan(1);
+        expect(resp.entities[0].ux_batch_request_id).toBeGreaterThan(1);
         done();
       });
   });
@@ -48,10 +45,9 @@ describe("GET tests", () => {
   });
 
   it("service should get all batches", (done: jest.DoneCallback) => {
-    svc.getAll().then((response: IGetResp<IBatchWithPodName>) => {
+    svc.getAllBatches().then((response) => {
       expect(response).not.toBeUndefined();
-      expect(response.data.links!.length).toBeGreaterThan(0);
-      expect(response.data.links![0].rel).toEqual("self");
+      expect(response.entities.length).toBeGreaterThan(0);
       done();
     });
   });

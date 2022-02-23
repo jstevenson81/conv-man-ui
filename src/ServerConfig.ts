@@ -12,7 +12,7 @@ export const ServerConfig = {
       gets: {
         attributes: "attributes",
         errorsByBatch: "errors/{{batch}}",
-        spreadsheetsByBatch: "spreadsheets/{{batch}}",
+        spDataByBatch: "spreadsheets/{{batch}}",
         worksheets: "worksheets",
         batches: "batches",
         podsByEmail: "pods/{{email}}",

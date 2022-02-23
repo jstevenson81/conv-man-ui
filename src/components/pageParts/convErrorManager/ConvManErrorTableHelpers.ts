@@ -1,22 +1,25 @@
 import _ from "lodash";
-import { CnvDataService } from "../../../services/ords/customMethods/CnvDataService";
 import { IConvManCol } from "../../../interfaces/IConvManCol";
-import { IValidationError } from "../../../services/models/entities/api/IValidationError";
-import { ICnvValErrorAttr } from "../../../interfaces/ords/ICnvValErrorAttr";
+import { IValidationError } from "../../../models/entities/api/IValidationError";
+import { IValidationErrorAttr } from "../../../models/entities/api/IValidationErrorAttr";
+import ErrorMgmtSvc from "../../../services/ErrorMgmtSvc";
 import { IConvManErrorTableDef } from "./interfaces/ICnvErrorTable";
 import { IConvManRowsCols } from "./interfaces/IConvManRowsCols";
 
 const getData = async (batchName: string): Promise<IConvManRowsCols> => {
-  const svc = new CnvDataService();
+  const svc = new ErrorMgmtSvc();
   const data = await svc.getErrorsByBatch(batchName);
-  const attrs = await svc.getAttributes();
+  const attrs = await svc.getErrorAttributes();
   return { rows: data, columns: attrs };
 };
 
-const getTableCols = (attrs: Array<ICnvValErrorAttr>, row: IValidationError): Array<IConvManCol<IValidationError>> => {
+const getTableCols = (
+  attrs: Array<IValidationErrorAttr>,
+  row: IValidationError
+): Array<IConvManCol<IValidationError>> => {
   const cols: Array<IConvManCol<IValidationError>> = new Array<IConvManCol<IValidationError>>();
   _.keysIn(row).forEach((key: string) => {
-    const header = _.find(attrs, (attr: ICnvValErrorAttr) => {
+    const header = _.find(attrs, (attr: IValidationErrorAttr) => {
       return (
         attr.cnv_data_column.toUpperCase() === key.toUpperCase() &&
         row.obj_key.toUpperCase() === attr.obj_key.toUpperCase()
@@ -31,14 +34,14 @@ const getTableCols = (attrs: Array<ICnvValErrorAttr>, row: IValidationError): Ar
 
 const buildTables = async (batchName: string): Promise<Array<IConvManErrorTableDef>> => {
   const { rows, columns } = await getData(batchName);
-  if (_.isEmpty(rows.oracleResponse!.items)) return [];
-  if (_.isEmpty(columns.oracleResponse!.items))
+  if (_.isEmpty(rows.entities)) return [];
+  if (_.isEmpty(columns.entities))
     throw new Error("The database services returned no attributes.  Errors cannot be built without attributes.");
 
   let table: IConvManErrorTableDef = { data: [], columns: [], sheetName: "", objectKey: "", key: 0 };
   const tables: Array<IConvManErrorTableDef> = [];
 
-  const orderedRows = _.orderBy(rows.oracleResponse!.items, ["spreadsheet_name"]);
+  const orderedRows = _.orderBy(rows.entities, ["spreadsheet_name"]);
   let spName: string = "";
   orderedRows.forEach((row) => {
     if (spName === row.spreadsheet_name) {
@@ -47,7 +50,7 @@ const buildTables = async (batchName: string): Promise<Array<IConvManErrorTableD
       if (spName !== "") tables.push(table);
       table = {
         data: [row],
-        columns: getTableCols(columns.oracleResponse!.items, row),
+        columns: getTableCols(columns.entities, row),
         sheetName: row.spreadsheet_name,
         objectKey: row.obj_key,
         key: row.stg_key_id,

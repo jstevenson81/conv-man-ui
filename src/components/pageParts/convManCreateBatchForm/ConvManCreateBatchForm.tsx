@@ -1,18 +1,18 @@
 import { Transition, Dialog } from "@headlessui/react";
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import { XIcon } from "@heroicons/react/solid";
+import { DateTime } from "luxon";
+import { useState, useEffect, useCallback, Fragment } from "react";
+import { IUniqueWorksheet } from "../../../models/entities/api/IUniqueWorksheet";
+import { IUxPod } from "../../../models/entities/base/IUxPod";
+import { IApiResponse } from "../../../models/responses/IApiResponse";
+import ExcelSvc from "../../../services/ExcelService";
+import PodSvc from "../../../services/PodSvc";
+import { SpreadsheetsSvc } from "../../../services/SpreadsheetSvc";
+import ConvManFileDropZone from "../../forms/ConvManDropZone";
 import ConvManInput from "../../forms/ConvManInput";
 import ConvManSelectList from "../../forms/ConvManSelectList";
-import { XIcon } from "@heroicons/react/solid";
 import { IConvManFile } from "../../forms/interfaces/IConvManFileInputState";
-import { DateTime } from "luxon";
 import { IConvManSelectListItem } from "../../forms/interfaces/ISelectListItem";
-import { PodService } from "../../../services/ords/customMethods/PodService";
-import { IUxPod } from "../../../interfaces/ords/IUxPod";
-import { IApiResponse } from "../../../interfaces/Local/IApiResponse";
-import { WorksheetService } from "../../../services/ords/customMethods/WorksheetService";
-import IWorksheet from "../../../interfaces/ords/IWorksheet";
-import ConvManFileDropZone from "../../forms/ConvManDropZone";
-import ExcelService from "../../../services/ExcelService";
 
 type ICreateBatchProps = {
   isOpen: boolean;
@@ -34,20 +34,20 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
 
   //#region services
 
-  const excelSvc = new ExcelService();
+  const excelSvc = new ExcelSvc();
 
   //#endregion
 
   //#region data gathering
 
   useEffect(() => {
-    const worksheetSvc = new WorksheetService();
-    const podSvc = new PodService();
+    const spSvc = new SpreadsheetsSvc();
+    const podSvc = new PodSvc();
 
-    worksheetSvc.getAll().then((resp: IApiResponse<IWorksheet>) => {
-      if (resp && resp.oracleResponse) {
-        const options = worksheetSvc.convertToSelectList({
-          data: resp.oracleResponse.items,
+    spSvc.getWorksheets().then((resp: IApiResponse<IUniqueWorksheet>) => {
+      if (resp && resp.entities) {
+        const options = spSvc.convertToSelectList({
+          data: resp.entities,
           props: {
             value: "spreadsheet_name",
             option: "spreadsheet_name",
@@ -59,9 +59,9 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
 
     podSvc.getAllPods().then((resp: IApiResponse<IUxPod>) => {
       let options: Array<IConvManSelectListItem> = [];
-      if (resp && resp.oracleResponse) {
+      if (resp && resp.entities) {
         options = podSvc.convertToSelectList({
-          data: resp.oracleResponse.items,
+          data: resp.entities,
           props: { value: "ux_pod_id", option: "pod_name" },
         });
       }
