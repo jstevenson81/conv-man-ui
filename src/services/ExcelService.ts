@@ -9,7 +9,7 @@ export default class ExcelSvc {
   sheetToCsv(config: { workbook: IConvManFile; sheetToRead: string; batchName: string }): Array<ICnvSpreadsheet> {
     const wb = XLSX.read(config.workbook.data);
     const csv = XLSX.utils.sheet_to_csv(wb.Sheets[config.sheetToRead]);
-    const arr = new Array<ICnvSp>();
+    const arr = new Array<ICnvSpreadsheet>();
 
     Papa.parse(csv, {
       complete: (csvData) => {
@@ -26,7 +26,7 @@ export default class ExcelSvc {
     return arr;
   }
 
-  createSpreadsheetRow(row: any, batchName: string): ICnvSp {
+  createSpreadsheetRow(row: any, batchName: string): ICnvSpreadsheet {
     const alpha = Array.from(Array(26)).map((e, i) => i + 65);
     const alphabet = alpha.map((x) => {
       return String.fromCharCode(x);
