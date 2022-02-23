@@ -11,7 +11,7 @@ export class BatchRequestSvc extends OracleRestServiceBase {
     super(ServerConfig.ords.entities.batchRequests);
   }
   create = async ({ pod_url, cnv_batch, created_by }: IUxBatchRequest): Promise<IApiResponse<IUxBatchRequest>> => {
-    const response: IApiResponse<IUxBatchRequest> = { entities: [], error: { message: "", name: "" } };
+    let response: IApiResponse<IUxBatchRequest> = this.initApiResponse<IUxBatchRequest>();
     try {
       const nowAsJson = DateTime.now().toJSON().toString();
       const body: IUxBatchRequest = {
@@ -29,23 +29,22 @@ export class BatchRequestSvc extends OracleRestServiceBase {
       });
       response.entities[0] = axiosResponse.data;
     } catch (e) {
-      response.error = this.handleError({ e, code: "GET", reqType: "ORDS_API_EXCEPTION" });
+      response = this.handleError<IUxBatchRequest>({ e, code: "GET", reqType: "ORDS_API_EXCEPTION" });
     }
     return response;
   };
 
-  getAll = async (): Promise<IApiResponse<IBatchWithPodName>> => {
-    const response: IApiResponse<IBatchWithPodName> = { entities: [], error: { message: "", name: "" } };
+  getAllBatches = async (): Promise<IApiResponse<IBatchWithPodName>> => {
+    let response: IApiResponse<IBatchWithPodName>;
 
     try {
       const axiosResp = await this.runGet<IBatchWithPodName>({
         action: ServerConfig.ords.customActions.gets.batches,
         pathOrEntity: ServerConfig.ords.entities.customMethods,
       });
-      const finalResponse = await this.getMore<IBatchWithPodName>(axiosResp);
-      response.entities = finalResponse.data.items;
+      response = await this.constructEntities<IBatchWithPodName>(axiosResp);
     } catch (e) {
-      response.error = this.handleError({ e, code: "GET", reqType: "ORDS_API_EXCEPTION" });
+      response = this.handleError({ e, code: "GET", reqType: "ORDS_API_EXCEPTION" });
     }
     return response;
   };

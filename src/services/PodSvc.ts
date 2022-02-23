@@ -1,27 +1,23 @@
-import { ServerConfig } from "../../ServerConfig";
-import { GetResponse } from "../models/data/implementation/GetResponse";
-import { IGetPod } from "../models/entities/api/IGetPod";
-import { IGetResp } from "../../interfaces/responses/IGetResp";
+import { IUxPod } from "../models/entities/base/IUxPod";
+import { IApiResponse } from "../models/responses/IApiResponse";
+import { ServerConfig } from "../ServerConfig";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
-
 
 export default class PodSvc extends OracleRestServiceBase {
   constructor() {
     super(ServerConfig.ords.entities.pod);
   }
-  getAll = async (): Promise<IGetResp<IGetPod>> => {
-    const response = new GetResponse<IGetPod>();
+  getAllPods = async (): Promise<IApiResponse<IUxPod>> => {
+    let response: IApiResponse<IUxPod>;
     try {
-      const axiosResp = await this.runGet<IGetPod>({
+      const axiosResp = await this.runGet<IUxPod>({
         action: ServerConfig.ords.customActions.gets.pods,
         pathOrEntity: ServerConfig.ords.entities.customMethods,
       });
-      response.data = axiosResp.data;
+      response = await this.constructEntities(axiosResp);
     } catch (e) {
-      response.error = this.handleError({ e, code: "GET", reqType: "ORDS_API_EXCEPTION" });
+      response = this.handleError({ e, code: "GET", reqType: "ORDS_API_EXCEPTION" });
     }
     return response;
   };
 }
-
-

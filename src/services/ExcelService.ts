@@ -1,11 +1,12 @@
-import { IConvManFile } from "../components/forms/interfaces/IConvManFileInputState";
-import * as XLSX from "xlsx";
-import Papa from "papaparse";
 import _ from "lodash";
-import { CnvSpreadsheet } from "./models/entities/base/CnvSpreadsheet";
+import Papa from "papaparse";
+import { IConvManFile } from "../components/forms/interfaces/IConvManFileInputState";
+import { CnvSpreadsheet } from "../models/entities/base/CnvSpreadsheet";
+import * as XLSX from "xlsx";
+import { ICnvSpreadsheet } from "../models/entities/base/ICnvSpreadsheet";
 
-export default class ExcelService {
-  sheetToCsv(config: { workbook: IConvManFile; sheetToRead: string; batchName: string }): Array<ICnvSp> {
+export default class ExcelSvc {
+  sheetToCsv(config: { workbook: IConvManFile; sheetToRead: string; batchName: string }): Array<ICnvSpreadsheet> {
     const wb = XLSX.read(config.workbook.data);
     const csv = XLSX.utils.sheet_to_csv(wb.Sheets[config.sheetToRead]);
     const arr = new Array<ICnvSp>();

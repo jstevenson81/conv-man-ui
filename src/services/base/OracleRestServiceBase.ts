@@ -3,6 +3,7 @@ import _ from "lodash";
 import { IConvManSelectListItem } from "../../components/forms/interfaces/ISelectListItem";
 import { IEntity } from "../../models/entities/base/IEntity";
 import { ErrorCodes, ErrorTypes, IConvManError } from "../../models/errors/IConvManError";
+import { IApiResponse } from "../../models/responses/IApiResponse";
 import { IOracleAutoRestResponse } from "../../models/responses/IOracleAutoRestResponse";
 import { IOracleModuleResponse } from "../../models/responses/IOracleModuleResponse";
 import { ServerConfig } from "../../ServerConfig";
@@ -18,11 +19,20 @@ export abstract class OracleRestServiceBase {
     axios.defaults.baseURL = ServerConfig.ords.url;
   }
 
-  protected handleError({ e, code, reqType }: { e: any; code: ErrorCodes; reqType: ErrorTypes }): IConvManError {
+  protected handleError<TEntity>({
+    e,
+    code,
+    reqType,
+  }: {
+    e: any;
+    code: ErrorCodes;
+    reqType: ErrorTypes;
+  }): IApiResponse<TEntity> {
+    const response = this.initApiResponse<TEntity>();
     const axiosError = e as AxiosError;
     const errResp = axiosError && axiosError.response ? axiosError.response : null;
 
-    return {
+    response.error = {
       title: `ORDS request error${errResp ? ": " + errResp.data.title : ""}`,
       message: errResp ? errResp.data.message : e.message,
       stack: axiosError ? axiosError.stack : e.stack,
@@ -33,11 +43,34 @@ export abstract class OracleRestServiceBase {
         ? { config: axiosError.config, request: axiosError.request, response: axiosError.response }
         : null,
     };
+    return response;
   }
 
   //#endregion
 
   //#region get more results
+
+  //#endregion
+
+  //#region convert to select list items
+
+  //#endregion
+
+  //#region helper methods
+
+  protected getAction(config: IGetApiConfig): string {
+    const path = config.pathOrEntity === null ? this.entity : config.pathOrEntity;
+    const action = config.action === null ? "" : `/${config.action}`;
+
+    return path + action;
+  }
+
+  protected async constructEntities<TEntity>(initAxiosResp: AxiosResponse): Promise<IApiResponse<TEntity>> {
+    const final = await this.getMore<TEntity>(initAxiosResp);
+    const apiResponse = this.initApiResponse<TEntity>();
+    apiResponse.entities = final.data.items;
+    return apiResponse;
+  }
 
   protected async getMore<TEntity>(
     initialResponse: AxiosResponse<IOracleModuleResponse<TEntity>>
@@ -56,19 +89,8 @@ export abstract class OracleRestServiceBase {
     return initialResponse;
   }
 
-  //#endregion
-
-  //#region convert to select list items
-
-  //#endregion
-
-  //#region helper methods
-
-  protected getAction(config: IGetApiConfig): string {
-    const path = config.pathOrEntity === null ? this.entity : config.pathOrEntity;
-    const action = config.action === null ? "" : `/${config.action}`;
-
-    return path + action;
+  protected initApiResponse<TEntity>(): IApiResponse<TEntity> {
+    return { entities: [], error: { message: "", name: "" } };
   }
 
   public convertToSelectList<TEntity>({

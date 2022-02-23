@@ -1,6 +1,6 @@
-import React, { useMemo } from "react";
-import { Column, useTable } from "react-table";
-import { IValidationError } from "../../../services/models/entities/api/IValidationError";
+import React, { ChangeEvent, useMemo } from "react";
+import { Column, Row, useTable } from "react-table";
+import { IValidationError } from "../../../models/entities/api/IValidationError";
 import { IConvManErrorTableDef } from "./interfaces/ICnvErrorTable";
 
 const ConvManErrTable: React.FC<IConvManErrorTableDef> = (props: IConvManErrorTableDef) => {
@@ -20,9 +20,56 @@ const ConvManErrTable: React.FC<IConvManErrorTableDef> = (props: IConvManErrorTa
 
   //#endregion
 
+  //#region table cell
+  // Create an editable cell renderer
+  const EditableCell = ({
+    value: initialValue,
+    row: { index },
+    column: { id },
+    updateMyData, // This is a custom function that we supplied to our table instance
+  }: {
+    value: any;
+    row: Row;
+    column: Column;
+    updateMyData: any;
+  }) => {
+    // We need to keep and update the state of the cell normally
+    const [value, setValue] = React.useState(initialValue);
+
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setValue(e.currentTarget.value);
+    };
+
+    // We'll only update the external data when the input is blurred
+    const onBlur = () => {
+      updateMyData(index, id, value);
+    };
+
+    // If the initialValue is changed external, sync it up with our state
+    React.useEffect(() => {
+      setValue(initialValue);
+    }, [initialValue]);
+
+    return id === "stg_error_msg" ? (
+      <span>{value.replace(";", "")}</span>
+    ) : (
+      <input
+        value={value}
+        onChange={onChange}
+        onBlur={onBlur}
+        className="w-full border-slate-300 border rounded-md p-2"
+      />
+    );
+  };
+
+  const defaultColumn: Partial<Column<IValidationError>> = {
+    Cell: EditableCell,
+  };
+  //#endregion
+
   //#region table instance
 
-  const tableInstance = useTable({ columns, data });
+  const tableInstance = useTable({ columns, data, defaultColumn });
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
 
   //#endregion
