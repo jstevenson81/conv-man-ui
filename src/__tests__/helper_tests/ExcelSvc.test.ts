@@ -16,8 +16,7 @@ describe("create xlsx tests", () => {
   it("service should create workbook from tables", (done: jest.DoneCallback) => {
     buildTables("testerrors1").then((tables) => {
       const buffer = svc.jsonToBook(tables);
-      console.info(buffer);
-      expect(true).toBeTruthy();
+      expect(buffer.length).toBeGreaterThan(0);
       done();
     });
   }, 60000);

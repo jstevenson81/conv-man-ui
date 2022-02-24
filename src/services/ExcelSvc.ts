@@ -38,7 +38,7 @@ export default class ExcelSvc {
             return col.accessor === key;
           });
           if (colHeader) {
-            mappedRow = { ...mappedRow, [colHeader.headerText]: row[key] };
+            mappedRow = { ...mappedRow, [colHeader.hdlColumnText]: row[key] };
           }
         });
         data.push(mappedRow);
@@ -46,7 +46,9 @@ export default class ExcelSvc {
       const sheet = XLSX.utils.json_to_sheet(data);
       XLSX.utils.book_append_sheet(workbook, sheet, table.sheetName);
     });
-    return XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    XLSX.writeFile(workbook, "Users/jonathanstevenson/test.xlsx", { bookType: "xlsx", type: "array" });
+    return [];
+    //return XLSX.write(workbook, { bookType: "xlsx", type: "array" });
   }
 
   createSpreadsheetRow(row: any, batchName: string): ICnvSpreadsheet {
