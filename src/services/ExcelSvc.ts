@@ -27,7 +27,7 @@ export default class ExcelSvc {
     return arr;
   }
 
-  jsonToBook(tables: IConvManErrorTableDef[]): any {
+  jsonToBook(tables: IConvManErrorTableDef[]): XLSX.WorkBook {
     const workbook = XLSX.utils.book_new();
     tables.forEach((table) => {
       let data: Array<any> = [];
@@ -46,9 +46,7 @@ export default class ExcelSvc {
       const sheet = XLSX.utils.json_to_sheet(data);
       XLSX.utils.book_append_sheet(workbook, sheet, table.sheetName);
     });
-    XLSX.writeFile(workbook, "Users/jonathanstevenson/test.xlsx", { bookType: "xlsx", type: "array" });
-    return [];
-    //return XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    return workbook;
   }
 
   createSpreadsheetRow(row: any, batchName: string): ICnvSpreadsheet {

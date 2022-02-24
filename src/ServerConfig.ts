@@ -1,4 +1,7 @@
 export const ServerConfig = {
+  contentTypes: {
+    excel: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  },
   ords: {
     url: "https://etvwbwij8jdtzoz-hcmconversion1.adb.us-phoenix-1.oraclecloudapps.com/ords/admin/",
     entities: {

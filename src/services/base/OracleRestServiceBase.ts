@@ -1,8 +1,9 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import _ from "lodash";
+
 import { IConvManSelectListItem } from "../../components/forms/interfaces/ISelectListItem";
 import { IEntity } from "../../models/entities/base/IEntity";
-import { ErrorCodes, ErrorTypes, IConvManError } from "../../models/errors/IConvManError";
+import { ErrorCodes, ErrorTypes } from "../../models/errors/IConvManError";
 import { IApiResponse } from "../../models/responses/IApiResponse";
 import { IOracleAutoRestResponse } from "../../models/responses/IOracleAutoRestResponse";
 import { IOracleModuleResponse } from "../../models/responses/IOracleModuleResponse";

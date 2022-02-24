@@ -1,7 +1,5 @@
-import _ from "lodash";
 import { IValidationError } from "../models/entities/api/IValidationError";
 import { IValidationErrorAttr } from "../models/entities/api/IValidationErrorAttr";
-import { IUxBatchRequest } from "../models/entities/base/IUxBatchRequest";
 import { IApiResponse } from "../models/responses/IApiResponse";
 import { ServerConfig } from "../ServerConfig";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
