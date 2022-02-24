@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { ServerConfig } from "../../../ServerConfig";
 import { BatchRequestSvc } from "../../../services/BatchRequestSvc";
 import ConvManLoader from "../../common/loader/ConvManLoader";
 import ConvManSelectList from "../../forms/ConvManSelectList";
@@ -42,7 +43,7 @@ const Conversions: React.FC<IConvManDashProps> = () => {
     fetch(`templates/${tmpl.value}`, {
       method: "GET",
       headers: {
-        "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "Content-Type": ServerConfig.contentTypes.excel,
       },
     })
       .then((response) => response.blob())

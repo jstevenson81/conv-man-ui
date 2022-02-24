@@ -1,10 +1,12 @@
-import { Transition, Dialog } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import { DateTime } from "luxon";
-import { useState, useEffect, useCallback, Fragment } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
+
 import { IUniqueWorksheet } from "../../../models/entities/api/IUniqueWorksheet";
 import { IUxPod } from "../../../models/entities/base/IUxPod";
 import { IApiResponse } from "../../../models/responses/IApiResponse";
+import { ServerConfig } from "../../../ServerConfig";
 import ExcelSvc from "../../../services/ExcelSvc";
 import PodSvc from "../../../services/PodSvc";
 import { SpreadsheetsSvc } from "../../../services/SpreadsheetSvc";
@@ -23,7 +25,7 @@ type ICreateBatchProps = {
 const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatchProps) => {
   //#region state
   const [batchName, setBatchName] = useState("");
-  const [selectedPod, setSelectedPod] = useState<IConvManSelectListItem>();
+  const [, setSelectedPod] = useState<IConvManSelectListItem>();
   const [selectedSpreadsheet, setSelectedSpreadsheet] = useState<IConvManFile>();
   const [selectedWorksheet, setSelectedWorsheet] = useState<IConvManSelectListItem>();
 
@@ -82,6 +84,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
       sheetToRead: selectedWorksheet!.value,
       batchName: batchName,
     });
+    console.log(csv);
     props.onLoading(false);
   };
 
@@ -159,7 +162,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
 
                 <ConvManFileDropZone
                   label="Drop xlsx files here or click to browse"
-                  fileFilter="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                  fileFilter={ServerConfig.contentTypes.excel}
                   onFileChange={spreadsheetChange}
                 ></ConvManFileDropZone>
               </div>
