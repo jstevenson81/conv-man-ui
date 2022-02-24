@@ -10,6 +10,7 @@ const getData = async (batchName: string): Promise<IConvManRowsCols> => {
   const svc = new ErrorMgmtSvc();
   const data = await svc.getErrorsByBatch(batchName);
   const attrs = await svc.getErrorAttributes();
+  console.log(attrs);
   return { rows: data, columns: attrs };
 };
 
@@ -27,7 +28,13 @@ const getTableCols = (
     });
     if (header && header.display_name) {
       console.log({ header, key });
-      cols.push({ Header: header.display_name, accessor: key, id: key, headerText: header.display_name });
+      cols.push({
+        Header: header.display_name,
+        accessor: key,
+        id: key,
+        headerText: header.display_name,
+        hdlColumnText: header.hdl_column_name,
+      });
     }
   });
   return cols;
@@ -61,6 +68,7 @@ const buildTables = async (batchName: string): Promise<Array<IConvManErrorTableD
         Header: "Error Message",
         id: "stg_error_msg",
         headerText: "Error Message",
+        hdlColumnText: "Error Message",
       });
     }
     spName = row.spreadsheet_name;
