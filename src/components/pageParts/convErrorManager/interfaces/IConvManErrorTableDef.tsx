@@ -8,5 +8,3 @@ export type IConvManErrorTableDef = {
   objectKey: string;
   sheetName: string;
 };
-
-

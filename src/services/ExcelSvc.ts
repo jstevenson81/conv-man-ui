@@ -4,6 +4,7 @@ import { IConvManFile } from "../components/forms/interfaces/IConvManFileInputSt
 import { CnvSpreadsheet } from "../models/entities/base/CnvSpreadsheet";
 import * as XLSX from "xlsx";
 import { ICnvSpreadsheet } from "../models/entities/base/ICnvSpreadsheet";
+import { IConvManErrorTableDef } from "../components/pageParts/convErrorManager/interfaces/IConvManErrorTableDef";
 
 export default class ExcelSvc {
   sheetToCsv(config: { workbook: IConvManFile; sheetToRead: string; batchName: string }): Array<ICnvSpreadsheet> {
@@ -24,6 +25,28 @@ export default class ExcelSvc {
       },
     });
     return arr;
+  }
+
+  jsonToBook(tables: IConvManErrorTableDef[]): any {
+    const workbook = XLSX.utils.book_new();
+    tables.forEach((table) => {
+      let data: Array<any> = [];
+      table.data.forEach((row) => {
+        let mappedRow = {};
+        _.keysIn(row).forEach((key) => {
+          const colHeader = _.find(table.columns, (col) => {
+            return col.accessor === key;
+          });
+          if (colHeader) {
+            mappedRow = { ...mappedRow, [colHeader.headerText]: row[key] };
+          }
+        });
+        data.push(mappedRow);
+      });
+      const sheet = XLSX.utils.json_to_sheet(data);
+      XLSX.utils.book_append_sheet(workbook, sheet, table.sheetName);
+    });
+    return XLSX.write(workbook, { bookType: "xlsx", type: "array" });
   }
 
   createSpreadsheetRow(row: any, batchName: string): ICnvSpreadsheet {

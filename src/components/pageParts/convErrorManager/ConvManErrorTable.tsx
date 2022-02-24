@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Column, useTable } from "react-table";
 import { IValidationError } from "../../../models/entities/api/IValidationError";
-import { IConvManErrorTableDef } from "./interfaces/ICnvErrorTable";
+import { IConvManErrorTableDef } from "./interfaces/IConvManErrorTableDef";
 
 const ConvManErrTable: React.FC<IConvManErrorTableDef> = (props: IConvManErrorTableDef) => {
   //#region column and data memo setup

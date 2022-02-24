@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, Fragment } from "react";
 import { IUniqueWorksheet } from "../../../models/entities/api/IUniqueWorksheet";
 import { IUxPod } from "../../../models/entities/base/IUxPod";
 import { IApiResponse } from "../../../models/responses/IApiResponse";
-import ExcelSvc from "../../../services/ExcelService";
+import ExcelSvc from "../../../services/ExcelSvc";
 import PodSvc from "../../../services/PodSvc";
 import { SpreadsheetsSvc } from "../../../services/SpreadsheetSvc";
 import ConvManFileDropZone from "../../forms/ConvManDropZone";
