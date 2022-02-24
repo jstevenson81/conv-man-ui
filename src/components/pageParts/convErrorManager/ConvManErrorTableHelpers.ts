@@ -3,7 +3,7 @@ import { IConvManCol } from "../../../interfaces/IConvManCol";
 import { IValidationError } from "../../../models/entities/api/IValidationError";
 import { IValidationErrorAttr } from "../../../models/entities/api/IValidationErrorAttr";
 import ErrorMgmtSvc from "../../../services/ErrorMgmtSvc";
-import { IConvManErrorTableDef } from "./interfaces/ICnvErrorTable";
+import { IConvManErrorTableDef } from "./interfaces/IConvManErrorTableDef";
 import { IConvManRowsCols } from "./interfaces/IConvManRowsCols";
 
 const getData = async (batchName: string): Promise<IConvManRowsCols> => {
@@ -26,7 +26,8 @@ const getTableCols = (
       );
     });
     if (header && header.display_name) {
-      cols.push({ Header: header.display_name, accessor: key, id: key });
+      console.log({ header, key });
+      cols.push({ Header: header.display_name, accessor: key, id: key, headerText: header.display_name });
     }
   });
   return cols;
@@ -55,7 +56,12 @@ const buildTables = async (batchName: string): Promise<Array<IConvManErrorTableD
         objectKey: row.obj_key,
         key: row.stg_key_id,
       };
-      table.columns.unshift({ accessor: "stg_error_msg", Header: "Error Message", id: "stg_error_msg" });
+      table.columns.unshift({
+        accessor: "stg_error_msg",
+        Header: "Error Message",
+        id: "stg_error_msg",
+        headerText: "Error Message",
+      });
     }
     spName = row.spreadsheet_name;
   });

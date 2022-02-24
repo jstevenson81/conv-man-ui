@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { IConvManErrorTableDef } from "./interfaces/ICnvErrorTable";
+import { useState, useEffect, useRef } from "react";
+import { IConvManErrorTableDef } from "./interfaces/IConvManErrorTableDef";
 import { IConvManErrorTableProps } from "./interfaces/IConvManErrorTableProps";
 import buildTables, { IPieChartData, buildErrorPieData } from "./ConvManErrorTableHelpers";
 import ConvManLoader from "../../common/loader/ConvManLoader";
@@ -27,6 +27,9 @@ const ConvManErrTableCollection: React.FC<IConvManErrorTableProps> = (props: ICo
         const chartData = buildErrorPieData(tables);
         setPieData(chartData);
         unsetLoading();
+
+
+
       });
     }
   }, [props.batchName]);
