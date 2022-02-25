@@ -1,10 +1,11 @@
 import _ from "lodash";
 import Papa from "papaparse";
-import { IConvManFile } from "../components/forms/interfaces/IConvManFileInputState";
-import { CnvSpreadsheet } from "../models/entities/base/CnvSpreadsheet";
 import * as XLSX from "xlsx";
-import { ICnvSpreadsheet } from "../models/entities/base/ICnvSpreadsheet";
+
+import { IConvManFile } from "../components/forms/interfaces/IConvManFileInputState";
 import { IConvManErrorTableDef } from "../components/pageParts/convErrorManager/interfaces/IConvManErrorTableDef";
+import { CnvSpreadsheet } from "../models/entities/base/CnvSpreadsheet";
+import { ICnvSpreadsheet } from "../models/entities/base/ICnvSpreadsheet";
 
 export default class ExcelSvc {
   sheetToCsv(config: { workbook: IConvManFile; sheetToRead: string; batchName: string }): Array<ICnvSpreadsheet> {
@@ -17,7 +18,7 @@ export default class ExcelSvc {
         let i = 0;
         csvData.data.forEach((d) => {
           // we want to start with the 6th index
-          if (i > 4) {
+          if (i > 5) {
             arr.push(this.createSpreadsheetRow(d, config.batchName));
           }
           i++;
