@@ -132,10 +132,10 @@ export class CnvSpreadsheet implements ICnvSpreadsheet {
   column_dy = null;
   column_dz = null;
   spr_key_id = 0;
-  cnv_batch = null;
-  spreadsheet_name = null;
+  cnv_batch = "";
+  spreadsheet_name = "";
   creation_date = null;
-  created_by = null;
+  created_by = "";
   last_update_date = null;
   last_updated_by = null;
   [k: string]: string | number | null;

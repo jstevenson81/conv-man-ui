@@ -1,5 +1,5 @@
-import ExcelSvc from "../../services/ExcelSvc";
 import buildTables from "../../components/pageParts/convErrorManager/ConvManErrorTableHelpers";
+import ExcelSvc from "../../services/ExcelSvc";
 
 describe("create xlsx tests", () => {
   let svc: ExcelSvc;
@@ -15,8 +15,8 @@ describe("create xlsx tests", () => {
 
   it("service should create workbook from tables", (done: jest.DoneCallback) => {
     buildTables("testerrors1").then((tables) => {
-      const buffer = svc.jsonToBook(tables);
-      expect(buffer.length).toBeGreaterThan(0);
+      const workbook = svc.jsonToBook(tables);
+      expect(workbook.Sheets.length).toBeGreaterThan(0);
       done();
     });
   }, 60000);
