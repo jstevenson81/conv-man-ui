@@ -1,9 +1,11 @@
+import { AxiosError } from "axios";
 import Papa from "papaparse";
 
 import { IConvManFile } from "../components/forms/interfaces/IConvManFileInputState";
 import { IUniqueWorksheet } from "../models/entities/api/IUniqueWorksheet";
 import { ICnvSpreadsheet } from "../models/entities/base/ICnvSpreadsheet";
 import { IApiResponse } from "../models/responses/IApiResponse";
+import { IBulkLoadResponse } from "../models/responses/IBulkLoadResponse";
 import { ICreateBatchResponse } from "../models/responses/ICreateBatchResponse";
 import { ServerConfig } from "../ServerConfig";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
@@ -58,7 +60,13 @@ export class SpreadsheetsSvc extends OracleRestServiceBase {
     sheet: string;
   }): Promise<ICreateBatchResponse> => {
     const excel = new ExcelSvc();
-    const spRows = excel.sheetToCsv({ workbook: file, sheetToRead: sheet, batchName: batchName });
+    const spRows = excel.sheetToCsv({ workbook: file, sheetToRead: sheet, batchName: batchName, createdBy });
+    // we need to set this so the process knows to add and not update
+    spRows.forEach((row) => {
+      row.spr_key_id = null;
+    });
+
+    // unparse the CSV file
     const csv = Papa.unparse(spRows);
     const batchSvc = new BatchRequestSvc();
 
@@ -74,18 +82,21 @@ export class SpreadsheetsSvc extends OracleRestServiceBase {
 
     const response: ICreateBatchResponse = {
       batchCreateResponse: { entities: [], error: { message: "", name: "" } },
-      spreadsheetCreateResponse: { entities: [], error: { message: "", name: "" } },
+      spCreateResp: { data: "", links: [], status: 0, statusText: "" },
     };
     try {
       if (batchReqResp) response.batchCreateResponse = batchReqResp;
-      const createSpResp = await this.runPost<any, any>({
+      const createSpResp = await this.runPost<IBulkLoadResponse, any>({
         action: ServerConfig.ords.customActions.posts.batchload,
         body: csv,
         contentType: "text/csv",
       });
-      response.spreadsheetCreateResponse.entities.push({ ...createSpResp });
+      response.spCreateResp = createSpResp.data;
     } catch (e) {
-      response.spreadsheetCreateResponse = this.handleError({ e, code: "POST", reqType: "ORDS_API_EXCEPTION" });
+      const axiosError = e as AxiosError;
+      response.spCreateResp.data = axiosError.message;
+      response.spCreateResp.status = axiosError.response!.status;
+      response.spCreateResp.statusText = axiosError.response!.statusText;
     }
     return response;
   };

@@ -8,7 +8,8 @@ import { CnvSpreadsheet } from "../models/entities/base/CnvSpreadsheet";
 import { ICnvSpreadsheet } from "../models/entities/base/ICnvSpreadsheet";
 
 export default class ExcelSvc {
-  sheetToCsv(config: { workbook: IConvManFile; sheetToRead: string; batchName: string }): Array<ICnvSpreadsheet> {
+  //#region Parsing a sheet to CSV methods
+  sheetToCsv(config: { workbook: IConvManFile; sheetToRead: string; batchName: string, createdBy: string; }): Array<ICnvSpreadsheet> {
     const wb = XLSX.read(config.workbook.data);
     const csv = XLSX.utils.sheet_to_csv(wb.Sheets[config.sheetToRead]);
     const arr = new Array<ICnvSpreadsheet>();
@@ -19,7 +20,9 @@ export default class ExcelSvc {
         csvData.data.forEach((d) => {
           // we want to start with the 6th index
           if (i > 5) {
-            arr.push(this.createSpreadsheetRow(d, config.batchName));
+            const row = this.createSpreadsheetRow(d, config.batchName, config.createdBy, config.sheetToRead);
+
+            arr.push(row);
           }
           i++;
         });
@@ -27,6 +30,36 @@ export default class ExcelSvc {
     });
     return arr;
   }
+
+  createSpreadsheetRow(row: any, batchName: string, createdBy: string, sheetName: string): ICnvSpreadsheet {
+    const alpha = Array.from(Array(26)).map((e, i) => i + 65);
+    const alphabet = alpha.map((x) => {
+      return String.fromCharCode(x);
+    });
+    let i = 0;
+    let timesThroughAlphabet = 0;
+    const columns = _.keysIn(row);
+    const spRow = new CnvSpreadsheet();
+    columns.forEach((col: string) => {
+      let colName: string = "column_";
+      if (timesThroughAlphabet === 0) colName += alphabet[i];
+      else if (timesThroughAlphabet === 1) colName += alphabet[timesThroughAlphabet].toLowerCase() + alphabet[i];
+      colName = colName.toLowerCase();
+      if (row[col].indexOf("MERGE|") === -1) {
+        spRow[colName] = row[col];
+      }
+      // increment i and the times through alphabet
+      i++;
+      if (i === alphabet.length) timesThroughAlphabet++;
+    });
+    spRow.cnv_batch = batchName;
+    spRow.spreadsheet_name = sheetName;
+    spRow.created_by = createdBy;
+
+    return spRow;
+  }
+
+  //#endregion
 
   jsonToBook(tables: IConvManErrorTableDef[]): XLSX.WorkBook {
     const workbook = XLSX.utils.book_new();
@@ -48,26 +81,5 @@ export default class ExcelSvc {
       XLSX.utils.book_append_sheet(workbook, sheet, table.sheetName);
     });
     return workbook;
-  }
-
-  createSpreadsheetRow(row: any, batchName: string): ICnvSpreadsheet {
-    const alpha = Array.from(Array(26)).map((e, i) => i + 65);
-    const alphabet = alpha.map((x) => {
-      return String.fromCharCode(x);
-    });
-    let i = 0;
-    let timesThroughAlphabet = 0;
-    const columns = _.keysIn(row);
-    const spRow = new CnvSpreadsheet();
-    columns.forEach((col: any, colIdx: number) => {
-      let colName: string = "COLUMN_";
-      if (timesThroughAlphabet === 0) colName += alphabet[i];
-      else if (timesThroughAlphabet === 1) colName += alphabet[timesThroughAlphabet] + alphabet[i];
-      spRow[colName] = row[col];
-      i++;
-      if (i === alphabet.length) timesThroughAlphabet++;
-    });
-    spRow.CNV_BATCH = batchName;
-    return spRow;
   }
 }

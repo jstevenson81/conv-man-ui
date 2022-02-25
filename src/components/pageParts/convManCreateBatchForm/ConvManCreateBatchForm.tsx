@@ -83,8 +83,9 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
       workbook: selectedSpreadsheet!,
       sheetToRead: selectedWorksheet!.value,
       batchName: batchName,
+      createdBy: "CNV_SYS",
     });
-    
+
     props.onLoading(false);
   };
 

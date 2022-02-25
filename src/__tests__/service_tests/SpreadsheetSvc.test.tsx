@@ -65,7 +65,7 @@ let svc: SpreadsheetsSvc;
       .then((resp) => {
         expect(resp).not.toBeUndefined();
         expect(resp.batchCreateResponse.entities.length).toEqual(1);
-        expect(resp.spreadsheetCreateResponse).not.toBeUndefined();
+        expect(resp.spCreateResp).not.toBeUndefined();
         done();
       });
   }, 60000);
