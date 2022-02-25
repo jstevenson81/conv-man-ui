@@ -84,7 +84,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
       sheetToRead: selectedWorksheet!.value,
       batchName: batchName,
     });
-    console.log(csv);
+    
     props.onLoading(false);
   };
 
