@@ -1,4 +1,5 @@
 import { DateTime } from "luxon";
+
 import { BatchRequestSvc } from "../../services/BatchRequestSvc";
 
 describe("POST, PUT, DELETE Tests", () => {
@@ -15,7 +16,7 @@ describe("POST, PUT, DELETE Tests", () => {
 
   it("should create a batch request", (done: jest.DoneCallback) => {
     svc
-      .create({
+      .createBatchRequest({
         pod_url: "https://www.oracle.com/",
         cnv_batch: `testbatch_${DateTime.now().toMillis().toString()}`,
         created_by: "jsteve81@gmail.com",
