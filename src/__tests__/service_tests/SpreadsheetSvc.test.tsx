@@ -25,9 +25,8 @@ describe("GET tests", () => {
   }, 60000);
 });
 
-describe("PUT, POST, DELETE tests", ()=> {
-
-let svc: SpreadsheetsSvc;
+describe("PUT, POST, DELETE tests", () => {
+  let svc: SpreadsheetsSvc;
 
   beforeAll((): void => {
     svc = new SpreadsheetsSvc();
@@ -37,7 +36,6 @@ let svc: SpreadsheetsSvc;
     jest.useRealTimers();
     jest.setTimeout(60000);
   });
-
 
   it("should read a file", (done: jest.DoneCallback) => {
     const dataArray = readFileSync("./public/templates/DC001.xlsx");
@@ -65,7 +63,8 @@ let svc: SpreadsheetsSvc;
       .then((resp) => {
         expect(resp).not.toBeUndefined();
         expect(resp.batchCreateResponse.entities.length).toEqual(1);
-        expect(resp.spCreateResp).not.toBeUndefined();
+        expect(resp.spCreateResp.status).toEqual(200);
+        expect(resp.spCreateResp.statusText).toEqual("OK");
         done();
       });
   }, 60000);
