@@ -5,7 +5,6 @@ import { IConvManFile } from "../components/forms/interfaces/IConvManFileInputSt
 import { IUniqueWorksheet } from "../models/entities/api/IUniqueWorksheet";
 import { ICnvSpreadsheet } from "../models/entities/base/ICnvSpreadsheet";
 import { IApiResponse } from "../models/responses/IApiResponse";
-import { IBulkLoadResponse } from "../models/responses/IBulkLoadResponse";
 import { ICreateBatchResponse } from "../models/responses/ICreateBatchResponse";
 import { ServerConfig } from "../ServerConfig";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
@@ -86,12 +85,12 @@ export class SpreadsheetsSvc extends OracleRestServiceBase {
     };
     try {
       if (batchReqResp) response.batchCreateResponse = batchReqResp;
-      const createSpResp = await this.runPost<IBulkLoadResponse, any>({
+      const createSpResp = await this.runPostBatchload({
         action: ServerConfig.ords.customActions.posts.batchload,
         body: csv,
         contentType: "text/csv",
       });
-      response.spCreateResp = createSpResp.data;
+      response.spCreateResp = createSpResp;
     } catch (e) {
       const axiosError = e as AxiosError;
       response.spCreateResp.data = axiosError.message;

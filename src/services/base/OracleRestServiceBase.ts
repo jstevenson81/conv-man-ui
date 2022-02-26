@@ -5,6 +5,7 @@ import { IConvManSelectListItem } from "../../components/forms/interfaces/ISelec
 import { IEntity } from "../../models/entities/base/IEntity";
 import { ErrorCodes, ErrorTypes } from "../../models/errors/IConvManError";
 import { IApiResponse } from "../../models/responses/IApiResponse";
+import { IBulkLoadResponse } from "../../models/responses/IBulkLoadResponse";
 import { IOracleAutoRestResponse } from "../../models/responses/IOracleAutoRestResponse";
 import { IOracleModuleResponse } from "../../models/responses/IOracleModuleResponse";
 import { ServerConfig } from "../../ServerConfig";
@@ -126,9 +127,25 @@ export abstract class OracleRestServiceBase {
   }: ICreateApiConfig<TEntity>): Promise<AxiosResponse<TResponseType>> => {
     const actionUrl = action ? this.entity + action : this.entity;
 
-    return await axios.post<TResponseType>(actionUrl, body, {
+    const axiosResp = await axios.post<TResponseType>(actionUrl, body, {
       headers: { "Content-Type": contentType },
     });
+
+    return axiosResp;
+  };
+
+  protected runPostBatchload = async ({
+    action,
+    contentType,
+    body,
+  }: ICreateApiConfig<string>): Promise<IBulkLoadResponse> => {
+    const actionUrl = action ? this.entity + action : this.entity;
+
+    const axiosResp = await axios.post<any>(actionUrl, body, {
+      headers: { "Content-Type": contentType },
+    });
+
+    return { data: axiosResp.data, status: axiosResp.status, statusText: axiosResp.statusText, links: [] };
   };
 
   protected runPut = async <TResponseType extends IOracleAutoRestResponse, TEntity extends IEntity>({
