@@ -25,9 +25,14 @@ type ICreateBatchProps = {
 const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatchProps) => {
   //#region state
   const [batchName, setBatchName] = useState("");
-  const [, setSelectedPod] = useState<IConvManSelectListItem>();
-  const [selectedSpreadsheet, setSelectedSpreadsheet] = useState<IConvManFile>();
-  const [selectedWorksheet, setSelectedWorsheet] = useState<IConvManSelectListItem>();
+  const [selectedPod, setSelectedPod] = useState<IConvManSelectListItem>({ label: "", value: "" });
+  const [selectedSpreadsheet, setSelectedSpreadsheet] = useState<IConvManFile>({
+    data: new ArrayBuffer(0),
+    fileExt: "",
+    fileName: "",
+    lastModified: "",
+  });
+  const [selectedWorksheet, setSelectedWorsheet] = useState<IConvManSelectListItem>({ label: "", value: "" });
 
   const [worksheetOpts, setWorksheetOpts] = useState<Array<IConvManSelectListItem>>([]);
   const [podOpts, setPodOpts] = useState<Array<IConvManSelectListItem>>([]);
@@ -64,7 +69,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
       if (resp && resp.entities) {
         options = podSvc.convertToSelectList({
           data: resp.entities,
-          props: { value: "ux_pod_id", option: "pod_name" },
+          props: { value: "pod_url", option: "pod_name" },
         });
       }
       setPodOpts(options);
@@ -79,11 +84,13 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
 
   const createBatch = async (): Promise<any> => {
     props.onLoading(true);
-    const csv = excelSvc.sheetToCsv({
-      workbook: selectedSpreadsheet!,
-      sheetToRead: selectedWorksheet!.value,
+    const svc = new SpreadsheetsSvc();
+    const response = await svc.createBatch({
+      file: selectedSpreadsheet,
       batchName: batchName,
-      createdBy: "CNV_SYS",
+      createdBy: "CONV_MAN_SYS",
+      podUrl: selectedPod!.value,
+      sheet: selectedWorksheet.value,
     });
 
     props.onLoading(false);

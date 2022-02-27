@@ -1,11 +1,14 @@
+import "./assets/css/index.css";
+import "animate.css";
+
 import React from "react";
 import ReactDOM from "react-dom";
-import "./assets/css/index.css";
-import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 import App from "./components/App";
 import Conversions from "./components/pages/Conversions/Conversions";
 import Login from "./components/pages/Login/Login";
+import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(
   <React.StrictMode>
