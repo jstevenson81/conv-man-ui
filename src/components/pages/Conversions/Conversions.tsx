@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+
 import { ServerConfig } from "../../../ServerConfig";
 import { BatchRequestSvc } from "../../../services/BatchRequestSvc";
 import ConvManLoader from "../../common/loader/ConvManLoader";
+import ConvManToastr, { ConvManToastrType } from "../../common/toasts/ConvManToastr";
 import ConvManSelectList from "../../forms/ConvManSelectList";
 import { IConvManSelectListItem } from "../../forms/interfaces/ISelectListItem";
 import ConvManErrorTableContainer from "../../pageParts/convErrorManager/ConvManErrorTableContainer";
@@ -11,6 +13,12 @@ import IConvManDashProps from "./interfaces/IConvManDashProps";
 const Conversions: React.FC<IConvManDashProps> = () => {
   const [newBatchOpen, setNewBatchOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  //#region Toastr setup
+  const [toastMsg, setToastMsg] = useState("");
+  const [showToastr, setShowToastr] = useState(false);
+  const [toastType, setToastType] = useState<ConvManToastrType>("info");
+  //#endregion
 
   const [batchSelectItems, setBatchSelectItems] = useState<Array<IConvManSelectListItem>>([]);
   const [templates] = useState<Array<IConvManSelectListItem>>([
@@ -65,12 +73,31 @@ const Conversions: React.FC<IConvManDashProps> = () => {
       });
   };
 
+  const toggleToast = (toastrMsg: string, type: ConvManToastrType) => {
+    setToastType(type);
+    setToastMsg(toastrMsg);
+    setShowToastr(!showToastr);
+  };
+
   return (
     <div>
+      <ConvManToastr
+        message={toastMsg}
+        autoClose={1000}
+        position="top-right"
+        show={showToastr}
+        type={toastType}
+      ></ConvManToastr>
       <ConvManLoader show={isLoading} message="Please wait while we complete your request"></ConvManLoader>
       <div className="flex items-center justify-start justify-items-start mb-2 gap-4">
         <h1 className="text-2xl">Conversions</h1>
-        <button className="button blue" onClick={() => toggleNewBatch(true)}>
+        <button
+          className="button blue"
+          onClick={() => {
+            toggleNewBatch(true);
+            toggleToast("I just clicked the new conversion button", "success");
+          }}
+        >
           new conversion
         </button>
       </div>
