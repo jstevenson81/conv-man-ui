@@ -15,9 +15,9 @@ const Conversions: React.FC<IConvManDashProps> = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   //#region Toastr setup
-  const [toastMsg, setToastMsg] = useState("");
-  const [showToastr, setShowToastr] = useState(false);
-  const [toastType, setToastType] = useState<ConvManToastrType>("info");
+  const [toastrMsg, setToastrMsg] = useState("");
+  const [toastrShown, setToastrShown] = useState(false);
+  const [toastrType, setToastrType] = useState<ConvManToastrType>("info");
   //#endregion
 
   const [batchSelectItems, setBatchSelectItems] = useState<Array<IConvManSelectListItem>>([]);
@@ -73,20 +73,24 @@ const Conversions: React.FC<IConvManDashProps> = () => {
       });
   };
 
-  const toggleToast = (toastrMsg: string, type: ConvManToastrType) => {
-    setToastType(type);
-    setToastMsg(toastrMsg);
-    setShowToastr(!showToastr);
+  const showToastr = (toastrMsg: string, type: ConvManToastrType) => {
+    setToastrType(type);
+    setToastrMsg(toastrMsg);
+    setToastrShown(true);
+    window.setTimeout(() => {
+      setToastrMsg("");
+      setToastrShown(false);
+    }, 200);
   };
 
   return (
     <div>
       <ConvManToastr
-        message={toastMsg}
+        message={toastrMsg}
         autoClose={1000}
         position="top-right"
-        show={showToastr}
-        type={toastType}
+        show={toastrShown}
+        type={toastrType}
       ></ConvManToastr>
       <ConvManLoader show={isLoading} message="Please wait while we complete your request"></ConvManLoader>
       <div className="flex items-center justify-start justify-items-start mb-2 gap-4">
@@ -95,7 +99,7 @@ const Conversions: React.FC<IConvManDashProps> = () => {
           className="button blue"
           onClick={() => {
             toggleNewBatch(true);
-            toggleToast("I just clicked the new conversion button", "success");
+            showToastr("I just clicked the new conversion button", "error");
           }}
         >
           new conversion
