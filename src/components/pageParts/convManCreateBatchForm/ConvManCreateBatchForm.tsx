@@ -7,7 +7,6 @@ import { IUniqueWorksheet } from "../../../models/entities/api/IUniqueWorksheet"
 import { IUxPod } from "../../../models/entities/base/IUxPod";
 import { IApiResponse } from "../../../models/responses/IApiResponse";
 import { ServerConfig } from "../../../ServerConfig";
-import ExcelSvc from "../../../services/ExcelSvc";
 import PodSvc from "../../../services/PodSvc";
 import { SpreadsheetsSvc } from "../../../services/SpreadsheetSvc";
 import ConvManFileDropZone from "../../forms/ConvManDropZone";
@@ -19,10 +18,18 @@ import { IConvManSelectListItem } from "../../forms/interfaces/ISelectListItem";
 type ICreateBatchProps = {
   isOpen: boolean;
   toggle(open: boolean): void;
-  onLoading(loading: boolean): void;
+  onLoading({ loading, message }: { loading: boolean; message: string }): void;
+  onBatchComplete(batchName: string): void;
+  refreshData: boolean;
 };
 
-const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatchProps) => {
+const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
+  isOpen,
+  toggle,
+  onLoading,
+  onBatchComplete,
+  refreshData,
+}) => {
   //#region state
   const [batchName, setBatchName] = useState("");
   const [selectedPod, setSelectedPod] = useState<IConvManSelectListItem>({ label: "", value: "" });
@@ -40,9 +47,6 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
   //#endregion
 
   //#region services
-
-  const excelSvc = new ExcelSvc();
-
   //#endregion
 
   //#region data gathering
@@ -76,16 +80,16 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
     });
 
     setBatchName(DateTime.now().valueOf().toString());
-  }, []);
+  }, [refreshData]);
 
   //#endregion
 
   //#region batch creation
 
   const createBatch = async (): Promise<any> => {
-    props.onLoading(true);
+    onLoading({ loading: true, message: "Creating your conversion request" });
     const svc = new SpreadsheetsSvc();
-    const response = await svc.createBatch({
+    await svc.createBatch({
       file: selectedSpreadsheet,
       batchName: batchName,
       createdBy: "CONV_MAN_SYS",
@@ -93,7 +97,8 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
       sheet: selectedWorksheet.value,
     });
 
-    props.onLoading(false);
+    onLoading({ loading: false, message: "" });
+    onBatchComplete(batchName);
   };
 
   const spreadsheetChange = useCallback((newFile: IConvManFile): void => {
@@ -103,8 +108,8 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
   //#endregion
 
   return (
-    <Transition appear show={props.isOpen} as={Fragment}>
-      <Dialog as="div" className="fixed inset-0 z-10" onClose={() => props.toggle(false)}>
+    <Transition appear show={isOpen} as={Fragment}>
+      <Dialog as="div" className="fixed inset-0 z-10" onClose={() => toggle(false)}>
         <div className="min-h-screen px-4 text-center">
           <Transition.Child
             as={Fragment}
@@ -135,7 +140,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
               <Dialog.Title as="div" className="flex items-center justify-between justify-items-center">
                 <h3 className="text-lg font-medium leading-6">new conversion request</h3>
                 <div className="hover:text-gray-800 hover:scale-125 transition duration-300">
-                  <XIcon className="w-5 h-5 hover:cursor-pointer" onClick={() => props.toggle(false)}></XIcon>
+                  <XIcon className="w-5 h-5 hover:cursor-pointer" onClick={() => toggle(false)}></XIcon>
                 </div>
               </Dialog.Title>
               <div className="mt-2">
@@ -176,7 +181,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = (props: ICreateBatch
               </div>
 
               <div className="mt-4 flex justify-end items-center gap-4 justify-items-center">
-                <button type="button" className="button red" onClick={() => props.toggle(false)}>
+                <button type="button" className="button red" onClick={() => toggle(false)}>
                   Close
                 </button>
                 <button type="button" className="button blue" onClick={() => createBatch()}>

@@ -50,7 +50,7 @@ const ConvManToastr: React.FC<IConvManToastsProps> = ({ message, autoClose, posi
           break;
       }
     }
-  }, [show, message]);
+  }, [show, message, autoClose, bounce, position, type]);
 
   // this is the markup we want to show the user
   return <ToastContainer transition={bounce}></ToastContainer>;

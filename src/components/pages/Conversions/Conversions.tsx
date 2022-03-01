@@ -1,5 +1,7 @@
+import { InformationCircleIcon, PlusIcon } from "@heroicons/react/outline";
 import React, { useEffect, useState } from "react";
 
+import { IUxPod } from "../../../models/entities/base/IUxPod";
 import { ServerConfig } from "../../../ServerConfig";
 import { BatchRequestSvc } from "../../../services/BatchRequestSvc";
 import ConvManLoader from "../../common/loader/ConvManLoader";
@@ -8,11 +10,17 @@ import ConvManSelectList from "../../forms/ConvManSelectList";
 import { IConvManSelectListItem } from "../../forms/interfaces/ISelectListItem";
 import ConvManErrorTableContainer from "../../pageParts/convErrorManager/ConvManErrorTableContainer";
 import ConvManCreateBatchForm from "../../pageParts/convManCreateBatchForm/ConvManCreateBatchForm";
+import ConvManPodManager from "../../pageParts/podManager/ConvManPodManager";
 import IConvManDashProps from "./interfaces/IConvManDashProps";
 
 const Conversions: React.FC<IConvManDashProps> = () => {
   const [newBatchOpen, setNewBatchOpen] = useState(false);
+  const [podManagerOpen, setPodManagerOpen] = useState(false);
+  const [refreshNewBatchData, setRefreshNewBatchData] = useState(false);
+
+  // loading
   const [isLoading, setIsLoading] = useState(false);
+  const [loaderMsg, setLoaderMsg] = useState("");
 
   //#region Toastr setup
   const [toastrMsg, setToastrMsg] = useState("");
@@ -43,8 +51,24 @@ const Conversions: React.FC<IConvManDashProps> = () => {
     setNewBatchOpen(open);
   };
 
-  const toggleLoading = (loading: boolean) => {
+  const batchComplete = (batchName: string) => {
+    setLoaderMsg("");
+    setIsLoading(false);
+    setNewBatchOpen(false);
+    showToastr(`Batch ${batchName} sucessfully created`, "success");
+  };
+
+  const podCreated = (newPod: IUxPod) => {
+    setLoaderMsg("");
+    setIsLoading(false);
+    setPodManagerOpen(false);
+    setRefreshNewBatchData(!refreshNewBatchData);
+    showToastr(`Pod ${newPod.pod_name} sucessfully created`, "success");
+  };
+
+  const toggleLoading = ({ loading, message }: { loading: boolean; message: string }) => {
     setIsLoading(loading);
+    setLoaderMsg(message);
   };
 
   const downloadTemplate = (tmpl: IConvManSelectListItem) => {
@@ -85,30 +109,47 @@ const Conversions: React.FC<IConvManDashProps> = () => {
 
   return (
     <div>
-      <ConvManToastr
-        message={toastrMsg}
-        autoClose={1000}
-        position="top-right"
-        show={toastrShown}
-        type={toastrType}
-      ></ConvManToastr>
-      <ConvManLoader show={isLoading} message="Please wait while we complete your request"></ConvManLoader>
-      <div className="flex items-center justify-start justify-items-start mb-2 gap-4">
-        <h1 className="text-2xl">Conversions</h1>
-        <button
-          className="button blue"
-          onClick={() => {
-            toggleNewBatch(true);
-            showToastr("I just clicked the new conversion button", "error");
-          }}
-        >
-          new conversion
-        </button>
+      <div className="mt-8">
+        <div className="flex items-center justify-start justify-items-start gap-4">
+          <h1 className="text-2xl">recent conversions</h1>
+          <button
+            className="button blue flex items-center justify-start justify-items-start gap-1"
+            onClick={() => {
+              toggleNewBatch(true);
+            }}
+          >
+            <PlusIcon className="h-4 w-4"></PlusIcon>
+            <span>new conversion</span>
+          </button>
+          <button
+            className="button red flex items-center justify-start justify-items-start gap-1"
+            onClick={() => setPodManagerOpen(true)}
+          >
+            <PlusIcon className="h-4 w-4"></PlusIcon>
+            <span>Create Pod</span>
+          </button>
+        </div>
+        <div className="text-slate-600 border border-green-600 bg-green-200 p-2 rounded-lg my-4 flex items-center gap-2">
+          <InformationCircleIcon className="w-10 h-10"></InformationCircleIcon>
+          <p className="text-sm">
+            Below are your recent conversions submitted. Select a batch, and there will be visuals and tables that will
+            allow you to correct your errors and re-submit
+          </p>
+        </div>
+        <div className="mt-4">
+          <ConvManSelectList
+            items={batchSelectItems}
+            label="Conversion"
+            onListboxChange={(newVal) => {
+              setSelectedBatch(newVal);
+            }}
+          ></ConvManSelectList>
+        </div>
+        <div className="mt-4">
+          <ConvManErrorTableContainer batchName={selectedBatch.value}></ConvManErrorTableContainer>
+        </div>
       </div>
-      <p>
-        This page allows you to manage your conversion processes. You can create a new conversion or resolve any issues
-        with existing conversions and resubmit
-      </p>
+
       <h1 className="mt-8 text-2xl">Templates</h1>
       <p>Click on any of the buttons below to download the template to use to create a conversion.</p>
       <div className="flex items-center justify-start justify-items-start gap-2 mt-4 w-full">
@@ -126,29 +167,29 @@ const Conversions: React.FC<IConvManDashProps> = () => {
           );
         })}
       </div>
-      <div className="mt-8">
-        <h1 className="text-2xl">recent conversions</h1>
-        <p className="mb-3">
-          Below are your recent conversions submitted. Select a batch, and there will be visuals and tables that will
-          allow you to correct your errors and re-submit
-        </p>
-        <ConvManSelectList
-          items={batchSelectItems}
-          label="Batch"
-          onListboxChange={(newVal) => {
-            setSelectedBatch(newVal);
-          }}
-        ></ConvManSelectList>
-      </div>
-      <div className="mt-8">
-        <ConvManErrorTableContainer batchName={selectedBatch.value}></ConvManErrorTableContainer>
-      </div>
 
       <ConvManCreateBatchForm
         isOpen={newBatchOpen}
         toggle={toggleNewBatch}
         onLoading={toggleLoading}
+        onBatchComplete={batchComplete}
+        refreshData={refreshNewBatchData}
       ></ConvManCreateBatchForm>
+
+      <ConvManPodManager
+        isOpen={podManagerOpen}
+        onPodCreated={(newPod: IUxPod) => podCreated(newPod)}
+        onToggleOpen={(open: boolean) => setPodManagerOpen(open)}
+      ></ConvManPodManager>
+
+      <ConvManToastr
+        message={toastrMsg}
+        autoClose={1000}
+        position="top-right"
+        show={toastrShown}
+        type={toastrType}
+      ></ConvManToastr>
+      <ConvManLoader show={isLoading} message={loaderMsg}></ConvManLoader>
     </div>
   );
 };
