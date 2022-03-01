@@ -1,4 +1,4 @@
-import PodSvc from "../../services/PodSvc";
+import PodSvc from "../../services/PodEmailSvc";
 
 describe("GET tests", () => {
   let svc: PodSvc;

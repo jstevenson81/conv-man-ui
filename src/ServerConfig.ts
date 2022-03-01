@@ -20,6 +20,7 @@ export const ServerConfig = {
         batches: "batches",
         podsByEmail: "pods/{{email}}",
         pods: "pods",
+        podEmails: "podemails",
       },
       posts: {
         batchload: "batchload",
