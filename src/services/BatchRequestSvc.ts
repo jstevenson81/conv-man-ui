@@ -11,6 +11,8 @@ export class BatchRequestSvc extends OracleRestServiceBase {
   constructor() {
     super(ServerConfig.ords.entities.batchRequests);
   }
+
+  //#region batch creation
   createBatchRequest = async ({
     pod_url,
     cnv_batch,
@@ -39,7 +41,7 @@ export class BatchRequestSvc extends OracleRestServiceBase {
     return response;
   };
 
-
+  //#endregion
 
   getAllBatches = async (): Promise<IApiResponse<IBatchWithPodName>> => {
     let response: IApiResponse<IBatchWithPodName>;
@@ -56,3 +58,5 @@ export class BatchRequestSvc extends OracleRestServiceBase {
     return response;
   };
 }
+
+

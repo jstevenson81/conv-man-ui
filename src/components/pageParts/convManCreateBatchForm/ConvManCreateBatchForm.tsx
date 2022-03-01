@@ -101,11 +101,12 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
     onBatchComplete(batchName);
   };
 
+  const callMoveToCnv = async (): Promise<any> => {}
+  //#endregion
+
   const spreadsheetChange = useCallback((newFile: IConvManFile): void => {
     setSelectedSpreadsheet(newFile);
   }, []);
-
-  //#endregion
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
