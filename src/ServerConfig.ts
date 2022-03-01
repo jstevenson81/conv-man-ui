@@ -1,6 +1,7 @@
 export const ServerConfig = {
   contentTypes: {
     excel: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    json: "application/json",
   },
   ords: {
     url: "https://etvwbwij8jdtzoz-hcmconversion1.adb.us-phoenix-1.oraclecloudapps.com/ords/admin/",
@@ -10,6 +11,7 @@ export const ServerConfig = {
       spreadsheets: "spreadsheets/",
       customMethods: "api/",
       batchRequests: "batchRequests/",
+      convPackage: "convOps/",
     },
     customActions: {
       gets: {
@@ -24,6 +26,11 @@ export const ServerConfig = {
       },
       posts: {
         batchload: "batchload",
+        moveToCnv: "MOVE_TO_CNV",
+        updateDateCnv: "UPDATE_DATA_CNV",
+        validateCnv: "VALIDATE_CNV",
+        convertToHdl: "CONVERT_CNV_TO_HDL",
+        createHdlFile: "CREATE_HDL_FILE",
       },
     },
   },
