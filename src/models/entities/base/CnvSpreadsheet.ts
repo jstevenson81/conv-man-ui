@@ -132,6 +132,7 @@ export class CnvSpreadsheet implements ICnvSpreadsheet {
   column_dy = null;
   column_dz = null;
   spr_key_id = 0;
+  obj_key_list = "";
   cnv_batch = "";
   spreadsheet_name = "";
   creation_date = null;

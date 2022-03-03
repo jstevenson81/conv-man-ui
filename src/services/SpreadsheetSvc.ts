@@ -45,34 +45,29 @@ export class SpreadsheetsSvc extends OracleRestServiceBase {
     return response;
   };
 
-  createBatch = async ({
-    file,
-    podUrl,
-    batchName,
-    createdBy,
-    sheet,
-  }: {
-    file: IConvManFile;
+  createBatch = async (config: {
+    workbook: IConvManFile;
     podUrl: string;
     batchName: string;
     createdBy: string;
-    sheet: string;
+    sheetToRead: string;
+    hdlObjKey: string;
   }): Promise<ICreateBatchResponse> => {
     const excel = new ExcelSvc();
-    const spRows = excel.sheetToCsv({ workbook: file, sheetToRead: sheet, batchName: batchName, createdBy });
+    const spRows = excel.sheetToCsv({ ...config });
     // we need to set this so the process knows to add and not update
     spRows.forEach((row) => {
       row.spr_key_id = null;
     });
 
-    // unparse the CSV file
-    const csv = Papa.unparse(spRows);
+    console.log(spRows);
+
     const batchSvc = new BatchRequestSvc();
 
     const batchReqResp = await batchSvc.createBatchRequest({
-      pod_url: podUrl,
-      cnv_batch: batchName,
-      created_by: createdBy,
+      pod_url: config.podUrl,
+      cnv_batch: config.batchName,
+      created_by: config.createdBy,
       ux_batch_request_id: null,
       created_on: null,
       updated_by: null,
@@ -84,6 +79,8 @@ export class SpreadsheetsSvc extends OracleRestServiceBase {
       spCreateResp: { data: "", links: [], status: 0, statusText: "" },
     };
     try {
+      const csv = Papa.unparse(spRows);
+
       if (batchReqResp) response.batchCreateResponse = batchReqResp;
       const createSpResp = await this.runPostBatchload({
         action: ServerConfig.ords.customActions.posts.batchload,

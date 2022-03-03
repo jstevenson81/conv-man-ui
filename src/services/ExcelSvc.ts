@@ -9,7 +9,13 @@ import { ICnvSpreadsheet } from "../models/entities/base/ICnvSpreadsheet";
 
 export default class ExcelSvc {
   //#region Parsing a sheet to CSV methods
-  sheetToCsv(config: { workbook: IConvManFile; sheetToRead: string; batchName: string, createdBy: string; }): Array<ICnvSpreadsheet> {
+  sheetToCsv(config: {
+    workbook: IConvManFile;
+    sheetToRead: string;
+    batchName: string;
+    createdBy: string;
+    hdlObjKey: string;
+  }): Array<ICnvSpreadsheet> {
     const wb = XLSX.read(config.workbook.data);
     const csv = XLSX.utils.sheet_to_csv(wb.Sheets[config.sheetToRead]);
     const arr = new Array<ICnvSpreadsheet>();
@@ -20,9 +26,10 @@ export default class ExcelSvc {
         csvData.data.forEach((d) => {
           // we want to start with the 6th index
           if (i > 5) {
-            const row = this.createSpreadsheetRow(d, config.batchName, config.createdBy, config.sheetToRead);
-
-            arr.push(row);
+            const row = this.createSpreadsheetRow({ row: d, ...config });
+            // if we don't have a blank row, then push
+            // the row to the array
+            if (!_.isUndefined(row)) arr.push(row);
           }
           i++;
         });
@@ -31,30 +38,70 @@ export default class ExcelSvc {
     return arr;
   }
 
-  createSpreadsheetRow(row: any, batchName: string, createdBy: string, sheetName: string): ICnvSpreadsheet {
+  createSpreadsheetRow(config: {
+    row: any;
+    batchName: string;
+    createdBy: string;
+    sheetToRead: string;
+    hdlObjKey: string;
+  }): ICnvSpreadsheet | undefined {
     const alpha = Array.from(Array(26)).map((e, i) => i + 65);
     const alphabet = alpha.map((x) => {
       return String.fromCharCode(x);
     });
-    let i = 0;
+    // this is the column index
+    let columnNumber = 0;
+    // this is the number of times we go past z
     let timesThroughAlphabet = 0;
-    const columns = _.keysIn(row);
+    // this is the columnd from the passed in row
+    const columns = _.keysIn(config.row);
+    // these two vars help us determine if the row is blank
+    // we need to subtract 1 from the length because
+    // we always start with the second column
+    const colCount = columns.length - 1;
+    let blankCols = 0;
+
+    // create a new spreadsheet row so
+    // we can set its values
     const spRow = new CnvSpreadsheet();
-    columns.forEach((col: string) => {
-      let colName: string = "column_";
-      if (timesThroughAlphabet === 0) colName += alphabet[i];
-      else if (timesThroughAlphabet === 1) colName += alphabet[timesThroughAlphabet].toLowerCase() + alphabet[i];
-      colName = colName.toLowerCase();
-      if (row[col].indexOf("MERGE|") === -1) {
-        spRow[colName] = row[col];
+
+    // loop through the columns in the row mapping
+    // the input data to a common structure CnvSpreadsheet
+    columns.forEach((col: string, index: number) => {
+      // start with the second column and not the first
+      // becuase in every template the first column
+      // is always blank
+      if (index >= 1) {
+        let colName: string = "column_";
+        if (timesThroughAlphabet === 0) colName += alphabet[columnNumber];
+        else if (timesThroughAlphabet === 1)
+          colName += alphabet[timesThroughAlphabet].toLowerCase() + alphabet[columnNumber];
+        colName = colName.toLowerCase();
+
+        // do we have a blank column or a column
+        // that should not be added
+        if (config.row[col].indexOf("MERGE|") === -1) {
+          spRow[colName] = config.row[col];
+        }
+        // if we have a blank column, we need to incriment the number of blanks so
+        // we can check to see if this is a blank row at the end
+        else if (config.row[col].trim() === "") blankCols++;
+
+        // increment i and the times through alphabet
+        columnNumber++;
+        if (columnNumber === alphabet.length) timesThroughAlphabet++;
       }
-      // increment i and the times through alphabet
-      i++;
-      if (i === alphabet.length) timesThroughAlphabet++;
     });
-    spRow.cnv_batch = batchName;
-    spRow.spreadsheet_name = sheetName;
-    spRow.created_by = createdBy;
+    // if this is a blank row, we need to not add it to the array, so return
+    // undefined
+    if (blankCols === colCount) return undefined;
+
+    // set the properties of the row that are outside of the
+    // input row from the spreadsheet
+    spRow.cnv_batch = config.batchName;
+    spRow.spreadsheet_name = config.sheetToRead;
+    spRow.obj_key_list = `|${config.hdlObjKey}|`;
+    spRow.created_by = config.createdBy;
 
     return spRow;
   }

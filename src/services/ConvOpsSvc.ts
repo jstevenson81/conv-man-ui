@@ -1,50 +1,38 @@
-import axios from "axios";
-
 import { ServerConfig } from "../ServerConfig";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
 
+export interface IConvOpProps {
+  p_batch: string;
+  p_hdl_line_name: string;
+  p_root_obj_name: string;
+}
 
 export default class ConvOpsSvc extends OracleRestServiceBase {
   constructor() {
     super(ServerConfig.ords.entities.convPackage);
   }
-  executeBatchPackage = async ({
-    batchName, spName, hdlLineName,
-  }: {
-    batchName: string;
-    spName: string;
-    hdlLineName: string;
-  }): Promise<any> => {
+
+  executeConversionOp = async (config: IConvOpProps, action: string): Promise<any> => {
     try {
-      const formData = new FormData();
-      formData.set("p_batch", batchName);
-      formData.set("p_hdl_line_name", hdlLineName);
-      formData.set("p_root_obj_name", spName);
-      const moveResp = axios.post(ServerConfig.ords.customActions.posts.moveToCnv, formData, {
-        headers: {
-          "Content-Type": ServerConfig.contentTypes.json,
-        },
+      const response = await this.runPost<any, any>({
+        action: action,
+        contentType: "application/json",
+        body: { ...config },
       });
-      const updateDataCnvResp = axios.post(ServerConfig.ords.customActions.posts.updateDateCnv, formData, {
-        headers: {
-          "Content-Type": ServerConfig.contentTypes.json,
-        },
-      });
-      const validateCnvResp = axios.post(ServerConfig.ords.customActions.posts.validateCnv, formData, {
-        headers: {
-          "Content-Type": ServerConfig.contentTypes.json,
-        },
-      });
-      const convertToHdlResp = axios.post(ServerConfig.ords.customActions.posts.convertToHdl, formData, {
-        headers: {
-          "Content-Type": ServerConfig.contentTypes.json,
-        },
-      });
-      const createHdlFileResp = axios.post(ServerConfig.ords.customActions.posts.createHdlFile, formData, {
-        headers: {
-          "Content-Type": ServerConfig.contentTypes.json,
-        },
-      });
-    } catch (e) { }
+      return response;
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  executeBatchPackage = async (config: IConvOpProps): Promise<any> => {
+    let response = this.initApiResponse();
+    try {
+      const moveResp = await this.executeConversionOp(config, ServerConfig.ords.customActions.posts.moveToCnv);
+      return moveResp;
+    } catch (e) {
+      response = this.handleError({ e, code: "POST", reqType: "ORDS_API_EXCEPTION" });
+    }
+    return response;
   };
 }

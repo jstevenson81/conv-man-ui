@@ -133,6 +133,7 @@ export interface ICnvSpreadsheet extends IEntity {
   column_dy: string | null;
   column_dz: string | null;
   spr_key_id: number | null;
+  obj_key_list: string | null;
   cnv_batch: string | null;
   spreadsheet_name: string | null;
   creation_date: string | null;

@@ -2,6 +2,7 @@ import { InformationCircleIcon, PlusIcon } from "@heroicons/react/outline";
 import React, { useEffect, useState } from "react";
 
 import { IUxPod } from "../../../models/entities/base/IUxPod";
+import { ICreateBatchResponse } from "../../../models/responses/ICreateBatchResponse";
 import { ServerConfig } from "../../../ServerConfig";
 import { BatchRequestSvc } from "../../../services/BatchRequestSvc";
 import ConvManLoader from "../../common/loader/ConvManLoader";
@@ -41,7 +42,7 @@ const Conversions: React.FC<IConvManDashProps> = () => {
     batchReqSvc.getAllBatches().then((batches) => {
       const mappedBatches = batchReqSvc.convertToSelectList({
         data: batches.entities,
-        props: { option: "cnv_batch", value: "cnv_batch" },
+        props: { option: "cnv_batch", value: "cnv_batch", lookup: "cnv_batch" },
       });
       setBatchSelectItems(mappedBatches);
     });
@@ -51,11 +52,19 @@ const Conversions: React.FC<IConvManDashProps> = () => {
     setNewBatchOpen(open);
   };
 
-  const batchComplete = (batchName: string) => {
+  const batchComplete = (createBatchRes: ICreateBatchResponse) => {
     setLoaderMsg("");
+    setRefreshNewBatchData(!refreshNewBatchData);
     setIsLoading(false);
     setNewBatchOpen(false);
-    showToastr(`Batch ${batchName} sucessfully created`, "success");
+    const batch = createBatchRes.batchCreateResponse.entities[0];
+    showToastr(
+      `
+      Batch ${batch.cnv_batch} sucessfully created
+      Response: ${createBatchRes.spCreateResp.data}
+      `,
+      "success"
+    );
   };
 
   const podCreated = (newPod: IUxPod) => {
@@ -184,7 +193,7 @@ const Conversions: React.FC<IConvManDashProps> = () => {
 
       <ConvManToastr
         message={toastrMsg}
-        autoClose={1000}
+        autoClose={2000}
         position="top-right"
         show={toastrShown}
         type={toastrType}

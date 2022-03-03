@@ -100,7 +100,7 @@ export abstract class OracleRestServiceBase {
     props,
   }: {
     data: Array<TEntity>;
-    props: { value: string; option: string };
+    props: { value: string; option: string; lookup: string };
   }): Array<IConvManSelectListItem> {
     const resp = new Array<IConvManSelectListItem>();
     data.forEach((d: any) => {
@@ -110,9 +110,16 @@ export abstract class OracleRestServiceBase {
       const optProp = _.find(_.keys(d), (k: string) => {
         return k === props.option;
       });
-      if (valProp && optProp) resp.push({ label: d[optProp], value: d[valProp] });
-      else if (valProp) resp.push({ label: d[valProp], value: d[valProp] });
-      else if (optProp) resp.push({ label: d[optProp], value: d[optProp] });
+      const lookupProp = _.find(_.keys(d), (k: string) => {
+        return k === props.lookup;
+      });
+      let option: IConvManSelectListItem = { label: "", value: "", lookup: "" };
+      if (valProp && optProp) option = { label: d[optProp], value: d[valProp] };
+      else if (valProp) option = { label: d[valProp], value: d[valProp] };
+      else if (optProp) option = { label: d[optProp], value: d[optProp] };
+
+      if (lookupProp) option.lookup = d[lookupProp];
+      resp.push(option);
     });
     return resp;
   }
