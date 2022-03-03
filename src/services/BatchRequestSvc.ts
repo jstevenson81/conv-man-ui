@@ -1,9 +1,11 @@
 import { DateTime } from "luxon";
 
 import { IBatchWithPodName } from "../models/entities/api/IBatchWithPodName";
+import { ISummaryRow } from "../models/entities/api/ISummaryRow";
 import { IUxBatchRequest } from "../models/entities/base/IUxBatchRequest";
 import { IApiResponse } from "../models/responses/IApiResponse";
 import { IBatchAutoRestResponse } from "../models/responses/IBatchAutoRestResponse";
+import { ISummaryDataResp } from "../models/responses/ISummaryBatchDataResp";
 import { ServerConfig } from "../ServerConfig";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
 
@@ -57,6 +59,34 @@ export class BatchRequestSvc extends OracleRestServiceBase {
     }
     return response;
   };
+  getBatchSummaryData = async (batchName: string): Promise<ISummaryDataResp> => {
+    let totalErrResp: IApiResponse<ISummaryRow>;
+    let totalRowResp: IApiResponse<ISummaryRow>;
+
+    try {
+      const axiosRespErr = await this.runGet<ISummaryRow>({
+        action: ServerConfig.ords.customActions.gets.totalRowsPerBatc.replace("{{batch}}", batchName),
+        pathOrEntity: ServerConfig.ords.entities.customMethods,
+      });
+      totalRowResp = await this.constructEntities<ISummaryRow>(axiosRespErr);
+    } catch (e) {
+      totalRowResp = this.handleError({ e, code: "GET", reqType: "ORDS_API_EXCEPTION" });
+    }
+
+    try {
+      const axiosRespTotal = await this.runGet<ISummaryRow>({
+        action: ServerConfig.ords.customActions.gets.totalErrorsPerBatch.replace("{{batch}}", batchName),
+        pathOrEntity: ServerConfig.ords.entities.customMethods,
+      });
+      totalErrResp = await this.constructEntities<ISummaryRow>(axiosRespTotal);
+    } catch (e) {
+      totalErrResp = this.handleError({ e, code: "GET", reqType: "ORDS_API_EXCEPTION" });
+    }
+
+    return {
+      totalErrorRows: totalErrResp.entities,
+      totalRows: totalRowResp.entities,
+      error: { name: "", message: "" },
+    };
+  };
 }
-
-
