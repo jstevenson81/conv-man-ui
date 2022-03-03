@@ -57,8 +57,8 @@ describe("PUT, POST, DELETE tests", () => {
         batchName: DateTime.now().toMillis().toString(),
         podUrl: "https://www.oracle.com/test",
         createdBy: "jsteve81@gmail.com",
-        file: file,
-        sheet: "Grades",
+        workbook: file,
+        sheetToRead: "Grades",
       })
       .then((resp) => {
         expect(resp).not.toBeUndefined();

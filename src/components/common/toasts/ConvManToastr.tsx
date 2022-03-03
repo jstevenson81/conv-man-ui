@@ -31,6 +31,7 @@ const ConvManToastr: React.FC<IConvManToastsProps> = ({ message, autoClose, posi
         autoClose: autoClose,
         pauseOnHover: true,
         theme: "dark",
+
       };
       switch (type) {
         case "error":

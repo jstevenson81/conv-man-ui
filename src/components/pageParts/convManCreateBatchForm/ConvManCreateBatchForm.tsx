@@ -1,12 +1,15 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
+import _ from "lodash";
 import { DateTime } from "luxon";
 import { Fragment, useCallback, useEffect, useState } from "react";
 
 import { IUniqueWorksheet } from "../../../models/entities/api/IUniqueWorksheet";
 import { IUxPod } from "../../../models/entities/base/IUxPod";
 import { IApiResponse } from "../../../models/responses/IApiResponse";
+import { ICreateBatchResponse } from "../../../models/responses/ICreateBatchResponse";
 import { ServerConfig } from "../../../ServerConfig";
+import ConvOpsSvc from "../../../services/ConvOpsSvc";
 import PodSvc from "../../../services/PodSvc";
 import { SpreadsheetsSvc } from "../../../services/SpreadsheetSvc";
 import ConvManFileDropZone from "../../forms/ConvManDropZone";
@@ -19,7 +22,7 @@ type ICreateBatchProps = {
   isOpen: boolean;
   toggle(open: boolean): void;
   onLoading({ loading, message }: { loading: boolean; message: string }): void;
-  onBatchComplete(batchName: string): void;
+  onBatchComplete(createResp: ICreateBatchResponse): void;
   refreshData: boolean;
 };
 
@@ -60,11 +63,15 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
         const options = spSvc.convertToSelectList({
           data: resp.entities,
           props: {
-            value: "spreadsheet_name",
+            value: "obj_key",
             option: "spreadsheet_name",
+            lookup: "spreadsheet_name",
           },
         });
-        setWorksheetOpts(options);
+        const displayOptions: IConvManSelectListItem[] = options.map((o) => {
+          return { value: o.value, label: `${o.label} (${o.value})`, lookup: o.lookup };
+        });
+        setWorksheetOpts(displayOptions);
       }
     });
 
@@ -73,7 +80,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
       if (resp && resp.entities) {
         options = podSvc.convertToSelectList({
           data: resp.entities,
-          props: { value: "pod_url", option: "pod_name" },
+          props: { value: "pod_url", option: "pod_name", lookup: "pod_name" },
         });
       }
       setPodOpts(options);
@@ -89,19 +96,27 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
   const createBatch = async (): Promise<any> => {
     onLoading({ loading: true, message: "Creating your conversion request" });
     const svc = new SpreadsheetsSvc();
-    await svc.createBatch({
-      file: selectedSpreadsheet,
+    const hdlObjKey = _.startCase(_.toLower(selectedWorksheet.value));
+    const createBatchRes = await svc.createBatch({
+      workbook: selectedSpreadsheet,
       batchName: batchName,
       createdBy: "CONV_MAN_SYS",
       podUrl: selectedPod!.value,
-      sheet: selectedWorksheet.value,
+      sheetToRead: selectedWorksheet.lookup!,
+      hdlObjKey: hdlObjKey,
     });
 
-    onLoading({ loading: false, message: "" });
-    onBatchComplete(batchName);
+    onLoading({ loading: true, message: "Processing your conversion" });
+    const convOpsSvc = new ConvOpsSvc();
+    const execPackageRes = await convOpsSvc.executeBatchPackage({
+      p_batch: batchName,
+      p_root_obj_name: hdlObjKey,
+      p_hdl_line_name: hdlObjKey,
+    });
+    console.log(execPackageRes);
+    onBatchComplete(createBatchRes);
   };
 
-  const callMoveToCnv = async (): Promise<any> => {}
   //#endregion
 
   const spreadsheetChange = useCallback((newFile: IConvManFile): void => {
