@@ -1,10 +1,22 @@
 import _ from "lodash";
+
 import { IConvManCol } from "../../../interfaces/IConvManCol";
 import { IValidationError } from "../../../models/entities/api/IValidationError";
 import { IValidationErrorAttr } from "../../../models/entities/api/IValidationErrorAttr";
+import { BatchRequestSvc } from "../../../services/BatchRequestSvc";
 import ErrorMgmtSvc from "../../../services/ErrorMgmtSvc";
 import { IConvManErrorTableDef } from "./interfaces/IConvManErrorTableDef";
 import { IConvManRowsCols } from "./interfaces/IConvManRowsCols";
+
+export type IPieChartData = {
+  name: string;
+  value: number;
+};
+
+export type ISummaryData = {
+  name: string;
+  value: number;
+};
 
 const getData = async (batchName: string): Promise<IConvManRowsCols> => {
   const svc = new ErrorMgmtSvc();
@@ -13,6 +25,7 @@ const getData = async (batchName: string): Promise<IConvManRowsCols> => {
   return { rows: data, columns: attrs };
 };
 
+//#region table setup
 const getTableCols = (
   attrs: Array<IValidationErrorAttr>,
   row: IValidationError
@@ -48,18 +61,25 @@ const buildTables = async (batchName: string): Promise<Array<IConvManErrorTableD
   const tables: Array<IConvManErrorTableDef> = [];
 
   const orderedRows = _.orderBy(rows.entities, ["spreadsheet_name"]);
-  let spName: string = "";
-  orderedRows.forEach((row) => {
-    if (spName === row.spreadsheet_name) {
-      table.data.push(row);
-    } else {
-      if (spName !== "") tables.push(table);
+  const sps = orderedRows.map((r) => {
+    return r.spreadsheet_name;
+  });
+
+  const unqSps = _.uniq(sps);
+
+  unqSps.forEach((spName) => {
+    const spRows = _.filter(orderedRows, (row) => {
+      return row.spreadsheet_name === spName;
+    });
+
+    if (spRows && spRows.length > 0) {
+      const firstRow = spRows[0];
       table = {
-        data: [row],
-        columns: getTableCols(columns.entities, row),
-        sheetName: row.spreadsheet_name,
-        objectKey: row.obj_key,
-        key: row.stg_key_id,
+        data: spRows,
+        columns: getTableCols(columns.entities, firstRow),
+        sheetName: firstRow.spreadsheet_name,
+        objectKey: firstRow.obj_key,
+        key: firstRow.stg_key_id,
       };
       table.columns.unshift({
         accessor: "stg_error_msg",
@@ -68,16 +88,14 @@ const buildTables = async (batchName: string): Promise<Array<IConvManErrorTableD
         headerText: "Error Message",
         hdlColumnText: "Error Message",
       });
+      tables.push(table);
     }
-    spName = row.spreadsheet_name;
   });
   return tables;
 };
+//#endregion
 
-export type IPieChartData = {
-  name: string;
-  value: number;
-};
+//#region build chart data
 
 export const buildErrorPieData = (data: Array<IConvManErrorTableDef>): Array<IPieChartData> => {
   const pieData: Array<IPieChartData> = [];
@@ -86,5 +104,26 @@ export const buildErrorPieData = (data: Array<IConvManErrorTableDef>): Array<IPi
   });
   return pieData;
 };
+
+export const buildTotalLineData = async (batchName: string): Promise<ISummaryData[]> => {
+  const svc = new BatchRequestSvc();
+  const data = await svc.getTotalBatchLines(batchName);
+  const ret: ISummaryData[] = [];
+  const ordered = _.orderBy(data.entities, "hdl_line_name");
+  const hdlLineNames = ordered.map((o) => o.hdl_line_name);
+  const uniqHdlLineNames = _.uniq(hdlLineNames);
+  uniqHdlLineNames.forEach((hdlLine) => {
+    var lines = _.filter(ordered, (o) => {
+      return o.hdl_line_name === hdlLine;
+    });
+    const mapped: ISummaryData[] = lines.map((l) => {
+      return { name: l.hdl_line_name, value: l.totalrows };
+    });
+    ret.push(...mapped);
+  });
+  return ret;
+};
+
+//#endregion
 
 export default buildTables;

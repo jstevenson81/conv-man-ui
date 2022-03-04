@@ -1,7 +1,6 @@
 import { IEntity } from "../base/IEntity";
 
-
 export interface ISummaryRow extends IEntity {
   totalrows: number;
-  obj_key: string;
+  hdl_line_name: string;
 }

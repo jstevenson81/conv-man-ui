@@ -32,16 +32,16 @@ export default class ConvOpsSvc extends OracleRestServiceBase {
     let response = this.initApiResponse();
     try {
       await this.executeConversionOp(config, ServerConfig.ords.customActions.posts.moveToCnv);
-      await this.executeConversionOp(
+      await this.executeConversionOp(config, ServerConfig.ords.customActions.posts.updateDateCnv);
+      const validateResponse = await this.executeConversionOp(
         config,
-        ServerConfig.ords.customActions.posts.updateDateCnv
+        ServerConfig.ords.customActions.posts.validateCnv
       );
-      await this.executeConversionOp(config, ServerConfig.ords.customActions.posts.validateCnv);
+      console.log(validateResponse);
+      response.entities.push(validateResponse.data);
     } catch (e) {
       response = this.handleError({ e, code: "POST", reqType: "ORDS_API_EXCEPTION" });
     }
     return response;
   };
-
-  processBatchPackageResponse = response;
 }

@@ -46,11 +46,7 @@ const Conversions: React.FC<IConvManDashProps> = () => {
       });
       setBatchSelectItems(mappedBatches);
     });
-  }, []);
-
-  const toggleNewBatch = (open: boolean) => {
-    setNewBatchOpen(open);
-  };
+  }, [setNewBatchOpen]);
 
   const batchComplete = (createBatchRes: ICreateBatchResponse) => {
     setLoaderMsg("");
@@ -123,9 +119,7 @@ const Conversions: React.FC<IConvManDashProps> = () => {
           <h1 className="text-2xl">recent conversions</h1>
           <button
             className="button blue flex items-center justify-start justify-items-start gap-1"
-            onClick={() => {
-              toggleNewBatch(true);
-            }}
+            onClick={() => setNewBatchOpen(true)}
           >
             <PlusIcon className="h-4 w-4"></PlusIcon>
             <span>new conversion</span>
@@ -179,7 +173,7 @@ const Conversions: React.FC<IConvManDashProps> = () => {
 
       <ConvManCreateBatchForm
         isOpen={newBatchOpen}
-        toggle={toggleNewBatch}
+        toggle={(open) => setNewBatchOpen(open)}
         onLoading={toggleLoading}
         onBatchComplete={batchComplete}
         refreshData={refreshNewBatchData}
