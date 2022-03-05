@@ -93,11 +93,11 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
 
   //#region batch creation
 
-  const createBatch = async (): Promise<any> => {
+  const createBatch = async (): Promise<void> => {
     onLoading({ loading: true, message: "Creating your conversion request" });
     const svc = new SpreadsheetsSvc();
     const hdlObjKey = _.startCase(_.toLower(selectedWorksheet.value));
-    const createBatchRes = await svc.createBatch({
+    const batchResp = await svc.createBatch({
       workbook: selectedSpreadsheet,
       batchName: batchName,
       createdBy: "CONV_MAN_SYS",
@@ -108,13 +108,12 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
 
     onLoading({ loading: true, message: "Processing your conversion" });
     const convOpsSvc = new ConvOpsSvc();
-    const execPackageRes = await convOpsSvc.executeBatchPackage({
+    batchResp.convOpsResp = await convOpsSvc.executeBatchPackage({
       p_batch: batchName,
       p_root_obj_name: hdlObjKey,
       p_hdl_line_name: hdlObjKey,
     });
-    console.log(execPackageRes);
-    onBatchComplete(createBatchRes);
+    onBatchComplete(batchResp);
   };
 
   //#endregion
@@ -176,6 +175,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
                 <ConvManSelectList
                   label="Environment"
                   items={podOpts}
+                  selectedItem={selectedPod}
                   onListboxChange={(newValue: IConvManSelectListItem) => {
                     setSelectedPod(newValue);
                   }}
@@ -184,6 +184,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
                 <ConvManSelectList
                   label="Worksheet"
                   items={worksheetOpts}
+                  selectedItem={selectedWorksheet}
                   onListboxChange={(newWorksheet: IConvManSelectListItem) => {
                     setSelectedWorsheet(newWorksheet);
                   }}

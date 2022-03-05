@@ -1,8 +1,8 @@
-import { ISummaryRow } from "../entities/api/ISummaryRow";
+import { ISummaryRowByHdl } from "../entities/api/ISummaryRowByHdl";
 import { IConvManError } from "../errors/IConvManError";
 
 export interface ISummaryDataResp {
-  totalErrorRows: ISummaryRow[];
-  totalRows: ISummaryRow[];
+  totalErrorRows: ISummaryRowByHdl[];
+  totalRows: ISummaryRowByHdl[];
   error: IConvManError;
 }

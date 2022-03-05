@@ -1,5 +1,6 @@
-import { IConvManSelectListProps } from "./interfaces/IConvManSelectListProps";
 import Select, { SingleValue } from "react-select";
+
+import { IConvManSelectListProps } from "./interfaces/IConvManSelectListProps";
 import { IConvManSelectListItem } from "./interfaces/ISelectListItem";
 
 const ConvManSelectList: React.FC<IConvManSelectListProps> = (props: IConvManSelectListProps) => {
@@ -13,6 +14,7 @@ const ConvManSelectList: React.FC<IConvManSelectListProps> = (props: IConvManSel
         escapeClearsValue={true}
         menuPosition="absolute"
         isSearchable={true}
+        value={props.selectedItem}
         onChange={(newValue: SingleValue<IConvManSelectListItem>) => {
           props.onListboxChange(newValue);
         }}

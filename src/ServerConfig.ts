@@ -23,8 +23,9 @@ export const ServerConfig = {
         podsByEmail: "pods/{{email}}",
         pods: "pods",
         podEmails: "podemails",
-        totalErrorsPerBatch: "totalerrors/{{batch}}",
-        totalRowsPerBatc: "totalrows/{{batch}}",
+        totalErrorsPerBatch: "errorsbyhdl/{{batch}}",
+        totalRowsPerBatch: "rowsbyhdl/{{batch}}",
+        hasErrorsByBatch: "haserrors/{{batch}}",
       },
       posts: {
         batchload: "batchload",

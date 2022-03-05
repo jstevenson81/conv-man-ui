@@ -77,6 +77,7 @@ export class SpreadsheetsSvc extends OracleRestServiceBase {
     const response: ICreateBatchResponse = {
       batchCreateResponse: { entities: [], error: { message: "", name: "" } },
       spCreateResp: { data: "", links: [], status: 0, statusText: "" },
+      convOpsResp: {hasErrors: false}
     };
     try {
       const csv = Papa.unparse(spRows);
