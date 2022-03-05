@@ -99,6 +99,7 @@ const ConvManPodManager: React.FC<IConvManPodManagerProps> = ({ isOpen, onPodCre
                 <ConvManSelectList
                   items={podEmailSelectItems}
                   label="Email Domain"
+                  smallLabel="select an email associated to this pod"
                   selectedItem={podEmail}
                   onListboxChange={(newValue) => setPodEmail(newValue)}
                 ></ConvManSelectList>

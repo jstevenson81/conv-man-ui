@@ -174,6 +174,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
                 ></ConvManInput>
                 <ConvManSelectList
                   label="Environment"
+                  smallLabel="select a pod"
                   items={podOpts}
                   selectedItem={selectedPod}
                   onListboxChange={(newValue: IConvManSelectListItem) => {
@@ -183,6 +184,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
 
                 <ConvManSelectList
                   label="Worksheet"
+                  smallLabel="select a worksheet name"
                   items={worksheetOpts}
                   selectedItem={selectedWorksheet}
                   onListboxChange={(newWorksheet: IConvManSelectListItem) => {

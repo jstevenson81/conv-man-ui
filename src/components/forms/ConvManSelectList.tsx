@@ -6,7 +6,9 @@ import { IConvManSelectListItem } from "./interfaces/ISelectListItem";
 const ConvManSelectList: React.FC<IConvManSelectListProps> = (props: IConvManSelectListProps) => {
   return (
     <div className="w-full">
-      <label className="mb-1 ml-1/2 uppercase text-sm text-slate-600 font-bold">{props.label}</label>
+      <label className="mb-1 ml-1/2 uppercase text-sm text-slate-600 font-bold">
+        {props.label} (<small>{props.smallLabel}</small>)
+      </label>
       <Select
         placeholder={`select a ${props.label}`}
         options={props.items}
