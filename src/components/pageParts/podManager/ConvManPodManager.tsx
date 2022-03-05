@@ -12,7 +12,7 @@ import { IConvManPodManagerProps } from "./interfaces/IConvManPodManagerProps";
 const ConvManPodManager: React.FC<IConvManPodManagerProps> = ({ isOpen, onPodCreated, onToggleOpen }) => {
   const [podName, setPodName] = useState("");
   const [podUrl, setPodUrl] = useState("");
-  const [podEmail, setPodEmail] = useState<IConvManSelectListItem>();
+  const [podEmail, setPodEmail] = useState<IConvManSelectListItem>({ label: "", value: "" });
   const [podEmailSelectItems, setPodEmailSelectItems] = useState<IConvManSelectListItem[]>([]);
 
   //#region data gathering
@@ -99,6 +99,7 @@ const ConvManPodManager: React.FC<IConvManPodManagerProps> = ({ isOpen, onPodCre
                 <ConvManSelectList
                   items={podEmailSelectItems}
                   label="Email Domain"
+                  selectedItem={podEmail}
                   onListboxChange={(newValue) => setPodEmail(newValue)}
                 ></ConvManSelectList>
               </div>

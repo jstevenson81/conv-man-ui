@@ -1,7 +1,8 @@
 import { DateTime } from "luxon";
 
 import { IBatchWithPodName } from "../models/entities/api/IBatchWithPodName";
-import { ISummaryRow } from "../models/entities/api/ISummaryRow";
+import { IHasErrors } from "../models/entities/api/IHasErrors";
+import { ISummaryRowByHdl } from "../models/entities/api/ISummaryRowByHdl";
 import { IUxBatchRequest } from "../models/entities/base/IUxBatchRequest";
 import { IApiResponse } from "../models/responses/IApiResponse";
 import { IBatchAutoRestResponse } from "../models/responses/IBatchAutoRestResponse";
@@ -59,19 +60,35 @@ export class BatchRequestSvc extends OracleRestServiceBase {
     return response;
   };
 
-  getTotalBatchLines = async (batchName: string): Promise<IApiResponse<ISummaryRow>> => {
-    let totalRowResp: IApiResponse<ISummaryRow>;
+  getTotalBatchLines = async (batchName: string): Promise<IApiResponse<ISummaryRowByHdl>> => {
+    let totalRowResp: IApiResponse<ISummaryRowByHdl>;
 
     try {
-      const axiosRespErr = await this.runGet<ISummaryRow>({
-        action: ServerConfig.ords.customActions.gets.totalRowsPerBatc.replace("{{batch}}", batchName),
+      const axiosRespErr = await this.runGet<ISummaryRowByHdl>({
+        action: ServerConfig.ords.customActions.gets.totalRowsPerBatch.replace("{{batch}}", batchName),
         pathOrEntity: ServerConfig.ords.entities.customMethods,
       });
-      totalRowResp = await this.constructEntities<ISummaryRow>(axiosRespErr);
+      totalRowResp = await this.constructEntities<ISummaryRowByHdl>(axiosRespErr);
     } catch (e) {
       totalRowResp = this.handleError({ e, code: "GET", reqType: "ORDS_API_EXCEPTION" });
     }
 
     return totalRowResp;
+  };
+
+  getErrorCount = async (batchName: string): Promise<IApiResponse<IHasErrors>> => {
+    let errorCountResp: IApiResponse<IHasErrors>;
+
+    try {
+      const axiosRespErr = await this.runGet<IHasErrors>({
+        action: ServerConfig.ords.customActions.gets.hasErrorsByBatch.replace("{{batch}}", batchName),
+        pathOrEntity: ServerConfig.ords.entities.customMethods,
+      });
+      errorCountResp = await this.constructEntities<IHasErrors>(axiosRespErr);
+    } catch (e) {
+      errorCountResp = this.handleError({ e, code: "GET", reqType: "ORDS_API_EXCEPTION" });
+    }
+
+    return errorCountResp;
   };
 }

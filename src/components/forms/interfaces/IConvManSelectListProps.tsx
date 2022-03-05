@@ -4,4 +4,5 @@ export type IConvManSelectListProps = {
   items: Array<IConvManSelectListItem>;
   onListboxChange(newValue: any): void;
   label: string;
+  selectedItem: IConvManSelectListItem;
 };

@@ -4,6 +4,7 @@ import { IConvOpInput } from "../models/entities/base/IConvOpInput";
 import { IConvOpResponse } from "../models/responses/IConvOpResponse";
 import { ServerConfig } from "../ServerConfig";
 import { OracleRestServiceBase } from "./base/OracleRestServiceBase";
+import { BatchRequestSvc } from "./BatchRequestSvc";
 
 export default class ConvOpsSvc extends OracleRestServiceBase {
   constructor() {
@@ -28,20 +29,31 @@ export default class ConvOpsSvc extends OracleRestServiceBase {
     }
   };
 
-  executeBatchPackage = async (config: IConvOpInput): Promise<any> => {
-    let response = this.initApiResponse();
+  executeBatchPackage = async (config: IConvOpInput): Promise<IHasErrors> => {
     try {
       await this.executeConversionOp(config, ServerConfig.ords.customActions.posts.moveToCnv);
       await this.executeConversionOp(config, ServerConfig.ords.customActions.posts.updateDateCnv);
-      const validateResponse = await this.executeConversionOp(
-        config,
-        ServerConfig.ords.customActions.posts.validateCnv
-      );
-      console.log(validateResponse);
-      response.entities.push(validateResponse.data);
+      await this.executeConversionOp(config, ServerConfig.ords.customActions.posts.validateCnv);
+      // check to see if we got a good validation response
+      // if so, check the batch for errors
+      // if there are errors, tell the user there are errors
+      // force a refresh of the data on the conversion page
+      // select the batch we just created and have it show the
+      // errors.  Finally, show a toastr telling the user we have errors
+      const batchSvc = new BatchRequestSvc();
+      const totalErrors = await batchSvc.getErrorCount(config.p_batch);
+      if (totalErrors.entities && totalErrors.entities[0].totalerrors > 0) {
+        return { hasErrors: true };
+      }
+      await this.executeConversionOp(config, ServerConfig.ords.customActions.posts.convertToHdl);
+      await this.executeConversionOp(config, ServerConfig.ords.customActions.posts.createHdlFile);
     } catch (e) {
-      response = this.handleError({ e, code: "POST", reqType: "ORDS_API_EXCEPTION" });
+      throw e;
     }
-    return response;
+    return { hasErrors: false };
   };
+}
+
+export interface IHasErrors {
+  hasErrors: boolean;
 }

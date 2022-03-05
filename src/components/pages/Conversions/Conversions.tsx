@@ -1,12 +1,14 @@
-import { InformationCircleIcon, PlusIcon } from "@heroicons/react/outline";
-import React, { useEffect, useState } from "react";
+import { InformationCircleIcon, PlusIcon } from "@heroicons/react/solid";
+import _ from "lodash";
+import { useEffect, useState } from "react";
+import { toast, ToastPosition } from "react-toastify";
 
 import { IUxPod } from "../../../models/entities/base/IUxPod";
 import { ICreateBatchResponse } from "../../../models/responses/ICreateBatchResponse";
 import { ServerConfig } from "../../../ServerConfig";
 import { BatchRequestSvc } from "../../../services/BatchRequestSvc";
 import ConvManLoader from "../../common/loader/ConvManLoader";
-import ConvManToastr, { ConvManToastrType } from "../../common/toasts/ConvManToastr";
+import { ConvManToastrOpts } from "../../common/toasts/ConvManToastrOpts";
 import ConvManSelectList from "../../forms/ConvManSelectList";
 import { IConvManSelectListItem } from "../../forms/interfaces/ISelectListItem";
 import ConvManErrorTableContainer from "../../pageParts/convErrorManager/ConvManErrorTableContainer";
@@ -24,9 +26,7 @@ const Conversions: React.FC<IConvManDashProps> = () => {
   const [loaderMsg, setLoaderMsg] = useState("");
 
   //#region Toastr setup
-  const [toastrMsg, setToastrMsg] = useState("");
-  const [toastrShown, setToastrShown] = useState(false);
-  const [toastrType, setToastrType] = useState<ConvManToastrType>("info");
+  const toastrConfig: { autoClose: number; position: ToastPosition } = { autoClose: 2000, position: "top-right" };
   //#endregion
 
   const [batchSelectItems, setBatchSelectItems] = useState<Array<IConvManSelectListItem>>([]);
@@ -36,6 +36,7 @@ const Conversions: React.FC<IConvManDashProps> = () => {
   ]);
 
   const [selectedBatch, setSelectedBatch] = useState<IConvManSelectListItem>({ label: "", value: "" });
+  const [errorBatch, setErrorBatch] = useState("");
 
   useEffect(() => {
     const batchReqSvc = new BatchRequestSvc();
@@ -45,30 +46,40 @@ const Conversions: React.FC<IConvManDashProps> = () => {
         props: { option: "cnv_batch", value: "cnv_batch", lookup: "cnv_batch" },
       });
       setBatchSelectItems(mappedBatches);
+      const currentBatch = _.find(mappedBatches, (batch) => {
+        return batch.label === errorBatch;
+      });
+      if (currentBatch) setSelectedBatch(currentBatch);
     });
-  }, [setNewBatchOpen]);
+  }, [setNewBatchOpen, errorBatch]);
 
   const batchComplete = (createBatchRes: ICreateBatchResponse) => {
-    setLoaderMsg("");
-    setRefreshNewBatchData(!refreshNewBatchData);
-    setIsLoading(false);
-    setNewBatchOpen(false);
     const batch = createBatchRes.batchCreateResponse.entities[0];
-    showToastr(
-      `
-      Batch ${batch.cnv_batch} sucessfully created
-      Response: ${createBatchRes.spCreateResp.data}
-      `,
-      "success"
-    );
+    if (createBatchRes.convOpsResp.hasErrors) {
+      toast.warning(
+        `Batch ${batch.cnv_batch} sucessfully created, however, there were validation errors.
+      See the errors below.`,
+        ConvManToastrOpts(toastrConfig)
+      );
+      setErrorBatch(batch.cnv_batch);
+    } else {
+      toast.success(
+        `Batch ${batch.cnv_batch} sucessfully created.  Response: ${createBatchRes.spCreateResp.data}`,
+        ConvManToastrOpts(toastrConfig)
+      );
+    }
+
+    // reset state
+    toggleLoading({ message: "", loading: false });
+    setNewBatchOpen(false);
+    setRefreshNewBatchData(!refreshNewBatchData);
   };
 
   const podCreated = (newPod: IUxPod) => {
-    setLoaderMsg("");
-    setIsLoading(false);
+    toggleLoading({ message: "", loading: false });
     setPodManagerOpen(false);
     setRefreshNewBatchData(!refreshNewBatchData);
-    showToastr(`Pod ${newPod.pod_name} sucessfully created`, "success");
+    toast.success(`Pod ${newPod.pod_name} sucessfully created`, ConvManToastrOpts(toastrConfig));
   };
 
   const toggleLoading = ({ loading, message }: { loading: boolean; message: string }) => {
@@ -102,16 +113,6 @@ const Conversions: React.FC<IConvManDashProps> = () => {
       });
   };
 
-  const showToastr = (toastrMsg: string, type: ConvManToastrType) => {
-    setToastrType(type);
-    setToastrMsg(toastrMsg);
-    setToastrShown(true);
-    window.setTimeout(() => {
-      setToastrMsg("");
-      setToastrShown(false);
-    }, 200);
-  };
-
   return (
     <div>
       <div className="mt-8">
@@ -143,6 +144,7 @@ const Conversions: React.FC<IConvManDashProps> = () => {
           <ConvManSelectList
             items={batchSelectItems}
             label="Conversion"
+            selectedItem={selectedBatch}
             onListboxChange={(newVal) => {
               setSelectedBatch(newVal);
             }}
@@ -185,13 +187,6 @@ const Conversions: React.FC<IConvManDashProps> = () => {
         onToggleOpen={(open: boolean) => setPodManagerOpen(open)}
       ></ConvManPodManager>
 
-      <ConvManToastr
-        message={toastrMsg}
-        autoClose={2000}
-        position="top-right"
-        show={toastrShown}
-        type={toastrType}
-      ></ConvManToastr>
       <ConvManLoader show={isLoading} message={loaderMsg}></ConvManLoader>
     </div>
   );

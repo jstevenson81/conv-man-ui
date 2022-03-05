@@ -1,19 +1,7 @@
 import { InformationCircleIcon } from "@heroicons/react/outline";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Bar, BarChart, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import * as XLSX from "xlsx";
 
 import ExcelSvc from "../../../services/ExcelSvc";
@@ -39,8 +27,10 @@ const ConvManErrTableCollection: React.FC<IConvManErrorTableProps> = (props: ICo
   };
   //#endregion
 
-  const barColorsBlue = ["#93c5fd", "#60a5fa", "#3b82f6", "#2563eb", "#1d4ed8", "#1e40af", "#1e3a8a"];
-  const barColorsPurple = ["#d8b4fe", "#c084fc", "#a855f7", "#9333ea", "#7e22ce", "#6b21a8", "#581c87"];
+  const blueColors = ["#93c5fd", "#60a5fa", "#3b82f6", "#2563eb", "#1d4ed8", "#1e40af", "#1e3a8a"];
+  //const greenColors = ["#86efac", "#4ade80", "#22c55e", "#16a34a", "#15803d", "#166534", "#14532d"];
+  //const tealColors = ["#5eead4", "#2dd4bf", "#14b8a6", "#0d9488", "#0f766e", "#115e59", "#134e4a"];
+  const roseColors = ["#fda4af", "#fb7185", "#f43f5e", "#e11d48", "#be123c", "#9f1239", "#881337"];
 
   //#region errors to json
 
@@ -79,13 +69,12 @@ const ConvManErrTableCollection: React.FC<IConvManErrorTableProps> = (props: ICo
         <div className="w-full h-[200px] mt-10 mb-4 flex items-center">
           <ResponsiveContainer>
             <BarChart width={730} height={250} data={summaryData}>
-              <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
               <Bar dataKey="value" fill="#8884d8">
                 {summaryData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={barColorsBlue[index % 20]} />
+                  <Cell key={`cell-${index}`} fill={blueColors[index % 20]} />
                 ))}
               </Bar>
             </BarChart>
@@ -95,7 +84,7 @@ const ConvManErrTableCollection: React.FC<IConvManErrorTableProps> = (props: ICo
             <PieChart>
               <Pie dataKey="value" data={pieData} innerRadius={40} outerRadius={80} cx="50%" cy="50%" label>
                 {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={barColorsPurple[index % 20]}></Cell>
+                  <Cell key={`cell-${index}`} fill={roseColors[index % 20]}></Cell>
                 ))}
               </Pie>
               <Legend verticalAlign="top" align="center"></Legend>
