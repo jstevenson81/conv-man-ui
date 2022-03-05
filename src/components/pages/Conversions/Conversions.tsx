@@ -1,7 +1,9 @@
-import { InformationCircleIcon, PlusIcon } from "@heroicons/react/solid";
+import "react-toastify/dist/ReactToastify.css";
+
+import { ClipboardCheckIcon, InformationCircleIcon, PlusIcon } from "@heroicons/react/outline";
 import _ from "lodash";
 import { useEffect, useState } from "react";
-import { toast, ToastPosition } from "react-toastify";
+import { toast, ToastContainer, ToastPosition } from "react-toastify";
 
 import { IUxPod } from "../../../models/entities/base/IUxPod";
 import { ICreateBatchResponse } from "../../../models/responses/ICreateBatchResponse";
@@ -116,34 +118,48 @@ const Conversions: React.FC<IConvManDashProps> = () => {
   return (
     <div>
       <div className="mt-8">
-        <div className="flex items-center justify-start justify-items-start gap-4">
-          <h1 className="text-2xl">recent conversions</h1>
-          <button
-            className="button blue flex items-center justify-start justify-items-start gap-1"
-            onClick={() => setNewBatchOpen(true)}
-          >
-            <PlusIcon className="h-4 w-4"></PlusIcon>
-            <span>new conversion</span>
-          </button>
-          <button
-            className="button red flex items-center justify-start justify-items-start gap-1"
-            onClick={() => setPodManagerOpen(true)}
-          >
-            <PlusIcon className="h-4 w-4"></PlusIcon>
-            <span>Create Pod</span>
-          </button>
-        </div>
-        <div className="text-slate-600 border border-green-600 bg-green-200 p-2 rounded-lg my-4 flex items-center gap-2">
-          <InformationCircleIcon className="w-10 h-10"></InformationCircleIcon>
-          <p className="text-sm">
-            Below are your recent conversions submitted. Select a batch, and there will be visuals and tables that will
-            allow you to correct your errors and re-submit
-          </p>
+        <div className="flex items-start justify-between justify-items-stretch gap-4">
+          <div className="flex-grow">
+            <div className="text-slate-600 border border-green-600 bg-green-200 px-2 py-4 rounded-lg flex items-center gap-2 mb-4">
+              <InformationCircleIcon className="w-8 h-8"></InformationCircleIcon>
+              <p className="text-sm">
+                Click the new conversion button to start a conversion process. You can also create a new pod. To
+                download a template, just select one from the list below.
+              </p>
+            </div>
+          </div>
+          <div className="flex-grow">
+            <div className="flex items-center justify-evenly button blue gap-1" onClick={() => setNewBatchOpen(true)}>
+              <ClipboardCheckIcon className="h-8 w-8"></ClipboardCheckIcon>
+              <span>new conversion</span>
+            </div>
+          </div>
+          <div className="flex-grow">
+            <div className="flex items-center justify-evenly button red gap-1" onClick={() => setPodManagerOpen(true)}>
+              <PlusIcon className="h-8 w-8"></PlusIcon>
+              <span>new pod</span>
+            </div>
+          </div>
         </div>
         <div className="mt-4">
           <ConvManSelectList
+            items={templates}
+            label="Conversion Templates"
+            smallLabel="select a template to download"
+            onListboxChange={(template) => {
+              downloadTemplate(template);
+            }}
+            selectedItem={templates[0]}
+          ></ConvManSelectList>
+        </div>
+
+        <div className="mt-4">
+          <h1 className="text-2xl mb-4 mt-10">recent conversions</h1>
+
+          <ConvManSelectList
             items={batchSelectItems}
             label="Conversion"
+            smallLabel="select a conversion to see its details"
             selectedItem={selectedBatch}
             onListboxChange={(newVal) => {
               setSelectedBatch(newVal);
@@ -153,24 +169,6 @@ const Conversions: React.FC<IConvManDashProps> = () => {
         <div className="mt-4">
           <ConvManErrorTableContainer batchName={selectedBatch.value}></ConvManErrorTableContainer>
         </div>
-      </div>
-
-      <h1 className="mt-8 text-2xl">Templates</h1>
-      <p>Click on any of the buttons below to download the template to use to create a conversion.</p>
-      <div className="flex items-center justify-start justify-items-start gap-2 mt-4 w-full">
-        {templates.map((t) => {
-          return (
-            <button
-              className="button blue"
-              key={t.value}
-              onClick={() => {
-                downloadTemplate(t);
-              }}
-            >
-              {t.label}
-            </button>
-          );
-        })}
       </div>
 
       <ConvManCreateBatchForm
@@ -188,6 +186,8 @@ const Conversions: React.FC<IConvManDashProps> = () => {
       ></ConvManPodManager>
 
       <ConvManLoader show={isLoading} message={loaderMsg}></ConvManLoader>
+
+      <ToastContainer></ToastContainer>
     </div>
   );
 };

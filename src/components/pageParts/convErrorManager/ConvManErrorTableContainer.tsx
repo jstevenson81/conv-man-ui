@@ -1,4 +1,5 @@
 import { InformationCircleIcon } from "@heroicons/react/outline";
+import { DocumentDownloadIcon } from "@heroicons/react/solid";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -66,6 +67,12 @@ const ConvManErrTableCollection: React.FC<IConvManErrorTableProps> = (props: ICo
     <>
       <ConvManLoader show={loadingState.show} message={loadingState.message}></ConvManLoader>
       <div className={errorTables && errorTables.length > 0 ? "visible" : "hidden"}>
+        <div className="text-slate-600 border border-sky-600 bg-sky-200 p-2 rounded-lg flex items-center gap-2 mb-4">
+          <InformationCircleIcon className="w-10 h-10"></InformationCircleIcon>
+          <p className="text-sm">
+            The chart on the left shows total lines by sheet. The chart on the right shows errors by sheet.
+          </p>
+        </div>
         <div className="w-full h-[200px] mt-10 mb-4 flex items-center">
           <ResponsiveContainer>
             <BarChart width={730} height={250} data={summaryData}>
@@ -92,21 +99,25 @@ const ConvManErrTableCollection: React.FC<IConvManErrorTableProps> = (props: ICo
             </PieChart>
           </ResponsiveContainer>
         </div>
-        <div className="flex items-center justify-start justify-items-start mb-10">
-          <h3 className={`text-md mr-2 ${pieData.length > 0 || summaryData.length > 0 ? "visible" : "hidden"}`}>
-            Conversion Charts
-          </h3>
-          <div className="text-slate-600 border border-sky-600 bg-sky-200 p-2 rounded-lg flex items-center gap-2">
+
+        <div className="flex flex-col gap-8">
+          <div className="flex items-center justify-start justify-items-start gap-8">
+            <h1 className="text-2xl">Error Details</h1>
+            <button
+              className="button red flex items-center justify-start justify-items-start gap-2"
+              onClick={errorsToJson}
+            >
+              <DocumentDownloadIcon className="h-6 w-6"></DocumentDownloadIcon>
+              Download Errors
+            </button>
+          </div>
+          <div className="text-slate-600 border border-green-600 bg-green-200 p-2 rounded-lg flex items-center gap-2 mb-4">
             <InformationCircleIcon className="w-10 h-10"></InformationCircleIcon>
             <p className="text-sm">
-              The chart on the left shows total lines by sheet. The chart on the right shows errors by sheet.
+              Click the button to download the validation errors for this conversion as an excel file. Below are the
+              errors broken out by sheet
             </p>
           </div>
-        </div>
-        <div className="flex flex-col gap-8">
-          <button className="button red" onClick={errorsToJson}>
-            Download Errors
-          </button>
           {errorTables.map((table) => {
             return <ConvManErrorTable {...table} key={table.key}></ConvManErrorTable>;
           })}
