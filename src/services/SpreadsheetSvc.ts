@@ -51,7 +51,6 @@ export class SpreadsheetsSvc extends OracleRestServiceBase {
     batchName: string;
     createdBy: string;
     sheetToRead: string;
-    hdlObjKey: string;
   }): Promise<ICreateBatchResponse> => {
     const excel = new ExcelSvc();
     const spRows = excel.sheetToCsv({ ...config });
@@ -59,8 +58,6 @@ export class SpreadsheetsSvc extends OracleRestServiceBase {
     spRows.forEach((row) => {
       row.spr_key_id = null;
     });
-
-    console.log(spRows);
 
     const batchSvc = new BatchRequestSvc();
 
@@ -76,7 +73,7 @@ export class SpreadsheetsSvc extends OracleRestServiceBase {
 
     const response: ICreateBatchResponse = {
       batchCreateResponse: { entities: [], error: { message: "", name: "" } },
-      spCreateResp: { data: "", links: [], status: 0, statusText: "" },
+      spCreateResp: { data: "", links: [], status: 0, statusText: "", isError: false },
       convOpsResp: { hasErrors: false },
     };
     try {
@@ -88,14 +85,20 @@ export class SpreadsheetsSvc extends OracleRestServiceBase {
         body: csv,
         contentType: "text/csv",
       });
-      if (createSpResp.data.indexOf("SEVERE") > -1) throw new Error(createSpResp.data);
+      const batchLoadMsg = createSpResp.data.replace(/(\r\n|\n|\r)/gm, "");
+      const hasError = batchLoadMsg.toUpperCase().indexOf("SEVERE") > -1;
+
+      if (hasError) throw new Error(createSpResp.data);
+
       response.spCreateResp = createSpResp;
     } catch (e) {
       const axiosError = e as AxiosError;
-      response.spCreateResp.data = axiosError.message;
+
+      response.spCreateResp.data = axiosError && axiosError.message ? axiosError.message : (e as Error).message;
       response.spCreateResp.status = axiosError && axiosError.response ? axiosError.response.status : 500;
       response.spCreateResp.statusText =
         axiosError && axiosError.response ? axiosError.response.statusText : "No rows committed";
+      response.spCreateResp.isError = true;
     }
     return response;
   };

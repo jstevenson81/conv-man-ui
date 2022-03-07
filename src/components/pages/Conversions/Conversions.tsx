@@ -64,6 +64,11 @@ const Conversions: React.FC<IConvManDashProps> = () => {
         ConvManToastrOpts(toastrConfig)
       );
       setErrorBatch(batch.cnv_batch);
+    } else if (createBatchRes.spCreateResp.isError) {
+      toast.error(
+        `Batch ${batch.cnv_batch} was not successfully created.  There were errors loading the batch to the database (CNV_SPREADSHEET table).`,
+        ConvManToastrOpts(toastrConfig)
+      );
     } else {
       toast.success(
         `Batch ${batch.cnv_batch} sucessfully created.  Response: ${createBatchRes.spCreateResp.data}`,

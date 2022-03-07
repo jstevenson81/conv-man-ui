@@ -4,4 +4,5 @@ export interface IBulkLoadResponse extends IOracleAutoRestResponse {
   data: string;
   status: number;
   statusText: string;
+  isError: boolean;
 }

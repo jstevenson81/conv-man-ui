@@ -14,7 +14,6 @@ export default class ExcelSvc {
     sheetToRead: string;
     batchName: string;
     createdBy: string;
-    hdlObjKey: string;
   }): Array<ICnvSpreadsheet> {
     const wb = XLSX.read(config.workbook.data);
     const csv = XLSX.utils.sheet_to_csv(wb.Sheets[config.sheetToRead]);
@@ -47,7 +46,6 @@ export default class ExcelSvc {
     batchName: string;
     createdBy: string;
     sheetToRead: string;
-    hdlObjKey: string;
   }): ICnvSpreadsheet | undefined {
     const alpha = Array.from(Array(26)).map((e, i) => i + 65);
     const alphabet = alpha.map((x) => {
@@ -71,29 +69,28 @@ export default class ExcelSvc {
 
     // loop through the columns in the row mapping
     // the input data to a common structure CnvSpreadsheet
-    columns.forEach((col: string, index: number) => {
-      // start with the second column and not the first
-      // becuase in every template the first column
-      // is always blank
-      if (index >= 1) {
-        let colName: string = "column_";
-        if (timesThroughAlphabet === 0) colName += alphabet[columnNumber];
-        else if (timesThroughAlphabet === 1)
-          colName += alphabet[timesThroughAlphabet].toLowerCase() + alphabet[columnNumber];
-        colName = colName.toLowerCase();
+    columns.forEach((col: string) => {
+      let colName: string = "column_";
+      if (timesThroughAlphabet === 0) colName += alphabet[columnNumber];
+      else colName += alphabet[timesThroughAlphabet].toLowerCase() + alphabet[columnNumber];
 
-        // do we have a blank column or a column
-        // that should not be added
-        if (config.row[col].indexOf("MERGE|") === -1) {
-          spRow[colName] = config.row[col];
-        }
-        // if we have a blank column, we need to incriment the number of blanks so
-        // we can check to see if this is a blank row at the end
-        else if (config.row[col].trim() === "") blankCols++;
+      // lower case the column name
+      colName = colName.toLowerCase();
 
-        // increment i and the times through alphabet
-        columnNumber++;
-        if (columnNumber === alphabet.length) timesThroughAlphabet++;
+      // do we have a blank column or a column
+      // that should not be added
+      if (config.row[col].indexOf("MERGE|") === -1) {
+        spRow[colName] = config.row[col];
+      }
+      // if we have a blank column, we need to incriment the number of blanks so
+      // we can check to see if this is a blank row at the end
+      else if (config.row[col].trim() === "") blankCols++;
+
+      // increment i and the times through alphabet
+      columnNumber++;
+      if (columnNumber === alphabet.length) {
+        timesThroughAlphabet++;
+        columnNumber = 0;
       }
     });
     // if this is a blank row, we need to not add it to the array, so return
@@ -104,7 +101,6 @@ export default class ExcelSvc {
     // input row from the spreadsheet
     spRow.cnv_batch = config.batchName;
     spRow.spreadsheet_name = config.sheetToRead;
-    spRow.obj_key_list = `|${config.hdlObjKey}|`;
     spRow.created_by = config.createdBy;
 
     return spRow;

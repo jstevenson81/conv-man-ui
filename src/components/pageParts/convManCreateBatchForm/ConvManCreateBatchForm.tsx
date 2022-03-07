@@ -103,16 +103,16 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
       createdBy: "CONV_MAN_SYS",
       podUrl: selectedPod!.value,
       sheetToRead: selectedWorksheet.lookup!,
-      hdlObjKey: hdlObjKey,
     });
-
-    onLoading({ loading: true, message: "Processing your conversion" });
-    const convOpsSvc = new ConvOpsSvc();
-    batchResp.convOpsResp = await convOpsSvc.executeBatchPackage({
-      p_batch: batchName,
-      p_root_obj_name: hdlObjKey,
-      p_hdl_line_name: hdlObjKey,
-    });
+    if (batchResp.spCreateResp.isError === false) {
+      onLoading({ loading: true, message: "Processing your conversion" });
+      const convOpsSvc = new ConvOpsSvc();
+      batchResp.convOpsResp = await convOpsSvc.executeBatchPackage({
+        p_batch: batchName,
+        p_root_obj_name: hdlObjKey,
+        p_hdl_line_name: hdlObjKey,
+      });
+    }
     onBatchComplete(batchResp);
   };
 

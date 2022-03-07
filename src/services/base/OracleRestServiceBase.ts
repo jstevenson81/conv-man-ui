@@ -152,7 +152,13 @@ export abstract class OracleRestServiceBase {
       headers: { "Content-Type": contentType },
     });
 
-    return { data: axiosResp.data, status: axiosResp.status, statusText: axiosResp.statusText, links: [] };
+    return {
+      isError: false,
+      data: axiosResp.data,
+      status: axiosResp.status,
+      statusText: axiosResp.statusText,
+      links: [],
+    };
   };
 
   protected runPut = async <TResponseType extends IOracleAutoRestResponse, TEntity extends IEntity>({
