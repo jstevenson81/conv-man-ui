@@ -1,8 +1,0 @@
-﻿SetCode,LocationCode,LocationName,AddressLine1,AddressLine2,AddressLine3,TownOrCity,Region1,Region2,Region3,PostalCode,Country,TimezoneName,EffectiveStartDate,EffectiveEndDate,BillToSiteFlag,ReceivingSiteFlag,ShipToSiteFlag,ShipToLocationSetCode,ShipToLocationCode,InventoryOrganizationName,ActiveStatus
-COMMON,LOC-001,Work Location 001,100 Main Street, Ste 550,,Town1,,NY,,12345,US,,18629,,Y,Y,Y,,,,A
-COMMON,LOC-002,Work Location 002,101 Main Street,,,Town2,,NC,,12345,US,,18629,,Y,Y,Y,,,,A
-COMMON,LOC-003,Work Location 003,102 Main Street,,,Town3,,CA,,12345,US,,18629,,Y,Y,Y,,,,A
-COMMON,LOC-004,Work Location 004,,,,,,,,,,,,,,,,,,,A
-COMMON,LOC-005,Work Location 005,,,,,,,,,,,,,,,,,,,A
-COMMON,LOC-006,Work Location 006,,,,,,,,,,,,,,,,,,,A
-COMMON,LOC-007,Work Location 007,,,,,,,,,,,,,,,,,,,A
