@@ -77,7 +77,7 @@ export class SpreadsheetsSvc extends OracleRestServiceBase {
     const response: ICreateBatchResponse = {
       batchCreateResponse: { entities: [], error: { message: "", name: "" } },
       spCreateResp: { data: "", links: [], status: 0, statusText: "" },
-      convOpsResp: {hasErrors: false}
+      convOpsResp: { hasErrors: false },
     };
     try {
       const csv = Papa.unparse(spRows);
@@ -88,12 +88,14 @@ export class SpreadsheetsSvc extends OracleRestServiceBase {
         body: csv,
         contentType: "text/csv",
       });
+      if (createSpResp.data.indexOf("SEVERE") > -1) throw new Error(createSpResp.data);
       response.spCreateResp = createSpResp;
     } catch (e) {
       const axiosError = e as AxiosError;
       response.spCreateResp.data = axiosError.message;
-      response.spCreateResp.status = axiosError.response!.status;
-      response.spCreateResp.statusText = axiosError.response!.statusText;
+      response.spCreateResp.status = axiosError && axiosError.response ? axiosError.response.status : 500;
+      response.spCreateResp.statusText =
+        axiosError && axiosError.response ? axiosError.response.statusText : "No rows committed";
     }
     return response;
   };

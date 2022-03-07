@@ -22,16 +22,20 @@ export default class ExcelSvc {
 
     Papa.parse(csv, {
       complete: (csvData) => {
-        let i = 0;
-        csvData.data.forEach((d) => {
-          // we want to start with the 6th index
-          if (i > 5) {
+        let processFollowingRows = false;
+        csvData.data.forEach((d: any) => {
+          if (processFollowingRows) {
             const row = this.createSpreadsheetRow({ row: d, ...config });
             // if we don't have a blank row, then push
             // the row to the array
             if (!_.isUndefined(row)) arr.push(row);
           }
-          i++;
+          // we want to start with the row past the row where the
+          // first column = HDL Field or HDL Header
+          const firstCol = d[0].toString().toUpperCase();
+          if (firstCol === "HDL FIELD" || firstCol === "HDL HEADER") {
+            processFollowingRows = true;
+          }
         });
       },
     });
@@ -53,7 +57,7 @@ export default class ExcelSvc {
     let columnNumber = 0;
     // this is the number of times we go past z
     let timesThroughAlphabet = 0;
-    // this is the columnd from the passed in row
+    // this is the columns from the passed in row
     const columns = _.keysIn(config.row);
     // these two vars help us determine if the row is blank
     // we need to subtract 1 from the length because

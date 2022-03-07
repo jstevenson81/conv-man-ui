@@ -2,6 +2,7 @@ import { readFileSync } from "fs";
 import { DateTime } from "luxon";
 
 import { IConvManFile } from "../../components/forms/interfaces/IConvManFileInputState";
+import ExcelSvc from "../../services/ExcelSvc";
 import { SpreadsheetsSvc } from "../../services/SpreadsheetSvc";
 
 describe("GET tests", () => {
@@ -44,6 +45,26 @@ describe("PUT, POST, DELETE tests", () => {
     done();
   });
 
+  it("should parse a worksheet", (done: jest.DoneCallback) => {
+    const svc = new ExcelSvc();
+    const data = svc.sheetToCsv({
+      batchName: DateTime.now().toMillis().toString(),
+      createdBy: "jonatan",
+      hdlObjKey: "OrgTree",
+      sheetToRead: "OrgTree",
+      workbook: {
+        data: readFileSync("./public/templates/DC001.xlsx"),
+        fileExt: "xlsx",
+        fileName: "DC001.xlsx",
+        lastModified: "blah",
+      },
+    });
+    expect(data).not.toBeUndefined();
+    expect(data.length).toBeGreaterThan(0);
+    expect(data[0].column_a).toEqual("NPG_HR_ORG_TREE");
+    done();
+  }, 60000);
+
   it("should create a batch request and a CSV bulkload", (done: jest.DoneCallback) => {
     const file: IConvManFile = {
       fileExt: ".xlsx",
@@ -59,6 +80,7 @@ describe("PUT, POST, DELETE tests", () => {
         createdBy: "jsteve81@gmail.com",
         workbook: file,
         sheetToRead: "Grades",
+        hdlObjKey: "",
       })
       .then((resp) => {
         expect(resp).not.toBeUndefined();
