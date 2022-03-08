@@ -48,6 +48,7 @@ export default class ConvOpsSvc extends OracleRestServiceBase {
             return {hasErrors: true}
         }
         await this.executeConversionOp(config, ServerConfig.ords.customActions.posts.convertToHdl);
+        config.p_storage_object_uri = ServerConfig.objectStorage.url;
         await this.executeConversionOp(config, ServerConfig.ords.customActions.posts.createHdlFile);
         return {hasErrors: false};
     };

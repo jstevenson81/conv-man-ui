@@ -29,7 +29,7 @@ const Conversions: React.FC<IConvManDashProps> = () => {
     const [loaderMsg, setLoaderMsg] = useState("");
 
     //#region Toastr setup
-    const toastrConfig: { autoClose: number; position: ToastPosition } = {autoClose: 2000, position: "top-right"};
+    const toastrConfig: { autoClose: number; position: ToastPosition } = {autoClose: 30000, position: "top-right"};
     //#endregion
 
     const [batchSelectItems, setBatchSelectItems] = useState<Array<IConvManSelectListItem>>([]);
