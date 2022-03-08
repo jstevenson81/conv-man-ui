@@ -1,4 +1,4 @@
 export interface IUniqueWorksheet {
-  obj_key: string;
+  root_obj_name: string;
   spreadsheet_name: string;
 }
