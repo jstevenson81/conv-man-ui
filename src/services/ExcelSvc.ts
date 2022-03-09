@@ -17,7 +17,6 @@ export default class ExcelSvc {
     }): Array<ICnvSpreadsheet> {
         const wb = XLSX.read(config.workbook.data, {raw: true, dateNF: "MM-DD-YYYY"});
         const csv = XLSX.utils.sheet_to_csv(wb.Sheets[config.sheetToRead]);
-        console.log(csv);
         const arr = new Array<ICnvSpreadsheet>();
 
         Papa.parse(csv, {
