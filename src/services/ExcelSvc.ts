@@ -15,8 +15,8 @@ export default class ExcelSvc {
         batchName: string;
         createdBy: string;
     }): Array<ICnvSpreadsheet> {
-        const wb = XLSX.read(config.workbook.data, {raw: true, dateNF: "MM-DD-YYYY"});
-        const csv = XLSX.utils.sheet_to_csv(wb.Sheets[config.sheetToRead]);
+        const wb = XLSX.read(config.workbook.data, {raw: true, dateNF: "MM/DD/YYYY"});
+        const csv = XLSX.utils.sheet_to_csv(wb.Sheets[config.sheetToRead], {});
         const arr = new Array<ICnvSpreadsheet>();
 
         Papa.parse(csv, {
@@ -51,6 +51,7 @@ export default class ExcelSvc {
         const alphabet = alpha.map((x) => {
             return String.fromCharCode(x);
         });
+        console.log(alphabet)
         // this is the column index
         let columnNumber = 0;
         // this is the number of times we go past z
@@ -70,32 +71,31 @@ export default class ExcelSvc {
         // loop through the columns in the row mapping
         // the input data to a common structure CnvSpreadsheet
         columns.forEach((col: string) => {
+
             let colName: string = "column_";
             if (timesThroughAlphabet === 0) colName += alphabet[columnNumber];
-            else colName += alphabet[timesThroughAlphabet].toLowerCase() + alphabet[columnNumber];
+            else colName += alphabet[timesThroughAlphabet - 1].toLowerCase() + alphabet[columnNumber];
+
 
             // lower case the column name
             colName = colName.toLowerCase();
+
 
             // do we have a blank column or a column
             // that should not be added
             if (config.row[col].indexOf("MERGE|") === -1) {
                 spRow[colName] = config.row[col];
             }
-                // if we have a blank column, we need to incriment the number of blanks so
-            // we can check to see if this is a blank row at the end
-            else if (config.row[col].trim() === "") blankCols++;
-
             // increment i and the times through alphabet
             columnNumber++;
             if (columnNumber === alphabet.length) {
-                timesThroughAlphabet++;
+                timesThroughAlphabet += 1;
                 columnNumber = 0;
             }
         });
         // if this is a blank row, we need to not add it to the array, so return
         // undefined
-        if (blankCols === colCount) return undefined;
+        if (_.isEmpty(spRow.column_b)) return undefined;
 
         // set the properties of the row that are outside of the
         // input row from the spreadsheet
@@ -104,6 +104,7 @@ export default class ExcelSvc {
         spRow.created_by = config.createdBy;
 
         return spRow;
+
     }
 
     //#endregion
