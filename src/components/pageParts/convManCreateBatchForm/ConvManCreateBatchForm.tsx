@@ -15,6 +15,7 @@ import ConvManInput from "../../forms/ConvManInput";
 import ConvManSelectList from "../../forms/ConvManSelectList";
 import {IConvManFile} from "../../forms/interfaces/IConvManFileInputState";
 import {IConvManSelectListItem} from "../../forms/interfaces/ISelectListItem";
+import ConvManCheckbox from "../../forms/ConvManCheckbox";
 
 type ICreateBatchProps = {
     isOpen: boolean;
@@ -41,9 +42,11 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
         lastModified: "",
     });
     const [selectedWorksheet, setSelectedWorsheet] = useState<IConvManSelectListItem>({label: "", value: ""});
+    const [pushToOracle, setPushToOracle] = useState<boolean>(false);
 
     const [worksheetOpts, setWorksheetOpts] = useState<Array<IConvManSelectListItem>>([]);
     const [podOpts, setPodOpts] = useState<Array<IConvManSelectListItem>>([]);
+
 
     //#endregion
 
@@ -109,7 +112,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
                     p_batch: batchName,
                     p_root_obj_name: selectedWorksheet.value,
                     p_hdl_line_name: "",
-                });
+                }, pushToOracle);
             } catch (e) {
                 batchResp.convOpsError = e as Error;
             }
@@ -178,6 +181,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
                                     placeHolder=" "
                                     name="BatchName"
                                     value={batchName}
+                                    allowSpaces={false}
                                     onInputChange={(newValue: string) => {
                                         setBatchName(newValue);
                                     }}
@@ -207,6 +211,12 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
                                     fileFilter={[]}
                                     onFileChange={spreadsheetChange}
                                 />
+                            </div>
+                            <div className="my-4">
+                                <ConvManCheckbox
+                                    checked={pushToOracle}
+                                    label="push to oracle upon successful validation"
+                                    onCheck={(checked) => setPushToOracle(checked)}/>
                             </div>
 
                             <div className="mt-4 flex justify-end items-center gap-4 justify-items-center">

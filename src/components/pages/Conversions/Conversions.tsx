@@ -76,7 +76,6 @@ const Conversions: React.FC<IConvManDashProps> = () => {
                 ConvManToastrOpts(toastrConfig)
             );
         } else if (createBatchRes.convOpsError && createBatchRes.convOpsError.message) {
-            console.log(createBatchRes.convOpsError.message)
             toast.error(<ConvManToastContent
                     message={`Batch ${batch.cnv_batch} was not successfully created. Please see the error below: `}
                     customMessage={createBatchRes.convOpsError.message}/>,
@@ -84,8 +83,9 @@ const Conversions: React.FC<IConvManDashProps> = () => {
             );
         } else {
             toast.success(<ConvManToastContent
-                    message={`Batch ${batch.cnv_batch} sucessfully created.`}
-                    customMessage={`Response: ${createBatchRes.spCreateResp.data}`}/>,
+                    message={`Batch ${batch.cnv_batch} successfully created.`}
+                    customMessage={`If the option to push to oracle was selected, the file has been pushed to Oracle.  If not, it has passed validation and you 
+                    may add new files to the batch ${batch.cnv_batch} if needed.`}/>,
                 ConvManToastrOpts(toastrConfig)
             );
         }
@@ -208,7 +208,8 @@ const Conversions: React.FC<IConvManDashProps> = () => {
                 onToggleOpen={(open: boolean) => setPodManagerOpen(open)}
             />
 
-            <ConvManLoader show={isLoading} message={loaderMsg}/>
+            <ConvManLoader show={isLoading}
+                           message={loaderMsg}/>
 
             <ToastContainer className="w-full"/>
         </div>

@@ -18,7 +18,7 @@ export default class ConvOpsSvc extends OracleRestServiceBase {
                 contentType: "application/json",
                 body: {...config},
             });
-            console.log(response.data)
+            console.log(response.data);
 
             if (response.data["~ret"] && response.data["~ret"] !== "SUCCESS")
                 throw new Error(
@@ -32,7 +32,7 @@ export default class ConvOpsSvc extends OracleRestServiceBase {
         }
     };
 
-    executeBatchPackage = async (config: IConvOpInput): Promise<IHasErrors> => {
+    executeBatchPackage = async (config: IConvOpInput, createFile: boolean): Promise<IHasErrors> => {
         await this.executeConversionOp(config, ServerConfig.ords.customActions.posts.moveToCnv);
         await this.executeConversionOp(config, ServerConfig.ords.customActions.posts.updateDateCnv);
         await this.executeConversionOp(config, ServerConfig.ords.customActions.posts.validateCnv);
@@ -45,8 +45,9 @@ export default class ConvOpsSvc extends OracleRestServiceBase {
         const batchSvc = new BatchRequestSvc();
         const totalErrors = await batchSvc.getErrorCount(config.p_batch);
         if (totalErrors.entities && totalErrors.entities[0].totalerrors > 0) {
-            return {hasErrors: true}
+            return {hasErrors: true};
         }
+        if (!createFile) return {hasErrors: false};
         await this.executeConversionOp(config, ServerConfig.ords.customActions.posts.convertToHdl);
         config.p_storage_object_uri = ServerConfig.objectStorage.url;
         await this.executeConversionOp(config, ServerConfig.ords.customActions.posts.createHdlFile);

@@ -1,10 +1,10 @@
-import React, { Component, ReactNode } from "react";
-import { IConvManLabelProps } from "./interfaces/IConvManLabelProps";
+import React from "react";
+import {IConvManLabelProps} from "./interfaces/IConvManLabelProps";
 
 const ConvManLabel: React.FC<IConvManLabelProps> = (props: IConvManLabelProps) => {
-  return (
-    <div
-      className="ml-2
+    return (
+        <div
+            className="ml-2
           w-1/3
           uppercase
           text-sm
@@ -15,10 +15,10 @@ const ConvManLabel: React.FC<IConvManLabelProps> = (props: IConvManLabelProps) =
           md:pb-0
           md:text-right
           md:whitespace-nowrap"
-    >
-      {props.label}
-    </div>
-  );
+        >
+            {props.label}
+        </div>
+    );
 };
 
 export default ConvManLabel;
