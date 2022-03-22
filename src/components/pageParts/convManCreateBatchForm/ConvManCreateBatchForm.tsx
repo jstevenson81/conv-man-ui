@@ -7,7 +7,6 @@ import {IUniqueWorksheet} from "../../../models/entities/api/IUniqueWorksheet";
 import {IUxPod} from "../../../models/entities/base/IUxPod";
 import {IApiResponse} from "../../../models/responses/IApiResponse";
 import {ICreateBatchResponse} from "../../../models/responses/ICreateBatchResponse";
-import {ServerConfig} from "../../../ServerConfig";
 import ConvOpsSvc from "../../../services/ConvOpsSvc";
 import PodSvc from "../../../services/PodSvc";
 import {SpreadsheetsSvc} from "../../../services/SpreadsheetSvc";
@@ -125,8 +124,12 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
     }, []);
 
     return (
-        <Transition appear show={isOpen} as={Fragment}>
-            <Dialog as="div" className="fixed inset-0 z-10" onClose={() => toggle(false)}>
+        <Transition appear
+                    show={isOpen}
+                    as={Fragment}>
+            <Dialog as="div"
+                    className="fixed inset-0 z-10"
+                    onClose={() => toggle(false)}>
                 <div className="min-h-screen px-4 text-center">
                     <Transition.Child
                         as={Fragment}
@@ -141,7 +144,8 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
                     </Transition.Child>
 
                     {/* This element is to trick the browser into centering the modal contents. */}
-                    <span className="inline-block h-screen align-middle" aria-hidden="true">
+                    <span className="inline-block h-screen align-middle"
+                          aria-hidden="true">
             &#8203;
           </span>
                     <Transition.Child
@@ -155,11 +159,12 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
                     >
                         <div
                             className="inline-block w-full max-w-xl p-6 my-8 overflow-visible text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-                            <Dialog.Title as="div" className="flex items-center justify-between justify-items-center">
+                            <Dialog.Title as="div"
+                                          className="flex items-center justify-between justify-items-center">
                                 <h3 className="text-lg font-medium leading-6">new conversion request</h3>
                                 <div className="hover:text-gray-800 hover:scale-125 transition duration-300">
                                     <XIcon className="w-5 h-5 hover:cursor-pointer"
-                                           onClick={() => toggle(false)}></XIcon>
+                                           onClick={() => toggle(false)}/>
                                 </div>
                             </Dialog.Title>
                             <div className="mt-2">
@@ -176,7 +181,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
                                     onInputChange={(newValue: string) => {
                                         setBatchName(newValue);
                                     }}
-                                ></ConvManInput>
+                                />
                                 <ConvManSelectList
                                     label="Environment"
                                     smallLabel="select a pod"
@@ -185,7 +190,7 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
                                     onListboxChange={(newValue: IConvManSelectListItem) => {
                                         setSelectedPod(newValue);
                                     }}
-                                ></ConvManSelectList>
+                                />
 
                                 <ConvManSelectList
                                     label="Worksheet"
@@ -195,20 +200,24 @@ const ConvManCreateBatchForm: React.FC<ICreateBatchProps> = ({
                                     onListboxChange={(newWorksheet: IConvManSelectListItem) => {
                                         setSelectedWorsheet(newWorksheet);
                                     }}
-                                ></ConvManSelectList>
+                                />
 
                                 <ConvManFileDropZone
                                     label="Drop xlsx files here or click to browse"
-                                    fileFilter={ServerConfig.contentTypes.excel}
+                                    fileFilter={[]}
                                     onFileChange={spreadsheetChange}
-                                ></ConvManFileDropZone>
+                                />
                             </div>
 
                             <div className="mt-4 flex justify-end items-center gap-4 justify-items-center">
-                                <button type="button" className="button red" onClick={() => toggle(false)}>
+                                <button type="button"
+                                        className="button red"
+                                        onClick={() => toggle(false)}>
                                     Close
                                 </button>
-                                <button type="button" className="button blue" onClick={() => createBatch()}>
+                                <button type="button"
+                                        className="button blue"
+                                        onClick={() => createBatch()}>
                                     Create Request
                                 </button>
                             </div>

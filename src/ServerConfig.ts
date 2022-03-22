@@ -1,6 +1,7 @@
 export const ServerConfig = {
     contentTypes: {
         excel: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        excelMacro: "application/vnd.ms-excel.sheet.macroEnabled.12",
         json: "application/json",
     },
     objectStorage: {
